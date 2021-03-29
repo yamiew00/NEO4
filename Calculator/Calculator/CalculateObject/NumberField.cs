@@ -10,39 +10,57 @@ namespace Calculator.CalculateObject
     public class NumberField
     {
         private readonly char COMMA = ',';
-        public decimal Value { get; set; } 
-        
+        public decimal Value { get; set; }
+
         private bool IsPositive = true;
 
         private int DegreeOfDecimal = 0;
 
         private bool DecimalPoint = false;
 
-        //(敗因，這個功能要整個砍掉)只有當這個數字是被計算過後的值，或者是由使用者輸入的值，才可以被運算。(初始生成的不能做運算)
+        //(不算敗因，但這個功能要整個砍掉)只有當這個數字是被計算過後的值，或者是由使用者輸入的值，才可以被運算。(初始生成的不能做運算)
         public bool CanNotOperated { get; private set;}
+
+        public bool isInput { get; private set; }
+
+        //新做法
+        public bool NaN {  get; private set; }
 
         //建構子
         public NumberField()
         {
             Value = 0;
             CanNotOperated = true;
+            isInput = false;
         }
 
-        //建構子，由計算結果而來
-        public NumberField(decimal number)
+        //建構子，輸入指定數值，傳入null代表這不是一個數(無限大)
+        public NumberField(decimal? number)
         {
-            Value = number;
+            if(number == null)
+            {
+                NaN = true;
+                return;
+            }
+            Value = number ?? 0;
             //IsPositive 還沒做
-            DegreeOfDecimal = getDigit(number);
+            DegreeOfDecimal = getDigit(number ?? 0);
             DecimalPoint = (DegreeOfDecimal == 0) ? 
                 false
                 : (number.ToString().Split('.').Count() == 2) ? true : false;
             CanNotOperated = false;
+            //isInput是true嗎
+            isInput = true;
         }
+        
+        
 
         //輸入整數
         public void Input(string unitDigit)
         {
+            //被輸入過
+            isInput = true;
+
             int unit = 0;
             //如果非數字→先有小數點
             if(!int.TryParse(unitDigit, out unit))
@@ -133,6 +151,11 @@ namespace Calculator.CalculateObject
         //toString
         public override string ToString()
         {
+            if (NaN)
+            {
+                return "無法除以零";
+            }
+
             decimal tmp = Value;
             
             //stack

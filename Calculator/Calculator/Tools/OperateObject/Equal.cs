@@ -8,7 +8,7 @@ namespace Calculator.Tools.OperateObject
 {
     public class Equal : IOperator
     {
-        public decimal Compute(decimal number1, decimal number2)
+        public decimal? Compute(decimal number1, decimal number2)
         {
             throw new NotImplementedException();
         }

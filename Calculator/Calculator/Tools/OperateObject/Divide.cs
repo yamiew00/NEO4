@@ -6,18 +6,16 @@ using System.Threading.Tasks;
 
 namespace Calculator.Tools.OperateObject
 {
-    public class Add : IOperator
+    public class Divide : IOperator
     {
-        
         public decimal? Compute(decimal number1, decimal number2)
         {
-            return number1 + number2;
+            return (number2 == 0)? null : (number1 / number2) as decimal?;
         }
 
         public string Mark()
         {
-            return "+";
+            return "÷";
         }
     }
-    
 }

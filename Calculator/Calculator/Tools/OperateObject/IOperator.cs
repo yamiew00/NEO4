@@ -8,7 +8,7 @@ namespace Calculator.Tools.OperateObject
 {
     public interface IOperator
     {
-        decimal Compute(decimal number1, decimal number2);
+        decimal? Compute(decimal number1, decimal number2);
         string Mark();
     }
 }

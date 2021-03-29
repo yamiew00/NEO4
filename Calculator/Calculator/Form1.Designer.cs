@@ -37,7 +37,6 @@
             this.Button8 = new System.Windows.Forms.Button();
             this.button45 = new System.Windows.Forms.Button();
             this.TextBoxPanel = new System.Windows.Forms.TextBox();
-            this.ButtonTest = new System.Windows.Forms.Button();
             this.ButtonAdd = new System.Windows.Forms.Button();
             this.TextBoxSubPanel = new System.Windows.Forms.TextBox();
             this.ButtonMinus = new System.Windows.Forms.Button();
@@ -50,6 +49,7 @@
             this.Button9 = new System.Windows.Forms.Button();
             this.ButtonC = new System.Windows.Forms.Button();
             this.ButtonCE = new System.Windows.Forms.Button();
+            this.ButtonDivide = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // ButtonDecimalPoint
@@ -142,7 +142,7 @@
             // 
             this.button45.AllowDrop = true;
             this.button45.Font = new System.Drawing.Font("新細明體", 27F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.button45.Location = new System.Drawing.Point(79, 109);
+            this.button45.Location = new System.Drawing.Point(3, 109);
             this.button45.Name = "button45";
             this.button45.Size = new System.Drawing.Size(70, 74);
             this.button45.TabIndex = 14;
@@ -159,16 +159,6 @@
             this.TextBoxPanel.TabIndex = 15;
             this.TextBoxPanel.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // ButtonTest
-            // 
-            this.ButtonTest.Location = new System.Drawing.Point(3, 125);
-            this.ButtonTest.Name = "ButtonTest";
-            this.ButtonTest.Size = new System.Drawing.Size(75, 23);
-            this.ButtonTest.TabIndex = 16;
-            this.ButtonTest.Text = "Test";
-            this.ButtonTest.UseVisualStyleBackColor = true;
-            this.ButtonTest.Click += new System.EventHandler(this.ButtonTest_Click);
-            // 
             // ButtonAdd
             // 
             this.ButtonAdd.Font = new System.Drawing.Font("新細明體", 27F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
@@ -179,7 +169,7 @@
             this.ButtonAdd.Tag = "";
             this.ButtonAdd.Text = "+";
             this.ButtonAdd.UseVisualStyleBackColor = true;
-            this.ButtonAdd.Click += new System.EventHandler(this.Button_Operate_Click);
+            this.ButtonAdd.Click += new System.EventHandler(this.Operators_Button_Click);
             // 
             // TextBoxSubPanel
             // 
@@ -201,7 +191,7 @@
             this.ButtonMinus.Tag = "";
             this.ButtonMinus.Text = "-";
             this.ButtonMinus.UseVisualStyleBackColor = true;
-            this.ButtonMinus.Click += new System.EventHandler(this.Button_Operate_Click);
+            this.ButtonMinus.Click += new System.EventHandler(this.Operators_Button_Click);
             // 
             // ButtonMultiply
             // 
@@ -213,7 +203,7 @@
             this.ButtonMultiply.Tag = "";
             this.ButtonMultiply.Text = "x";
             this.ButtonMultiply.UseVisualStyleBackColor = true;
-            this.ButtonMultiply.Click += new System.EventHandler(this.Button_Operate_Click);
+            this.ButtonMultiply.Click += new System.EventHandler(this.Operators_Button_Click);
             // 
             // Button1
             // 
@@ -297,7 +287,7 @@
             // 
             this.ButtonC.AllowDrop = true;
             this.ButtonC.Font = new System.Drawing.Font("新細明體", 27F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.ButtonC.Location = new System.Drawing.Point(155, 109);
+            this.ButtonC.Location = new System.Drawing.Point(79, 109);
             this.ButtonC.Name = "ButtonC";
             this.ButtonC.Size = new System.Drawing.Size(70, 74);
             this.ButtonC.TabIndex = 27;
@@ -309,7 +299,7 @@
             // 
             this.ButtonCE.AllowDrop = true;
             this.ButtonCE.Font = new System.Drawing.Font("新細明體", 27F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.ButtonCE.Location = new System.Drawing.Point(245, 109);
+            this.ButtonCE.Location = new System.Drawing.Point(155, 109);
             this.ButtonCE.Name = "ButtonCE";
             this.ButtonCE.Size = new System.Drawing.Size(70, 74);
             this.ButtonCE.TabIndex = 28;
@@ -317,11 +307,24 @@
             this.ButtonCE.UseVisualStyleBackColor = true;
             this.ButtonCE.Click += new System.EventHandler(this.ButtonCE_Click);
             // 
+            // ButtonDivide
+            // 
+            this.ButtonDivide.Font = new System.Drawing.Font("新細明體", 27F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.ButtonDivide.Location = new System.Drawing.Point(245, 109);
+            this.ButtonDivide.Name = "ButtonDivide";
+            this.ButtonDivide.Size = new System.Drawing.Size(70, 74);
+            this.ButtonDivide.TabIndex = 29;
+            this.ButtonDivide.Tag = "";
+            this.ButtonDivide.Text = "÷";
+            this.ButtonDivide.UseVisualStyleBackColor = true;
+            this.ButtonDivide.Click += new System.EventHandler(this.Operators_Button_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(318, 505);
+            this.Controls.Add(this.ButtonDivide);
             this.Controls.Add(this.ButtonCE);
             this.Controls.Add(this.ButtonC);
             this.Controls.Add(this.Button9);
@@ -334,7 +337,6 @@
             this.Controls.Add(this.ButtonMinus);
             this.Controls.Add(this.TextBoxSubPanel);
             this.Controls.Add(this.ButtonAdd);
-            this.Controls.Add(this.ButtonTest);
             this.Controls.Add(this.TextBoxPanel);
             this.Controls.Add(this.button45);
             this.Controls.Add(this.Button8);
@@ -362,7 +364,6 @@
         private System.Windows.Forms.Button Button8;
         private System.Windows.Forms.Button button45;
         private System.Windows.Forms.TextBox TextBoxPanel;
-        private System.Windows.Forms.Button ButtonTest;
         private System.Windows.Forms.Button ButtonAdd;
         private System.Windows.Forms.TextBox TextBoxSubPanel;
         private System.Windows.Forms.Button ButtonMinus;
@@ -375,6 +376,7 @@
         private System.Windows.Forms.Button Button9;
         private System.Windows.Forms.Button ButtonC;
         private System.Windows.Forms.Button ButtonCE;
+        private System.Windows.Forms.Button ButtonDivide;
     }
 }
 
