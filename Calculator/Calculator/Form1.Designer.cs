@@ -35,7 +35,7 @@
             this.Button2 = new System.Windows.Forms.Button();
             this.Button5 = new System.Windows.Forms.Button();
             this.Button8 = new System.Windows.Forms.Button();
-            this.button45 = new System.Windows.Forms.Button();
+            this.ButtonBack = new System.Windows.Forms.Button();
             this.TextBoxPanel = new System.Windows.Forms.TextBox();
             this.ButtonAdd = new System.Windows.Forms.Button();
             this.TextBoxSubPanel = new System.Windows.Forms.TextBox();
@@ -61,7 +61,7 @@
             this.ButtonDecimalPoint.TabIndex = 7;
             this.ButtonDecimalPoint.Text = ".";
             this.ButtonDecimalPoint.UseVisualStyleBackColor = true;
-            this.ButtonDecimalPoint.Click += new System.EventHandler(this.Button_Click);
+            this.ButtonDecimalPoint.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // ButtonNegate
             // 
@@ -72,7 +72,7 @@
             this.ButtonNegate.TabIndex = 8;
             this.ButtonNegate.Text = "±";
             this.ButtonNegate.UseVisualStyleBackColor = true;
-            this.ButtonNegate.Click += new System.EventHandler(this.ButtonNegate_Click);
+            this.ButtonNegate.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // Button0
             // 
@@ -85,7 +85,7 @@
             this.Button0.Tag = "Number";
             this.Button0.Text = "0";
             this.Button0.UseVisualStyleBackColor = true;
-            this.Button0.Click += new System.EventHandler(this.Button_Click);
+            this.Button0.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // ButtonEqual
             // 
@@ -97,7 +97,7 @@
             this.ButtonEqual.Tag = "Operator";
             this.ButtonEqual.Text = "=";
             this.ButtonEqual.UseVisualStyleBackColor = true;
-            this.ButtonEqual.Click += new System.EventHandler(this.Symbol_Button_Click);
+            this.ButtonEqual.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // Button2
             // 
@@ -110,7 +110,7 @@
             this.Button2.Tag = "Number";
             this.Button2.Text = "2";
             this.Button2.UseVisualStyleBackColor = true;
-            this.Button2.Click += new System.EventHandler(this.Button_Click);
+            this.Button2.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // Button5
             // 
@@ -123,7 +123,7 @@
             this.Button5.Tag = "Number";
             this.Button5.Text = "5";
             this.Button5.UseVisualStyleBackColor = true;
-            this.Button5.Click += new System.EventHandler(this.Button_Click);
+            this.Button5.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // Button8
             // 
@@ -136,18 +136,19 @@
             this.Button8.Tag = "Number";
             this.Button8.Text = "8";
             this.Button8.UseVisualStyleBackColor = true;
-            this.Button8.Click += new System.EventHandler(this.Button_Click);
+            this.Button8.Click += new System.EventHandler(this.All_Button_Click);
             // 
-            // button45
+            // ButtonBack
             // 
-            this.button45.AllowDrop = true;
-            this.button45.Font = new System.Drawing.Font("新細明體", 27F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.button45.Location = new System.Drawing.Point(3, 109);
-            this.button45.Name = "button45";
-            this.button45.Size = new System.Drawing.Size(70, 74);
-            this.button45.TabIndex = 14;
-            this.button45.Text = "0";
-            this.button45.UseVisualStyleBackColor = true;
+            this.ButtonBack.AllowDrop = true;
+            this.ButtonBack.Font = new System.Drawing.Font("新細明體", 27F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.ButtonBack.Location = new System.Drawing.Point(3, 109);
+            this.ButtonBack.Name = "ButtonBack";
+            this.ButtonBack.Size = new System.Drawing.Size(70, 74);
+            this.ButtonBack.TabIndex = 14;
+            this.ButtonBack.Text = "⌫";
+            this.ButtonBack.UseVisualStyleBackColor = true;
+            this.ButtonBack.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // TextBoxPanel
             // 
@@ -169,7 +170,7 @@
             this.ButtonAdd.Tag = "";
             this.ButtonAdd.Text = "+";
             this.ButtonAdd.UseVisualStyleBackColor = true;
-            this.ButtonAdd.Click += new System.EventHandler(this.Symbol_Button_Click);
+            this.ButtonAdd.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // TextBoxSubPanel
             // 
@@ -191,7 +192,7 @@
             this.ButtonMinus.Tag = "";
             this.ButtonMinus.Text = "-";
             this.ButtonMinus.UseVisualStyleBackColor = true;
-            this.ButtonMinus.Click += new System.EventHandler(this.Symbol_Button_Click);
+            this.ButtonMinus.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // ButtonMultiply
             // 
@@ -203,7 +204,7 @@
             this.ButtonMultiply.Tag = "";
             this.ButtonMultiply.Text = "x";
             this.ButtonMultiply.UseVisualStyleBackColor = true;
-            this.ButtonMultiply.Click += new System.EventHandler(this.Symbol_Button_Click);
+            this.ButtonMultiply.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // Button1
             // 
@@ -216,7 +217,7 @@
             this.Button1.Tag = "Number";
             this.Button1.Text = "1";
             this.Button1.UseVisualStyleBackColor = true;
-            this.Button1.Click += new System.EventHandler(this.Button_Click);
+            this.Button1.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // Button3
             // 
@@ -229,7 +230,7 @@
             this.Button3.Tag = "Number";
             this.Button3.Text = "3";
             this.Button3.UseVisualStyleBackColor = true;
-            this.Button3.Click += new System.EventHandler(this.Button_Click);
+            this.Button3.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // Button4
             // 
@@ -242,7 +243,7 @@
             this.Button4.Tag = "Number";
             this.Button4.Text = "4";
             this.Button4.UseVisualStyleBackColor = true;
-            this.Button4.Click += new System.EventHandler(this.Button_Click);
+            this.Button4.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // Button6
             // 
@@ -255,7 +256,7 @@
             this.Button6.Tag = "Number";
             this.Button6.Text = "6";
             this.Button6.UseVisualStyleBackColor = true;
-            this.Button6.Click += new System.EventHandler(this.Button_Click);
+            this.Button6.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // Button7
             // 
@@ -268,7 +269,7 @@
             this.Button7.Tag = "Number";
             this.Button7.Text = "7";
             this.Button7.UseVisualStyleBackColor = true;
-            this.Button7.Click += new System.EventHandler(this.Button_Click);
+            this.Button7.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // Button9
             // 
@@ -281,7 +282,7 @@
             this.Button9.Tag = "Number";
             this.Button9.Text = "9";
             this.Button9.UseVisualStyleBackColor = true;
-            this.Button9.Click += new System.EventHandler(this.Button_Click);
+            this.Button9.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // ButtonC
             // 
@@ -293,7 +294,7 @@
             this.ButtonC.TabIndex = 27;
             this.ButtonC.Text = "C";
             this.ButtonC.UseVisualStyleBackColor = true;
-            this.ButtonC.Click += new System.EventHandler(this.ButtonC_Click);
+            this.ButtonC.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // ButtonCE
             // 
@@ -305,7 +306,7 @@
             this.ButtonCE.TabIndex = 28;
             this.ButtonCE.Text = "CE";
             this.ButtonCE.UseVisualStyleBackColor = true;
-            this.ButtonCE.Click += new System.EventHandler(this.ButtonCE_Click);
+            this.ButtonCE.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // ButtonDivide
             // 
@@ -317,7 +318,7 @@
             this.ButtonDivide.Tag = "";
             this.ButtonDivide.Text = "÷";
             this.ButtonDivide.UseVisualStyleBackColor = true;
-            this.ButtonDivide.Click += new System.EventHandler(this.Symbol_Button_Click);
+            this.ButtonDivide.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // Form1
             // 
@@ -338,7 +339,7 @@
             this.Controls.Add(this.TextBoxSubPanel);
             this.Controls.Add(this.ButtonAdd);
             this.Controls.Add(this.TextBoxPanel);
-            this.Controls.Add(this.button45);
+            this.Controls.Add(this.ButtonBack);
             this.Controls.Add(this.Button8);
             this.Controls.Add(this.Button5);
             this.Controls.Add(this.Button2);
@@ -362,7 +363,7 @@
         private System.Windows.Forms.Button Button2;
         private System.Windows.Forms.Button Button5;
         private System.Windows.Forms.Button Button8;
-        private System.Windows.Forms.Button button45;
+        private System.Windows.Forms.Button ButtonBack;
         private System.Windows.Forms.TextBox TextBoxPanel;
         private System.Windows.Forms.Button ButtonAdd;
         private System.Windows.Forms.TextBox TextBoxSubPanel;

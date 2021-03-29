@@ -9,32 +9,47 @@ namespace Calculator.CalculateObject
 {
     public class NumberField
     {
+        /// <summary>
+        /// 分隔用符號
+        /// </summary>
         private readonly char COMMA = ',';
+
+        /// <summary>
+        /// 現有的值
+        /// </summary>
         public decimal Value { get; set; }
 
-        private bool IsPositive = true;
+        /// <summary>
+        /// 小數位數
+        /// </summary>
+        private int DegreeOfDecimal;
 
-        private int DegreeOfDecimal = 0;
-
-        private bool DecimalPoint = false;
-
-        //(不算敗因，但這個功能要整個砍掉)只有當這個數字是被計算過後的值，或者是由使用者輸入的值，才可以被運算。(初始生成的不能做運算)
-        public bool CanNotOperated { get; private set;}
-
+        /// <summary>
+        /// 是否有小數點
+        /// </summary>
+        private bool DecimalPoint;
+        
+        /// <summary>
+        /// 判斷是否為使用者所輸入
+        /// </summary>
         public bool isInput { get; private set; }
 
-        //新做法
+        /// <summary>
+        /// 判斷是不是無限大(被除以零)
+        /// </summary>
         public bool NaN {  get; private set; }
 
         //建構子
         public NumberField()
         {
             Value = 0;
-            CanNotOperated = true;
+            DegreeOfDecimal = 0;
+            DecimalPoint = false;
             isInput = false;
+            NaN = false;
         }
 
-        //建構子，輸入指定數值，傳入null代表這不是一個數(無限大)
+        //建構子，被視為自使用者輸入，輸入指定數值，傳入null代表這不是一個數(無限大)
         public NumberField(decimal? number)
         {
             if(number == null)
@@ -43,63 +58,69 @@ namespace Calculator.CalculateObject
                 return;
             }
             Value = number ?? 0;
-            //IsPositive 還沒做
             DegreeOfDecimal = GetDigit(number ?? 0);
-            DecimalPoint = (DegreeOfDecimal == 0) ? 
-                false
-                : (number.ToString().Split('.').Count() == 2) ? true : false;
-            CanNotOperated = false;
-            //isInput是true嗎
+            DecimalPoint = (DegreeOfDecimal == 0) ? false : true;
             isInput = true;
         }
-        
-        
 
-        //輸入整數
+        //輸入整數，只能是0到9
         public void Input(string unitDigit)
         {
             //被輸入過
             isInput = true;
 
-            int unit = 0;
-            //如果非數字→先有小數點
-            if(!int.TryParse(unitDigit, out unit))
-            {
-                if (unitDigit.Equals("."))
-                {
-                    DecimalPoint = true;
-                }
-                //更改為可運算
-                CanNotOperated = false;
+            decimal unit;
+            if (!decimal.TryParse(unitDigit, out unit)){
                 return;
             }
-
-            //限制輸入機制
+            
+            //限制輸入
             if(unit < 0 || unit > 9)
             {
                 throw new Exception("只能輸入個位數");
             }
 
-            //更改為可運算
-            CanNotOperated = false;
-
             //整數或小數模式
             if (DecimalPoint)
             {
-                decimal decimalUnitDigit = unit;
                 int digit = DegreeOfDecimal ++;
-                
                 for (int i = 0; i < digit + 1; i++)
                 {
-                    decimalUnitDigit /= 10;
+                    unit /= 10;
                 }
-                Value = Value + decimalUnitDigit;
+                Value = Value + unit;
             }
             else
             {
                 Value = Value * 10 + unit;
             }
             
+        }
+
+        public void AddPoint()
+        {
+            isInput = true;
+            DecimalPoint = true;
+        }
+
+        public void BackSpace()
+        {
+            if (!DecimalPoint)
+            {
+                Value = (long)(Value) / 10;
+            }
+            else
+            {
+                Value = deleteLast(Value);
+                if (DegreeOfDecimal == 0)
+                {
+                    DecimalPoint = false;
+                }
+                else
+                {
+                    DegreeOfDecimal--;
+                }
+            }
         }
 
         //判斷小數點後有幾個位數
@@ -110,6 +131,17 @@ namespace Calculator.CalculateObject
             {
                 digit++;
                 number *= 10;
+            }
+            return digit;
+        }
+
+        private int GetDigit(long number)
+        {
+            int digit = 1;
+            while(number > 10)
+            {
+                number /= 10;
+                digit++;
             }
             return digit;
         }
@@ -137,15 +169,29 @@ namespace Calculator.CalculateObject
                 return null;
             }
         }
-
-        //回傳一個需要去除掉小數點的數字
-        public NumberField EraseRedundantPoint()
+        
+        
+        //移除小數點後的最後一個位數
+        private decimal deleteLast(decimal number)
         {
-            if (DegreeOfDecimal == 0)
+            int digit = GetDigit(number);
+            if (digit == 0)
             {
-                DecimalPoint = false;
+                return number;
             }
-            return this;
+
+            for (int i = 0; i < digit - 1; i++)
+            {
+                number *= 10;
+            }
+
+            number = Math.Floor(number);
+
+            for (int i = 0; i < digit - 1; i++)
+            {
+                number /= 10;
+            }
+            return number;
         }
 
         //toString
@@ -181,11 +227,20 @@ namespace Calculator.CalculateObject
             
 
             //整數部位
+
             stack.Push(((long)abs % 1000).ToString());
-            while(abs > 1000)
+            int a = GetDigit((long)abs % 1000);
+            while (abs >= 1000)
             {
+                //補零
+                for (int i = 0; i < 3 - a; i++)
+                {
+                    stack.Push("0");
+                }
+
                 abs /= 1000;
                 stack.Push(((long)abs % 1000).ToString() + COMMA);
+                a = GetDigit((long)abs % 1000);
             }
 
             //正負號
