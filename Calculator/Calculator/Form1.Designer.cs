@@ -97,7 +97,7 @@
             this.ButtonEqual.Tag = "Operator";
             this.ButtonEqual.Text = "=";
             this.ButtonEqual.UseVisualStyleBackColor = true;
-            this.ButtonEqual.Click += new System.EventHandler(this.Button_Equal_Click);
+            this.ButtonEqual.Click += new System.EventHandler(this.Symbol_Button_Click);
             // 
             // Button2
             // 
@@ -169,7 +169,7 @@
             this.ButtonAdd.Tag = "";
             this.ButtonAdd.Text = "+";
             this.ButtonAdd.UseVisualStyleBackColor = true;
-            this.ButtonAdd.Click += new System.EventHandler(this.Operators_Button_Click);
+            this.ButtonAdd.Click += new System.EventHandler(this.Symbol_Button_Click);
             // 
             // TextBoxSubPanel
             // 
@@ -191,7 +191,7 @@
             this.ButtonMinus.Tag = "";
             this.ButtonMinus.Text = "-";
             this.ButtonMinus.UseVisualStyleBackColor = true;
-            this.ButtonMinus.Click += new System.EventHandler(this.Operators_Button_Click);
+            this.ButtonMinus.Click += new System.EventHandler(this.Symbol_Button_Click);
             // 
             // ButtonMultiply
             // 
@@ -203,7 +203,7 @@
             this.ButtonMultiply.Tag = "";
             this.ButtonMultiply.Text = "x";
             this.ButtonMultiply.UseVisualStyleBackColor = true;
-            this.ButtonMultiply.Click += new System.EventHandler(this.Operators_Button_Click);
+            this.ButtonMultiply.Click += new System.EventHandler(this.Symbol_Button_Click);
             // 
             // Button1
             // 
@@ -317,7 +317,7 @@
             this.ButtonDivide.Tag = "";
             this.ButtonDivide.Text = "÷";
             this.ButtonDivide.UseVisualStyleBackColor = true;
-            this.ButtonDivide.Click += new System.EventHandler(this.Operators_Button_Click);
+            this.ButtonDivide.Click += new System.EventHandler(this.Symbol_Button_Click);
             // 
             // Form1
             // 

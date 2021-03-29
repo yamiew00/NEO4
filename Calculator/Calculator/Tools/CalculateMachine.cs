@@ -10,6 +10,18 @@ namespace Calculator.Tools
 {
     public class CalculateMachine
     {
+        private static CalculateMachine calculateMachine;
+
+        public static CalculateMachine getInstance()
+        {
+            if (calculateMachine == null)
+            {
+                calculateMachine = new CalculateMachine();
+                return calculateMachine;
+            }
+            return calculateMachine;
+        }
+
         public NumberField BaseNumber;
         public NumberField LastResult;
         public NumberField LastInput { get; set; }
@@ -121,6 +133,8 @@ namespace Calculator.Tools
             //共有4種case
             if (newNumber.isInput == false)
             {
+                //如果等號後input, LeftNumber不變，並將RightNumber清空
+                RightNumber = null;
                 Operator = nextOperator;
             }
             else if (LeftNumber == null && Operator != null && RightNumber != null)
@@ -130,15 +144,9 @@ namespace Calculator.Tools
                 Operator = nextOperator;
                 RightNumber = null;
             }
-            else if (LeftNumber != null && Operator != null && RightNumber != null)
-            {
-                Console.WriteLine("case 2"); //未做，看起來就是錯的
-                LeftNumber = Compute(LeftNumber, newNumber);
-                Operator = nextOperator;
-            }
             else if (LeftNumber == null && Operator == null && RightNumber == null)
             {
-                //第一次輸進數字，不做運算
+                //第一次輸進數字，不做運算 
                 LeftNumber = newNumber;
                 Operator = nextOperator;
             }
@@ -168,28 +176,33 @@ namespace Calculator.Tools
             //共有五種case
             if ( LeftNumber == null && Operator != null && RightNumber != null)
             {
+                Console.WriteLine("Equal case 1");
                 Expression = LongExp(newNumber, RightNumber);
                 LeftNumber = Compute(newNumber, RightNumber) ?? LeftNumber;         //是無限大的話值要暫時留著
             }
             else if (LeftNumber == null && Operator == null && RightNumber == null)
             {
+                //第一次輸入
                 //和下一種高度相似，可以合併
                 Expression = ShortExp(newNumber);
                 LeftNumber = newNumber;
             }
             else if (LeftNumber != null && Operator == null && RightNumber == null)
             {
+                //無運算符，相當於第一次輸入
                 Expression = ShortExp(newNumber);
                 LeftNumber = newNumber;
             }
             else if (LeftNumber != null && Operator != null && RightNumber == null)
             {
+                //兩數運算
                 Expression = LongExp(LeftNumber, newNumber);
                 LeftNumber = Compute(LeftNumber, newNumber) ?? LeftNumber;          //是無限大的話值要暫時留著
                 RightNumber = newNumber;
             }
             else if (LeftNumber != null && Operator != null && RightNumber != null)
             {
+                //等號連按，相當於重複計算LeftNumber與RightNumber，按當前的Operator做
                 Expression = LongExp(LeftNumber, RightNumber);
                 LeftNumber = Compute(LeftNumber, RightNumber) ?? LeftNumber;        //是無限大的話值要暫時留著
             }

@@ -18,7 +18,9 @@ namespace Calculator
     {
         private NumberField number;
 
-        private CalculateMachine op = new CalculateMachine();
+        //弄成靜態物件
+        private static CalculateMachine calculateMachine = CalculateMachine.getInstance();
+        private  CalculateMachine op = new CalculateMachine();
 
         //行為字典
         Dictionary<object, Dictionary<string, Action>> dict;
@@ -27,10 +29,16 @@ namespace Calculator
         Dictionary<string, IOperator> OperatorDic = new Dictionary<string, IOperator>();
 
 
+        //Symbol字典
+        Dictionary<string, Action<NumberField>> SymbolDic = new Dictionary<string, Action<NumberField>>();
+
         public Form1()
         {
             InitializeComponent();
             number = new NumberField(0);    //第一個數字CanOperate
+
+            //op初始化
+
 
             //(字典)初始化
             Init();
@@ -41,11 +49,14 @@ namespace Calculator
             OperatorDic.Add("x", new Multiply());
             OperatorDic.Add("÷", new Divide());
 
+            //symbol初始化
+            //calculateMachine.Operate(number, operatorDic[button.Text]);
+            SymbolDic.Add("+", (number) => {calculateMachine.Operate(number, new Add());} );
+            SymbolDic.Add("-", (number) => { calculateMachine.Operate(number, new Minus()); });
+            SymbolDic.Add("x", (number) => { calculateMachine.Operate(number, new Multiply()); });
+            SymbolDic.Add("÷", (number) => { calculateMachine.Operate(number, new Divide()); });
+            SymbolDic.Add("=", (number) => { calculateMachine.EqualEvent(number); });
 
-
-            //測試用
-            var nf = new NumberField(null);
-            Console.WriteLine($"nf是 {nf.ToString()}");
         }
 
         //初始化的測試
@@ -64,10 +75,10 @@ namespace Calculator
 
             //Operator→加法、減法、乘法
             var operatorDic = new Dictionary<string, Action>();
-            operatorDic.Add("+", () => op.OperateSelector = new Add());
-            operatorDic.Add("-", () => op.OperateSelector = new Minus());
-            operatorDic.Add("x", () => op.OperateSelector = new Multiply());
-            operatorDic.Add("=", () => op.IsDealingEqual = true);
+            operatorDic.Add("+", () => calculateMachine.OperateSelector = new Add());
+            operatorDic.Add("-", () => calculateMachine.OperateSelector = new Minus());
+            operatorDic.Add("x", () => calculateMachine.OperateSelector = new Multiply());
+            operatorDic.Add("=", () => calculateMachine.IsDealingEqual = true);
 
             dict.Add(operatorType, operatorDic);
         }
@@ -96,7 +107,7 @@ namespace Calculator
             var tmpButton = (Button)sender;
 
             //執行運算符
-            var currentAns = op.Execute(number);
+            var currentAns = calculateMachine.Execute(number);
 
             //儲存新的運算符
             dict[tmpButton.Tag][tmpButton.Text].Invoke();
@@ -105,7 +116,7 @@ namespace Calculator
             number = new NumberField();
 
             //副Panel，等號的處理怎麼辦
-            TextBoxSubPanel.ShowText(op.OperateExpression());
+            TextBoxSubPanel.ShowText(calculateMachine.OperateExpression());
 
             //主Panel
             TextBoxPanel.ShowText(currentAns.ToString());
@@ -120,45 +131,87 @@ namespace Calculator
         //暫時用的四則運算按鈕
         private void Operators_Button_Click(object sender, EventArgs e)
         {
-            OperateAction(TextBoxPanel, TextBoxSubPanel, op, number, OperatorDic, sender);
+            OperateAction(TextBoxPanel, TextBoxSubPanel, number, OperatorDic, sender);
             number = new NumberField();
         }
         
 
-        //暫時用的方法
-        private Action<TextBox, TextBox,CalculateMachine, NumberField, Dictionary<string, IOperator>, object> OperateAction 
-            = (panel, subpanel, op, number, operatorDic, sender) =>
+        //四則運算Action
+        private Action<TextBox, TextBox, NumberField, Dictionary<string, IOperator>, object> OperateAction 
+            = (panel, subpanel, number, operatorDic, sender) =>
         {
             //sender是按鈕
             var button = (Button)sender;
 
+            Console.WriteLine($"number.IsInput = {number.isInput}");
+
             //做四則運算
-            op.Operate(number, operatorDic[button.Text]);
+            calculateMachine.Operate(number, operatorDic[button.Text]);
             
             //副Panel，等號的處理怎麼辦
-            subpanel.ShowText(op.Expression); //op可弄成靜態?
+            subpanel.ShowText(calculateMachine.Expression); //op可弄成靜態?
             
             //主Panel
-            panel.ShowText(op.currentNumber);
+            panel.ShowText(calculateMachine.currentNumber);
+        };
+
+
+        //symbol整合用
+        private Action<TextBox, TextBox, NumberField, Dictionary<string, Action<NumberField>>, object> symbolAction
+            = (panel, subpanel, number, symboldic, sender) =>
+            {
+                //sender是按鈕
+                var button = (Button)sender;
+
+                symboldic[button.Text].Invoke(number);
+
+                //副Panel，等號的處理怎麼辦
+                subpanel.ShowText(calculateMachine.Expression); //op可弄成靜態?
+
+                //主Panel
+                panel.ShowText(calculateMachine.currentNumber);
+            };
+
+        private void Symbol_Button_Click(object sender, EventArgs e)
+        {
+            symbolAction(TextBoxPanel, TextBoxSubPanel, number, SymbolDic, sender);
+            number = new NumberField();
+        }
+
+
+        //暫時用的等號按鈕
+        private void Tmp_Equal_Button_Click(object sender, EventArgs e)
+        {
+            EqualAction(TextBoxPanel, TextBoxSubPanel, number, OperatorDic, sender);
+            number = new NumberField();
+        }
+
+        //等號Action
+        private Action<TextBox, TextBox, NumberField, Dictionary<string, IOperator>, object> EqualAction
+            = (panel, subpanel, number, operatorDic, sender) =>
+        {
+            //sender是按鈕
+            var button = (Button)sender;
+
+            calculateMachine.EqualEvent(number);
+
+            //副Panel，等號的處理怎麼辦
+            subpanel.ShowText(calculateMachine.Expression); //op可弄成靜態?
+
+            //主Panel
+            panel.ShowText(calculateMachine.currentNumber);
         };
 
 
 
-
-
-
-
-
-
-
-
+        
         //等號按鈕
         private void Button_Equal_Click(object sender, EventArgs e)
         {
             var tmpButton = (Button)sender;
 
             //執行運算符
-            var currentAns = op.Equal(number);
+            var currentAns = calculateMachine.Equal(number);
 
             //儲存新的運算符
             dict[tmpButton.Tag][tmpButton.Text].Invoke();
@@ -167,7 +220,7 @@ namespace Calculator
             number = new NumberField();
 
             //副Panel，等號的處理怎麼辦
-            TextBoxSubPanel.ShowText(op.EqualExpression());
+            TextBoxSubPanel.ShowText(calculateMachine.EqualExpression());
 
             //主Panel
             TextBoxPanel.ShowText(currentAns.ToString());
@@ -178,14 +231,14 @@ namespace Calculator
         {
             number.Value *= -1;
 
-            string subPanelString = (op.IsDealingEqual) ?
-                $"negate({op.LastResult})"
-                : (op.LastResult == null) ? 
+            string subPanelString = (calculateMachine.IsDealingEqual) ?
+                $"negate({calculateMachine.LastResult})"
+                : (calculateMachine.LastResult == null) ? 
                     "" 
-                    : op.OperateExpression();
+                    : calculateMachine.OperateExpression();
 
-            string panelString = (op.IsDealingEqual) ?
-                (number = op.LastResult).ToString()
+            string panelString = (calculateMachine.IsDealingEqual) ?
+                (number = calculateMachine.LastResult).ToString()
                 : number.ToString();
 
             //副Panel，等號的處理怎麼辦
@@ -198,7 +251,7 @@ namespace Calculator
         //Clear按鈕
         private void ButtonC_Click(object sender, EventArgs e)
         {
-            op.Clear();
+            calculateMachine.Clear();
             number = new NumberField();
 
             //副Panel
@@ -214,9 +267,9 @@ namespace Calculator
             number.Value = 0;
 
             //副Panel
-            TextBoxSubPanel.ShowText((op.IsDealingEqual) ? 
+            TextBoxSubPanel.ShowText((calculateMachine.IsDealingEqual) ? 
                 "" 
-                : op.OperateExpression());
+                : calculateMachine.OperateExpression());
 
             //主Panel
             TextBoxPanel.ShowText(number.ToString());

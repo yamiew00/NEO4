@@ -44,7 +44,7 @@ namespace Calculator.CalculateObject
             }
             Value = number ?? 0;
             //IsPositive 還沒做
-            DegreeOfDecimal = getDigit(number ?? 0);
+            DegreeOfDecimal = GetDigit(number ?? 0);
             DecimalPoint = (DegreeOfDecimal == 0) ? 
                 false
                 : (number.ToString().Split('.').Count() == 2) ? true : false;
@@ -103,7 +103,7 @@ namespace Calculator.CalculateObject
         }
 
         //判斷小數點後有幾個位數
-        private int getDigit(decimal number)
+        private int GetDigit(decimal number)
         {
             int digit = 0;
             while (!IsInteger(number))
@@ -156,7 +156,7 @@ namespace Calculator.CalculateObject
                 return "無法除以零";
             }
 
-            decimal tmp = Value;
+            decimal abs = Math.Abs(Value);
             
             //stack
             Stack<string> stack = new Stack<string>();
@@ -165,7 +165,7 @@ namespace Calculator.CalculateObject
             if (DecimalPoint)
             {
                 //非零的部分
-                int nonZeroDigit = getDigit(Value);
+                int nonZeroDigit = GetDigit(Value);
                 //不足則必須補零
                 while (nonZeroDigit++ < DegreeOfDecimal)
                 {
@@ -181,11 +181,17 @@ namespace Calculator.CalculateObject
             
 
             //整數部位
-            stack.Push(((long)tmp % 1000).ToString());
-            while(tmp > 1000)
+            stack.Push(((long)abs % 1000).ToString());
+            while(abs > 1000)
             {
-                tmp /= 1000;
-                stack.Push(((long)tmp % 1000).ToString() + COMMA);
+                abs /= 1000;
+                stack.Push(((long)abs % 1000).ToString() + COMMA);
+            }
+
+            //正負號
+            if (Value < 0)
+            {
+                stack.Push("-");
             }
 
             //文字
