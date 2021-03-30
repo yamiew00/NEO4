@@ -52,6 +52,7 @@ namespace Calculator.CalculateObject
         //建構子，被視為自使用者輸入，輸入指定數值，傳入null代表這不是一個數(無限大)
         public NumberField(decimal? number)
         {
+
             if(number == null)
             {
                 NaN = true;

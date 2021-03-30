@@ -210,10 +210,10 @@ namespace Calculator
         /// </summary>
         private void InitSymbolActionDic()
         {
-            SymbolActionDic.Add(ButtonAdd.Text, () => { CalculateMachine.Operate(CurrentNumber, new Add()); });
-            SymbolActionDic.Add(ButtonMinus.Text, () => { CalculateMachine.Operate(CurrentNumber, new Minus()); });
-            SymbolActionDic.Add(ButtonMultiply.Text, () => { CalculateMachine.Operate(CurrentNumber, new Multiply()); });
-            SymbolActionDic.Add(ButtonDivide.Text, () => { CalculateMachine.Operate(CurrentNumber, new Divide()); });
+            SymbolActionDic.Add(ButtonAdd.Text, () => { CalculateMachine.OperateEvent(CurrentNumber, new Add()); });
+            SymbolActionDic.Add(ButtonMinus.Text, () => { CalculateMachine.OperateEvent(CurrentNumber, new Minus()); });
+            SymbolActionDic.Add(ButtonMultiply.Text, () => { CalculateMachine.OperateEvent(CurrentNumber, new Multiply()); });
+            SymbolActionDic.Add(ButtonDivide.Text, () => { CalculateMachine.OperateEvent(CurrentNumber, new Divide()); });
             SymbolActionDic.Add(ButtonEqual.Text, () =>
             {
                 EnableButtons();
@@ -334,7 +334,7 @@ namespace Calculator
         {
             if (CalculateMachine.OccurNaN)
             {
-                CalculateMachine.refresh();
+                CalculateMachine.Refresh();
                 foreach (var Button in DisableList)
                 {
                     Button.Enabled = true;
