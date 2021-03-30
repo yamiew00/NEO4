@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CalculateObject\NumberField.cs" />
+    <Compile Include="Controllers\InputController.cs" />
     <Compile Include="Extensions\Controls.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

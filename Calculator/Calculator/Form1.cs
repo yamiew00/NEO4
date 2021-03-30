@@ -11,180 +11,79 @@ using Calculator.CalculateObject;
 using Calculator.Tools;
 using Calculator.Tools.OperateObject;
 using Calculator.Extensions;
+using Calculator.Controllers;
 
 namespace Calculator
 {
+    /// <summary>
+    /// 主頁面
+    /// </summary>
     public partial class Form1 : Form
     {
-        private static NumberField number;
+        /// <summary>
+        /// 操作中的數字
+        /// </summary>
+        private static NumberField CurrentNumber;
 
-        //靜態物件
-        private static CalculateMachine calculateMachine = CalculateMachine.getInstance();
+        /// <summary>
+        /// 計算器實體
+        /// </summary>
+        private static CalculateMachine CalculateMachine = CalculateMachine.GetInstance();
 
-        //靜態Control
+        /// <summary>
+        /// 輸入器實體
+        /// </summary>
+        private static InputController InputController = InputController.GetInstance();
+
+        /// <summary>
+        /// 主數字面板
+        /// </summary>
         private static TextBox Panel;
+
+        /// <summary>
+        /// 運算式面板
+        /// </summary>
         private static TextBox SubPanel;
 
-        //Tags
-        object symbolTag = new { 種類 = "Symbol" };
-        object inputTag = new { 種類 = "Input" };
-        object featureTag = new { 種類 = "Feature" };
+        /// <summary>
+        /// Symbol表示運算符號及等號
+        /// </summary>
+        private readonly object SYMBOL_TAG = new { 種類 = "Symbol" };
 
+        /// <summary>
+        /// Input表示數字、小數點及返回鍵
+        /// </summary>
+        private readonly object INPUT_TAG = new { 種類 = "Input" };
 
-        //All字典
-        Dictionary<object, Action<object>> AllDic = new Dictionary<object, Action<object>>();
+        /// <summary>
+        /// Feature表示清除鍵及正負號
+        /// </summary>
+        private readonly object FEATURE_TAG = new { 種類 = "Feature" };
 
-        //Symbol字典
-        Dictionary<string, Action> SymbolDic = new Dictionary<string, Action>();
+        /// <summary>
+        /// 所有行動流程的字典。(KEY, VALUE) = (TAG, ACTION)
+        /// </summary>
+        private Dictionary<object, Action<object>> AllActionDic = new Dictionary<object, Action<object>>();
 
-        //Input字典
-        Dictionary<string, Action<string>> InputDic = new Dictionary<string, Action<string>>();
+        /// <summary>
+        /// TAG為SYMBOL_TAG時，應行動的字典。(KEY, VALUE) = (TEXT, ACTION)。其中TEXT傳入的是BUTTON擁有的TEXT
+        /// </summary>
+        private Dictionary<string, Action> SymbolActionDic = new Dictionary<string, Action>();
 
-        //Feature字典
-        Dictionary<string, Action> FeatureDic = new Dictionary<string, Action>();
+        /// <summary>
+        /// TAG為INPUT_TAG時，應行動的字典。(KEY, VALUE) = (TEXT, ACTION)。其中TEXT傳入的是BUTTON擁有的TEXT
+        /// </summary>
+        private Dictionary<string, Action<string>> InputActionDic = new Dictionary<string, Action<string>>();
 
+        /// <summary>
+        /// TAG為FEATURE_TAG時，應行動的字典。(KEY, VALUE) = (TEXT, ACTION)。其中TEXT傳入的是BUTTON擁有的TEXT
+        /// </summary>
+        private Dictionary<string, Action> FeatureActionDic = new Dictionary<string, Action>();
 
-        //建構子，包含字典初始化
-        public Form1()
-        {
-            InitializeComponent();
-
-            //第一個數字視為使用者已輸入
-            number = new NumberField(0);    
-
-            //靜態物件初始化
-            Panel = TextBoxPanel;
-            SubPanel = TextBoxSubPanel;
-
-            //Tag初始化
-            TagInit();
-
-            //字典初始化
-            DictInit();
-        }
-
-        //初始化Tag
-        private void TagInit()
-        {
-            //定義Tag→加法、減法、乘法
-            ButtonAdd.Tag = symbolTag;
-            ButtonMinus.Tag = symbolTag;
-            ButtonMultiply.Tag = symbolTag;
-            ButtonDivide.Tag = symbolTag;
-            ButtonEqual.Tag = symbolTag;
-
-
-            //Input的Tag→
-            Button0.Tag = inputTag;
-            Button1.Tag = inputTag;
-            Button2.Tag = inputTag;
-            Button3.Tag = inputTag;
-            Button4.Tag = inputTag;
-            Button5.Tag = inputTag;
-            Button6.Tag = inputTag;
-            Button7.Tag = inputTag;
-            Button8.Tag = inputTag;
-            Button9.Tag = inputTag;
-            ButtonDecimalPoint.Tag = inputTag;
-            ButtonBack.Tag = inputTag;
-            
-            //Feature的Tag
-            ButtonNegate.Tag = featureTag;
-            ButtonC.Tag = featureTag;
-            ButtonCE.Tag = featureTag;
-        }
-
-        private void DictInit()
-        {
-            //symbol字典初始化 整合五個符號
-            SymbolDic.Add("+", () => { calculateMachine.Operate(number, new Add()); });
-            SymbolDic.Add("-", () => { calculateMachine.Operate(number, new Minus()); });
-            SymbolDic.Add("x", () => { calculateMachine.Operate(number, new Multiply()); });
-            SymbolDic.Add("÷", () => { calculateMachine.Operate(number, new Divide()); });
-            SymbolDic.Add("=", () => { calculateMachine.EqualEvent(number); });
-
-            //Input字典初始化 back和小數點
-            InputDic.Add(".", (text) => { number.AddPoint(); });
-            InputDic.Add("⌫", (text) => { number.BackSpace(); });
-            InputDic.Add("0", (text) => { number.Input(text); });
-            InputDic.Add("1", (text) => { number.Input(text); });
-            InputDic.Add("2", (text) => { number.Input(text); });
-            InputDic.Add("3", (text) => { number.Input(text); });
-            InputDic.Add("4", (text) => { number.Input(text); });
-            InputDic.Add("5", (text) => { number.Input(text); });
-            InputDic.Add("6", (text) => { number.Input(text); });
-            InputDic.Add("7", (text) => { number.Input(text); });
-            InputDic.Add("8", (text) => { number.Input(text); });
-            InputDic.Add("9", (text) => { number.Input(text); });
-
-            //Feature字典初始化
-            FeatureDic.Add("±", () =>
-            {
-                //調整數值
-                number = (number.isInput) ?
-                    new NumberField(-1 * number.Value)
-                    : new NumberField(-1 * calculateMachine.LeftNumber.Value);
-
-
-                //number.Value = (number.isInput) ? -1 * number.Value : number.Value;
-
-                SubPanel.ShowText(calculateMachine.NegateExpression(SubPanel.Text));
-
-                //Panel.ShowText((number.isInput) ? number.ToString() : calculateMachine.LeftNumber.ToString());
-                Panel.ShowText(number.ToString());
-            });
-            FeatureDic.Add("C", () =>
-            {
-                calculateMachine.Clear();
-                number = new NumberField(0);
-
-                //副Panel
-                SubPanel.ShowText("");
-
-                //主Panel
-                Panel.ShowText(number.ToString());
-            });
-            FeatureDic.Add("CE", () =>
-            {
-                number = new NumberField(0);
-
-                //副Panel
-                calculateMachine.ClearError();
-                SubPanel.ShowText(calculateMachine.Expression);
-
-                //主Panel
-                TextBoxPanel.ShowText(number.ToString());
-            });
-
-            //All字典初始化
-            AllDic.Add(symbolTag, (sender) =>
-            {
-                symbolAction(SymbolDic, sender);
-                number = new NumberField();
-            });
-            AllDic.Add(inputTag, (sender) =>
-            {
-                var button = (Button)sender;
-                InputDic[button.Text].Invoke(button.Text);
-                Panel.ShowText(number.ToString());
-            });
-            AllDic.Add(featureTag, (sender) => {
-                var button = (Button)sender;
-                FeatureDic[button.Text].Invoke();
-            });
-        }
-
-
-
-        //測試整合
-        private void All_Button_Click(object sender, EventArgs e)
-        {
-            var button = (Button)sender;
-            AllDic[button.Tag].Invoke(sender);
-        }
-
-        //symbol用的Action
-        private Action<Dictionary<string, Action>, object> symbolAction
+        /// <summary>
+        /// symbol用的Action
+        /// </summary>
+        private Action<Dictionary<string, Action>, object> SymbolAction
             = (symboldic, sender) =>
             {
                 //sender是按鈕
@@ -193,10 +92,256 @@ namespace Calculator
                 symboldic[button.Text].Invoke();
 
                 //副Panel
-                SubPanel.ShowText(calculateMachine.Expression);
+                SubPanel.ShowText(CalculateMachine.Expression);
 
                 //主Panel
-                Panel.ShowText(calculateMachine.currentNumber);
+                Panel.ShowText(CalculateMachine.CurrentNumber);
             };
+
+        /// <summary>
+        /// 要無效化的按鈕LIST
+        /// </summary>
+        private List<Button> DisableList;
+
+        /// <summary>
+        /// 建構子
+        /// </summary>
+        public Form1()
+        {
+            InitializeComponent();
+            
+            //預設數字視為使用者輸入
+            CurrentNumber = new NumberField(0);    
+
+            //靜態面板初始化
+            Panel = TextBoxPanel;
+            SubPanel = TextBoxSubPanel;
+
+            //所有Tag初始化
+            InitTag();
+
+            //所有字典初始化
+            InitActionDic();
+
+            //DisableList初始化
+            DisableListInit();
+        }
+
+        /// <summary>
+        /// TAG的初始化
+        /// </summary>
+        private void InitTag()
+        {
+            //有SYMBOL_Tag的包含四則運算、等號
+            ButtonAdd.Tag = SYMBOL_TAG;
+            ButtonMinus.Tag = SYMBOL_TAG;
+            ButtonMultiply.Tag = SYMBOL_TAG;
+            ButtonDivide.Tag = SYMBOL_TAG;
+            ButtonEqual.Tag = SYMBOL_TAG;
+
+            //有INPUT_TAG的包含數字、小數點及返回鍵
+            Button0.Tag = INPUT_TAG;
+            Button1.Tag = INPUT_TAG;
+            Button2.Tag = INPUT_TAG;
+            Button3.Tag = INPUT_TAG;
+            Button4.Tag = INPUT_TAG;
+            Button5.Tag = INPUT_TAG;
+            Button6.Tag = INPUT_TAG;
+            Button7.Tag = INPUT_TAG;
+            Button8.Tag = INPUT_TAG;
+            Button9.Tag = INPUT_TAG;
+            ButtonDecimalPoint.Tag = INPUT_TAG;
+            ButtonBack.Tag = INPUT_TAG;
+
+            //有FEATURE_TAG的包含正負號、及清除鍵
+            ButtonNegate.Tag = FEATURE_TAG;
+            ButtonC.Tag = FEATURE_TAG;
+            ButtonCE.Tag = FEATURE_TAG;
+        }
+
+        /// <summary>
+        /// 主流程字典初始化
+        /// </summary>
+        private void InitActionDic()
+        {
+            //AllActionDic字典初始化
+            InitAllActionDic();
+
+            //Symbol字典初始化 
+            InitSymbolActionDic();
+
+            //Input字典初始化
+            InitInputActionDic();
+
+            //Feature字典初始化
+            InitFeatureActionDic();
+        }
+
+        /// <summary>
+        /// AllActionDic的初始化
+        /// </summary>
+        private void InitAllActionDic()
+        {
+            AllActionDic.Add(SYMBOL_TAG, (sender) =>
+            {
+                SymbolAction(SymbolActionDic, sender);
+                CurrentNumber = new NumberField();
+                if (CalculateMachine.OccurNaN)
+                {
+                    DisableButtons();
+                }
+            });
+            AllActionDic.Add(INPUT_TAG, (sender) =>
+            {
+                var button = (Button)sender;
+                InputActionDic[button.Text].Invoke(button.Text);
+                Panel.ShowText(CurrentNumber.ToString());
+                SubPanel.ShowText(CalculateMachine.Expression);
+            });
+            AllActionDic.Add(FEATURE_TAG, (sender) =>
+            {
+                var button = (Button)sender;
+                FeatureActionDic[button.Text].Invoke();
+            });
+        }
+
+        /// <summary>
+        /// SymbolActionDic的初始化
+        /// </summary>
+        private void InitSymbolActionDic()
+        {
+            SymbolActionDic.Add(ButtonAdd.Text, () => { CalculateMachine.Operate(CurrentNumber, new Add()); });
+            SymbolActionDic.Add(ButtonMinus.Text, () => { CalculateMachine.Operate(CurrentNumber, new Minus()); });
+            SymbolActionDic.Add(ButtonMultiply.Text, () => { CalculateMachine.Operate(CurrentNumber, new Multiply()); });
+            SymbolActionDic.Add(ButtonDivide.Text, () => { CalculateMachine.Operate(CurrentNumber, new Divide()); });
+            SymbolActionDic.Add(ButtonEqual.Text, () =>
+            {
+                EnableButtons();
+                CalculateMachine.EqualEvent(CurrentNumber);
+            });
+        }
+
+        /// <summary>
+        /// InputActionDic的初始化 
+        /// </summary>
+        private void InitInputActionDic()
+        {
+            Action<string> inputNumber = ((text) =>
+            {
+                EnableButtons();
+                InputController.Input(CurrentNumber, text);
+            });
+            InputActionDic.Add(".", (text) => { CurrentNumber.AddPoint(); });
+            InputActionDic.Add("⌫", (text) =>
+            {
+                EnableButtons();
+                CurrentNumber.BackSpace();
+            });
+            InputActionDic.Add("0", inputNumber);
+            InputActionDic.Add("1", inputNumber);
+            InputActionDic.Add("2", inputNumber);
+            InputActionDic.Add("3", inputNumber);
+            InputActionDic.Add("4", inputNumber);
+            InputActionDic.Add("5", inputNumber);
+            InputActionDic.Add("6", inputNumber);
+            InputActionDic.Add("7", inputNumber);
+            InputActionDic.Add("8", inputNumber);
+            InputActionDic.Add("9", inputNumber);
+        }
+
+        /// <summary>
+        /// FeatureActionDic的初始化 
+        /// </summary>
+        private void InitFeatureActionDic()
+        {
+            FeatureActionDic.Add("±", () =>
+            {
+                //調整數值
+                CurrentNumber = (CurrentNumber.isInput) ?
+                    new NumberField(-1 * CurrentNumber.Value)
+                    : new NumberField(-1 * CalculateMachine.LeftNumber.Value);
+
+                SubPanel.ShowText(CalculateMachine.NegateExpression(SubPanel.Text));
+
+                Panel.ShowText(CurrentNumber.ToString());
+            });
+            FeatureActionDic.Add("C", () =>
+            {
+                EnableButtons();
+                CalculateMachine.Clear();
+                CurrentNumber = new NumberField(0);
+
+                //副Panel
+                SubPanel.ShowText("");
+
+                //主Panel
+                Panel.ShowText(CurrentNumber.ToString());
+            });
+            FeatureActionDic.Add("CE", () =>
+            {
+                EnableButtons();
+                CurrentNumber = new NumberField(0);
+
+                //副Panel
+                CalculateMachine.ClearError();
+                SubPanel.ShowText(CalculateMachine.Expression);
+
+                //主Panel
+                TextBoxPanel.ShowText(CurrentNumber.ToString());
+            });
+        }
+
+        /// <summary>
+        /// 指定可能要無效化的按鈕
+        /// </summary>
+        private void DisableListInit()
+        {
+            DisableList = new List<Button>();
+            DisableList.Add(ButtonAdd);
+            DisableList.Add(ButtonMinus);
+            DisableList.Add(ButtonMultiply);
+            DisableList.Add(ButtonDivide);
+            DisableList.Add(ButtonNegate);
+            DisableList.Add(ButtonDecimalPoint);
+        }
+
+        /// <summary>
+        /// 全按鈕點擊事件
+        /// </summary>
+        /// <param name="sender">按鈕</param>
+        /// <param name="e">點擊事件</param>
+        private void All_Button_Click(object sender, EventArgs e)
+        {
+            var button = (Button)sender;
+            AllActionDic[button.Tag].Invoke(sender);
+        }
+
+        /// <summary>
+        /// 指定按鈕無效化(發生無限大的時候)
+        /// </summary>
+        private void DisableButtons()
+        {
+            foreach (var Button in DisableList)
+            {
+                Button.Enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// 復原無效化的按鈕
+        /// </summary>
+        private void EnableButtons()
+        {
+            if (CalculateMachine.OccurNaN)
+            {
+                CalculateMachine.refresh();
+                foreach (var Button in DisableList)
+                {
+                    Button.Enabled = true;
+                }
+                //視為使用者輸入0
+                CurrentNumber = new NumberField(0);
+            }
+        }
     }
 }

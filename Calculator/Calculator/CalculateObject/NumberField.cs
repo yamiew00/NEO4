@@ -64,15 +64,10 @@ namespace Calculator.CalculateObject
         }
 
         //輸入整數，只能是0到9
-        public void Input(string unitDigit)
+        public void Input(int unit)
         {
             //被輸入過
             isInput = true;
-
-            decimal unit;
-            if (!decimal.TryParse(unitDigit, out unit)){
-                return;
-            }
             
             //限制輸入
             if(unit < 0 || unit > 9)
@@ -80,21 +75,23 @@ namespace Calculator.CalculateObject
                 throw new Exception("只能輸入個位數");
             }
 
+            //
+            decimal number = (decimal) unit;
+            
             //整數或小數模式
             if (DecimalPoint)
             {
                 int digit = DegreeOfDecimal ++;
                 for (int i = 0; i < digit + 1; i++)
                 {
-                    unit /= 10;
+                    number /= 10;
                 }
-                Value = Value + unit;
+                Value += number;
             }
             else
             {
-                Value = Value * 10 + unit;
+                Value = Value * 10 + number;
             }
-            
         }
 
         public void AddPoint()
@@ -221,8 +218,7 @@ namespace Calculator.CalculateObject
                 stack.Push(GetDecimal(Value));
 
                 //小數點
-                stack.Push(".");
-                
+                stack.Push(".");   
             }
             
 
@@ -257,7 +253,6 @@ namespace Calculator.CalculateObject
                 str += tmpStr;
             }
 
-            
             return str;
         }
     }
