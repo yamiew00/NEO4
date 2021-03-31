@@ -65,5 +65,17 @@ namespace Calculator.Controllers
             //
             numberField.Input(number);
         }
+
+        //以下新的
+        //分成數字和等號處理
+        public void NewInput(string controlText)
+        {
+            //暫時先寫死等號
+            if (!controlText.Equals("="))
+            {
+                ExpressionTree.GetInstance()
+                    .Input(controlText);
+            }
+        }
     }
 }

@@ -13,5 +13,12 @@ namespace Calculator.Extensions
         {
             textBox.Text = str;
         }
+
+        public static string Print(this List<string> list)
+        {
+            string result = string.Empty;
+            list.ForEach(x => result += $"{x}, ");
+            return result;
+        }
     }
 }
