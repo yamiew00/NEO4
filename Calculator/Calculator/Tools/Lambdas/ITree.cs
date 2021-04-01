@@ -121,7 +121,8 @@ namespace Calculator.Tools.Lambdas
             {
                 result.Add(stack.Pop());
             }
-            
+
+            //Console.WriteLine($"Itree result.Print() = {result.Print()}");
             return result;
         }
 

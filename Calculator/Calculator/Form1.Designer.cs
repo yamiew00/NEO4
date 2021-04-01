@@ -1,5 +1,8 @@
 ﻿namespace Calculator
 {
+    /// <summary>
+    /// Form1
+    /// </summary>
     partial class Form1
     {
         /// <summary>
@@ -368,7 +371,7 @@
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(70, 74);
             this.button10.TabIndex = 35;
-            this.button10.Tag = "2,(a + b) * a + 1";
+            this.button10.Tag = "1, (a - b) / b * 100";
             this.button10.Text = "§";
             this.button10.UseVisualStyleBackColor = true;
             this.button10.Click += new System.EventHandler(this.All_Button_Click);

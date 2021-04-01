@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Calculator.Tools;
 
-
 namespace Calculator.Controllers
 {
     /// <summary>
@@ -32,6 +31,9 @@ namespace Calculator.Controllers
             return Instance;
         }
 
+        /// <summary>
+        /// 運算樹
+        /// </summary>
         private ExpressionTree ETree;
 
         /// <summary>
@@ -41,44 +43,59 @@ namespace Calculator.Controllers
         {
             ETree = new ExpressionTree();
         }
-
-
         
-        //以下新的
-        //分成數字和等號處理
+        /// <summary>
+        /// 承接畫面端送過來的文字(指令)
+        /// </summary>
+        /// <param name="controlText">文字</param>
         public void Input(string controlText)
         {
-            //暫時先寫死等號
             if (!controlText.Equals("="))
             {
                 ETree.Input(controlText);
             }
         }
 
+        /// <summary>
+        /// Clear鍵事件
+        /// </summary>
         public void Clear()
         {
             ETree.Clear();
         }
 
+        /// <summary>
+        /// ClearError事件
+        /// </summary>
         public void ClearError()
         {
             ETree.ClearError();
         }
 
+        /// <summary>
+        /// 獲取當下的運算式
+        /// </summary>
+        /// <returns>運算式</returns>
         public string GetExpression()
         {
             return ETree.Expression;
         }
 
+        /// <summary>
+        /// 獲取運算結果
+        /// </summary>
+        /// <returns>運算結果</returns>
         public decimal GetResult()
         {
             return ETree.Result();
         }
 
+        /// <summary>
+        /// BackSpace事件
+        /// </summary>
         public void BackSpace()
         {
             ETree.BackSpace();
         }
-
     }
 }

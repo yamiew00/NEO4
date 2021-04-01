@@ -8,19 +8,30 @@ using Calculator.Controllers;
 
 namespace Calculator.Tools
 {
-    //負責前中後序
+    /// <summary>
+    /// 處理中後序的運算樹
+    /// </summary>
     public class ExpressionTree
     {
-        public string Expression { get; set; }
+        /// <summary>
+        /// 運算式
+        /// </summary>
+        public string Expression { get; private set; }
 
-        //輸入運算式(可能一次輸入多個)
+        /// <summary>
+        /// 輸入運算式
+        /// </summary>
+        /// <param name="element">輸入字串</param>
         public void Input(string element)
         {
             Expression += element;   
         }
 
-        //Infix，很多防呆可以做，正常使用沒問題
-        public List<string> Infix()
+        /// <summary>
+        /// 將運算樹轉換成中序。很多防呆可以做，正常使用沒問題
+        /// </summary>
+        /// <returns>中序</returns>
+        public List<string> ToInfix()
         {
             List<string> result = new List<string>();
             string unit = string.Empty;
@@ -60,8 +71,12 @@ namespace Calculator.Tools
             return result;
         }
 
-        //中序轉後序
-        public static List<string> InfixToPostFix(List<string> expression)
+        /// <summary>
+        /// 中序轉後序
+        /// </summary>
+        /// <param name="infix">中序</param>
+        /// <returns>後序</returns>
+        public List<string> InfixToPostFix(List<string> infix)
         {
             List<string> result = new List<string>();
 
@@ -69,7 +84,26 @@ namespace Calculator.Tools
             Stack<string> stack = new Stack<string>();
 
             //製造stack與result
-            foreach(var item in expression)
+            ComputeIterative(infix, result, stack);
+
+            //最後把operators都pop出來
+            while (stack.Count > 0)
+            {
+                result.Add(stack.Pop());
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 中序轉後序的演算法
+        /// </summary>
+        /// <param name="infix">中序</param>
+        /// <param name="result">結果</param>
+        /// <param name="stack">堆疊</param>
+        private void ComputeIterative(List<string> infix, List<string> result, Stack<string> stack)
+        {
+            foreach (var item in infix)
             {
                 if (IsNumber(item))
                 {
@@ -81,7 +115,7 @@ namespace Calculator.Tools
                 }
                 else if (item.Equals(")"))
                 {
-                    while (stack.Count > 0 
+                    while (stack.Count > 0
                         && !stack.Peek().Equals("("))
                     {
                         result.Add(stack.Pop());
@@ -97,79 +131,81 @@ namespace Calculator.Tools
                         stack.Pop();
                     }
                 }
-                //這裡還要再做處理，只能限定成既有的運算符號(做了)
                 else
                 {
-                    while ( stack.Count > 0
+                    //限定成既有的運算符號。若輸入了未定義運算符會error
+                    while (stack.Count > 0
                         && OperatorController.GetInstance().GetPriority(item) <= OperatorController.GetInstance().GetPriority(stack.Peek()))
                     {
                         result.Add(stack.Pop());
                     }
                     stack.Push(item);
                 }
-                
-
             }
-
-            //最後把operators都pop出來
-            while(stack.Count > 0)
-            {
-                result.Add(stack.Pop());
-            }
-
-            Console.WriteLine(result.Print());
-
-            return result;
         }
        
-        //有點類似
-        private static bool IsNumber(string str)
+        /// <summary>
+        /// 判斷是否為數字
+        /// </summary>
+        /// <param name="str">字串</param>
+        /// <returns>「是數字」的布林值</returns>
+        private bool IsNumber(string str)
         {
             if (decimal.TryParse(str, out decimal i))
             {
                 return true;
             }
             return false;
-        }    
+        }
 
-        //拿計算結果
+        /// <summary>
+        /// 回傳計算結果
+        /// </summary>
+        /// <returns>計算結果</returns>
         public decimal Result()
         {
-            Console.WriteLine("count = " + InfixToPostFix(Infix()).Count());
-            return Evaluator.TransformToAns(InfixToPostFix(Infix()));
+            return Evaluator.PostfixToAns(InfixToPostFix(ToInfix()));
         }
-        
-        //Clear
+
+        /// <summary>
+        /// Clear事件
+        /// </summary>
         public void Clear()
         {
             Expression = string.Empty;
         }
 
-        //Clear Error，清掉最後一個數字
+        /// <summary>
+        /// Clear Error。也就是清掉最後一個數字
+        /// </summary>
         public void ClearError()
         {
+            int lastIndex = Expression.Length - 1;
+            char element = Expression[lastIndex];
 
-                int lastIndex = Expression.Length - 1;
-                char element = Expression[lastIndex];
-
-
-                for (int index = Expression.Length - 1; index >=0; index--)
+            for (int index = Expression.Length - 1; index >= 0; index--)
+            {
+                if (char.IsNumber(Expression[index]) || Expression[index].Equals('.'))
                 {
-                    if (char.IsNumber(Expression[index]) || Expression[index].Equals('.'))
-                    {
-                        //移除最後一個元素
-                        Expression = Expression.Substring(0, Expression.Length - 1);
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    //移除最後一個元素
+                    Expression = Expression.Substring(0, Expression.Length - 1);
                 }
+                else
+                {
+                    break;
+                }
+            }
         }
 
+        /// <summary>
+        /// 返回鍵，也就是清最後一個輸入
+        /// </summary>
         public void BackSpace()
         {
-            Expression = Expression.Substring(0, Expression.Length - 1);
+            if (Expression != null && Expression.Length > 0)
+            {
+                Expression = Expression.Substring(0, Expression.Length - 1);
+            }
         }
     }
 }

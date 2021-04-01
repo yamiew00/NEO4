@@ -9,7 +9,7 @@ namespace Calculator.Tools
 {
     class IEvaluator
     {
-        //BE
+        //寫死成兩個Parameter
         private ParameterExpression a = Expression.Parameter(typeof(decimal), "a");
         private ParameterExpression b = Expression.Parameter(typeof(decimal), "b");
 

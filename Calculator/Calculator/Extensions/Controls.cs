@@ -7,14 +7,26 @@ using System.Windows.Forms;
 
 namespace Calculator.Extensions
 {
+    /// <summary>
+    /// Control的擴充方法
+    /// </summary>
     public static class Controls
     {
-        public static void ShowText(this TextBox textBox, String str)
+        /// <summary>
+        /// 顯示指定文字
+        /// </summary>
+        /// <param name="textBox">指定的textBox</param>
+        /// <param name="str">指定文字</param>
+        public static void ShowText(this TextBox textBox, string str)
         {
             textBox.Text = str;
         }
 
-        //Debug用
+        /// <summary>
+        /// Debug用的
+        /// </summary>
+        /// <param name="list">stringList</param>
+        /// <returns>string</returns>
         public static string Print(this List<string> list)
         {
             string result = string.Empty;

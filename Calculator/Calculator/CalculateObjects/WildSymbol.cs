@@ -11,8 +11,15 @@ namespace Calculator.CalculateObjects
     /// </summary>
     public class WildSymbol
     {
-        public int Priority;
+        /// <summary>
+        /// 優先度
+        /// </summary>
+        public int Priority { get; private set; }
 
+        /// <summary>
+        /// 建構子
+        /// </summary>
+        /// <param name="priority">優先度</param>
         public WildSymbol(int priority)
         {
             Priority = priority;

@@ -6,13 +6,21 @@ using System.Text;
 using System.Threading.Tasks;
 using Calculator.Controllers;
 
-
 namespace Calculator.Setting
 {
+    /// <summary>
+    /// 畫面邏輯的設定
+    /// </summary>
     public static class FrameLogic
     {
+        /// <summary>
+        /// 輸入器
+        /// </summary>
         private static InputController IC = InputController.GetInstance();
 
+        /// <summary>
+        /// 指令集
+        /// </summary>
         private static List<Commands> CommandList = new List<Commands>
         {
             new Commands("=", (form) => 
@@ -45,6 +53,11 @@ namespace Calculator.Setting
             })
         };
 
+        /// <summary>
+        /// 按指令集做事，不在指令集中的就直接傳給輸入器
+        /// </summary>
+        /// <param name="command">指令</param>
+        /// <param name="form">指定的Form</param>
         public static void WhatToDo(string command, Form1 form)
         {
             var action = CommandList.Where(x => x.Command == command);
