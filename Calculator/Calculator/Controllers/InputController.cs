@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Calculator.Tools;
-using Calculator.CalculateObject;
+
 
 namespace Calculator.Controllers
 {
@@ -32,50 +32,53 @@ namespace Calculator.Controllers
             return Instance;
         }
 
+        private ExpressionTree ETree;
+
         /// <summary>
         /// 私有建構子，外部不可建立實體
         /// </summary>
         private InputController()
         {
-            CalculateMachine = CalculateMachine.GetInstance();
+            ETree = new ExpressionTree();
         }
 
-        /// <summary>
-        /// 計算機實體
-        /// </summary>
-        private CalculateMachine CalculateMachine;
 
-        /// <summary>
-        /// 輸入數字，同時判斷是否要更動計算器內容
-        /// </summary>
-        /// <param name="numberField">原有的數字</param>
-        /// <param name="numberStr">要更新的新(數字)字元</param>
-        public void Input(NumberField numberField, string numberStr)
-        {
-            int number;
-            if (!int.TryParse(numberStr, out number))
-            {
-                return;
-            }
-            //判斷需不需要更動CalculateMachine
-            if (CalculateMachine.Interruptible)
-            {
-                CalculateMachine.Interrupt();
-            }
-            //
-            numberField.Input(number);
-        }
-
+        
         //以下新的
         //分成數字和等號處理
-        public void NewInput(string controlText)
+        public void Input(string controlText)
         {
             //暫時先寫死等號
             if (!controlText.Equals("="))
             {
-                ExpressionTree.GetInstance()
-                    .Input(controlText);
+                ETree.Input(controlText);
             }
         }
+
+        public void Clear()
+        {
+            ETree.Clear();
+        }
+
+        public void ClearError()
+        {
+            ETree.ClearError();
+        }
+
+        public string GetExpression()
+        {
+            return ETree.Expression;
+        }
+
+        public decimal GetResult()
+        {
+            return ETree.Result();
+        }
+
+        public void BackSpace()
+        {
+            ETree.BackSpace();
+        }
+
     }
 }

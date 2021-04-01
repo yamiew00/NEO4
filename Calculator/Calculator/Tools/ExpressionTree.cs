@@ -11,23 +11,6 @@ namespace Calculator.Tools
     //負責前中後序
     public class ExpressionTree
     {
-        private static ExpressionTree Instance;
-
-        public static ExpressionTree GetInstance()
-        {
-            if (Instance == null)
-            {
-                Instance = new ExpressionTree();
-                return Instance;
-            }
-            return Instance;
-        }
-
-        private ExpressionTree()
-        {
-
-        }
-
         public string Expression { get; set; }
 
         //輸入運算式(可能一次輸入多個)
@@ -72,10 +55,8 @@ namespace Calculator.Tools
 
                     result.Add(character.ToString());
                 }
-
             }
-
-            //Console.WriteLine("Infix = " + result.Print());
+            
             return result;
         }
 
@@ -156,6 +137,39 @@ namespace Calculator.Tools
         {
             Console.WriteLine("count = " + InfixToPostFix(Infix()).Count());
             return Evaluator.TransformToAns(InfixToPostFix(Infix()));
+        }
+        
+        //Clear
+        public void Clear()
+        {
+            Expression = string.Empty;
+        }
+
+        //Clear Error，清掉最後一個數字
+        public void ClearError()
+        {
+
+                int lastIndex = Expression.Length - 1;
+                char element = Expression[lastIndex];
+
+
+                for (int index = Expression.Length - 1; index >=0; index--)
+                {
+                    if (char.IsNumber(Expression[index]) || Expression[index].Equals('.'))
+                    {
+                        //移除最後一個元素
+                        Expression = Expression.Substring(0, Expression.Length - 1);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+        }
+
+        public void BackSpace()
+        {
+            Expression = Expression.Substring(0, Expression.Length - 1);
         }
     }
 }

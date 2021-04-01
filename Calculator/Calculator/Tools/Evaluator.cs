@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Calculator.Controllers;
+using Calculator.Extensions;
 
 namespace Calculator.Tools
 {
@@ -19,6 +20,10 @@ namespace Calculator.Tools
             foreach(var item in postfix)
             {
                 bool isBinary = OperatorController.GetInstance().GetBinaryMarks().Contains(item);
+
+                Console.WriteLine($"OperatorController.GetInstance().GetBinaryMarks() = {OperatorController.GetInstance().GetBinaryMarks().Print()}");
+
+
                 bool isUnary = OperatorController.GetInstance().GetUnaryMarks().Contains(item);
 
                if (IsNumber(item))
@@ -36,7 +41,7 @@ namespace Calculator.Tools
                     //計算
                     decimal number1 = stack.Pop();
                     decimal number2 = stack.Pop();
-                    stack.Push(BinaryCompute(item, number1, number2));
+                    stack.Push(BinaryCompute(item, number2, number1));
                 }
                else if (isUnary)
                 {
@@ -52,6 +57,7 @@ namespace Calculator.Tools
                 }
                 else
                 {
+                    Console.WriteLine($"item = {item}");
                     throw new Exception("無法識別的符號");
                 }
             }

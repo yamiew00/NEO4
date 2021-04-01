@@ -14,6 +14,7 @@ namespace Calculator.Extensions
             textBox.Text = str;
         }
 
+        //Debug用
         public static string Print(this List<string> list)
         {
             string result = string.Empty;

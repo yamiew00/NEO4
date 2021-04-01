@@ -46,7 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CalculateObject\NumberField.cs" />
+    <Compile Include="CalculateObjects\BinaryOperator.cs" />
+    <Compile Include="CalculateObjects\UnaryOperator.cs" />
+    <Compile Include="CalculateObjects\WildSymbol.cs" />
     <Compile Include="Controllers\InputController.cs" />
     <Compile Include="Controllers\OperatorController.cs" />
     <Compile Include="Extensions\Controls.cs" />
@@ -56,17 +58,15 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormLogic.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Setting\FrameLogic.cs" />
+    <Compile Include="Setting\Operators.cs" />
     <Compile Include="Tools\Evaluator.cs" />
     <Compile Include="Tools\ExpressionTree.cs" />
-    <Compile Include="Tools\OperateObject\Add.cs" />
-    <Compile Include="Tools\OperateObject\Divide.cs" />
-    <Compile Include="Tools\OperateObject\Equal.cs" />
-    <Compile Include="Tools\OperateObject\IOperator.cs" />
-    <Compile Include="Tools\OperateObject\Minus.cs" />
-    <Compile Include="Tools\OperateObject\Mutliply.cs" />
-    <Compile Include="Tools\CalculateMachine.cs" />
+    <Compile Include="Tools\Lambdas\IEvaluator.cs" />
+    <Compile Include="Tools\Lambdas\ITree.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
