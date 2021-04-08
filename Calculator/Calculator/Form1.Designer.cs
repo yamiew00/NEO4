@@ -66,6 +66,7 @@
             this.ButtonDecimalPoint.Name = "ButtonDecimalPoint";
             this.ButtonDecimalPoint.Size = new System.Drawing.Size(70, 74);
             this.ButtonDecimalPoint.TabIndex = 7;
+            this.ButtonDecimalPoint.Tag = "Number";
             this.ButtonDecimalPoint.Text = ".";
             this.ButtonDecimalPoint.UseVisualStyleBackColor = true;
             this.ButtonDecimalPoint.Click += new System.EventHandler(this.All_Button_Click);
@@ -101,7 +102,7 @@
             this.ButtonEqual.Name = "ButtonEqual";
             this.ButtonEqual.Size = new System.Drawing.Size(70, 74);
             this.ButtonEqual.TabIndex = 10;
-            this.ButtonEqual.Tag = "Operator";
+            this.ButtonEqual.Tag = "Equal";
             this.ButtonEqual.Text = "=";
             this.ButtonEqual.UseVisualStyleBackColor = true;
             this.ButtonEqual.Click += new System.EventHandler(this.All_Button_Click);
@@ -153,13 +154,14 @@
             this.ButtonBack.Name = "ButtonBack";
             this.ButtonBack.Size = new System.Drawing.Size(70, 74);
             this.ButtonBack.TabIndex = 14;
+            this.ButtonBack.Tag = "BackSpace";
             this.ButtonBack.Text = "⌫";
             this.ButtonBack.UseVisualStyleBackColor = true;
             this.ButtonBack.Click += new System.EventHandler(this.All_Button_Click);
             // 
             // TextBoxPanel
             // 
-            this.TextBoxPanel.Font = new System.Drawing.Font("新細明體", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.TextBoxPanel.Font = new System.Drawing.Font("新細明體", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.TextBoxPanel.Location = new System.Drawing.Point(3, 37);
             this.TextBoxPanel.Multiline = true;
             this.TextBoxPanel.Name = "TextBoxPanel";
@@ -175,7 +177,7 @@
             this.ButtonAdd.Size = new System.Drawing.Size(70, 74);
             this.ButtonAdd.TabIndex = 17;
             this.ButtonAdd.TabStop = false;
-            this.ButtonAdd.Tag = "";
+            this.ButtonAdd.Tag = "Operator";
             this.ButtonAdd.Text = "+";
             this.ButtonAdd.UseVisualStyleBackColor = true;
             this.ButtonAdd.Click += new System.EventHandler(this.All_Button_Click);
@@ -197,7 +199,7 @@
             this.ButtonMinus.Name = "ButtonMinus";
             this.ButtonMinus.Size = new System.Drawing.Size(70, 74);
             this.ButtonMinus.TabIndex = 19;
-            this.ButtonMinus.Tag = "";
+            this.ButtonMinus.Tag = "Operator";
             this.ButtonMinus.Text = "-";
             this.ButtonMinus.UseVisualStyleBackColor = true;
             this.ButtonMinus.Click += new System.EventHandler(this.All_Button_Click);
@@ -209,7 +211,7 @@
             this.ButtonMultiply.Name = "ButtonMultiply";
             this.ButtonMultiply.Size = new System.Drawing.Size(70, 74);
             this.ButtonMultiply.TabIndex = 20;
-            this.ButtonMultiply.Tag = "";
+            this.ButtonMultiply.Tag = "Operator";
             this.ButtonMultiply.Text = "x";
             this.ButtonMultiply.UseVisualStyleBackColor = true;
             this.ButtonMultiply.Click += new System.EventHandler(this.All_Button_Click);
@@ -300,6 +302,7 @@
             this.ButtonC.Name = "ButtonC";
             this.ButtonC.Size = new System.Drawing.Size(70, 74);
             this.ButtonC.TabIndex = 27;
+            this.ButtonC.Tag = "Clear";
             this.ButtonC.Text = "C";
             this.ButtonC.UseVisualStyleBackColor = true;
             this.ButtonC.Click += new System.EventHandler(this.All_Button_Click);
@@ -312,6 +315,7 @@
             this.ButtonCE.Name = "ButtonCE";
             this.ButtonCE.Size = new System.Drawing.Size(70, 74);
             this.ButtonCE.TabIndex = 28;
+            this.ButtonCE.Tag = "ClearError";
             this.ButtonCE.Text = "CE";
             this.ButtonCE.UseVisualStyleBackColor = true;
             this.ButtonCE.Click += new System.EventHandler(this.All_Button_Click);
@@ -323,7 +327,7 @@
             this.ButtonDivide.Name = "ButtonDivide";
             this.ButtonDivide.Size = new System.Drawing.Size(70, 74);
             this.ButtonDivide.TabIndex = 29;
-            this.ButtonDivide.Tag = "";
+            this.ButtonDivide.Tag = "Operator";
             this.ButtonDivide.Text = "÷";
             this.ButtonDivide.UseVisualStyleBackColor = true;
             this.ButtonDivide.Click += new System.EventHandler(this.All_Button_Click);
@@ -335,7 +339,7 @@
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(70, 74);
             this.button11.TabIndex = 31;
-            this.button11.Tag = "";
+            this.button11.Tag = "RightBracket";
             this.button11.Text = ")";
             this.button11.UseVisualStyleBackColor = true;
             this.button11.Click += new System.EventHandler(this.All_Button_Click);
@@ -347,7 +351,7 @@
             this.button12.Name = "button12";
             this.button12.Size = new System.Drawing.Size(70, 74);
             this.button12.TabIndex = 32;
-            this.button12.Tag = "";
+            this.button12.Tag = "LeftBracket";
             this.button12.Text = "(";
             this.button12.UseVisualStyleBackColor = true;
             this.button12.Click += new System.EventHandler(this.All_Button_Click);
@@ -371,7 +375,7 @@
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(70, 74);
             this.button10.TabIndex = 35;
-            this.button10.Tag = "1, (a - b) / b * 100";
+            this.button10.Tag = "1, (a - c) / c * 100";
             this.button10.Text = "§";
             this.button10.UseVisualStyleBackColor = true;
             this.button10.Click += new System.EventHandler(this.All_Button_Click);
