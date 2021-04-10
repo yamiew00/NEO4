@@ -7,15 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Calculator.Tools;
 using Calculator.Extensions;
-using Calculator.Controllers;
-using Calculator.Setting;
 using System.Linq.Expressions;
-using Calculator.Tools.Lambdas;
-using Calculator.NewTrees;
-using Calculator.NewThings;
-
+using Calculator.Controllers;
+using Calculator.Objects;
+using Calculator.Setting;
 
 namespace Calculator
 {
@@ -24,7 +20,7 @@ namespace Calculator
     /// </summary>
     public partial class Form1 : Form
     {
-        NewInputController nic = NewInputController.GetInstance();
+        InputController nic = InputController.GetInstance();
         NetworkController nc = NetworkController.GetInstance();
         string PanelString = string.Empty;
         string LastTag;
@@ -40,67 +36,21 @@ namespace Calculator
             Panel = TextBoxPanel;
             SubPanel = TextBoxSubPanel;
 
-            //手動更新運算符字典
-            OperatorController.GetInstance()
-                .SetRules(this);
-
-            //測試
-            NewBinary AddOp = new NewBinary(1, '+', (num1, num2) => num1 + num2);
-            NewBinary MinusOP = new NewBinary(1, '-', (num1, num2) => num1 - num2);
-            NewBinary MultiplyOp = new NewBinary(2, '*', (num1, num2) => num1 * num2);
-
-            NewTree newTree = new NewTree();
-            newTree.Add(1);
-            newTree.Add(MultiplyOp);
-            newTree.Add(2);
-            newTree.Add(AddOp);
-            newTree.Add(3);
-            newTree.Add(MultiplyOp);
-            newTree.Add(4);
-            //newTree.Add(AddOp);
-            //newTree.Add(5);
-            //newTree.Add(MultiplyOp);
-            //newTree.Add(6);
-
-            Node root = newTree.Root;
-            //Node current = newTree.CurrentNode;
-            //Console.WriteLine($"current = {current.ToString()}");
-
-            //測計算
-            NewEvaluator newEvaluator = new NewEvaluator();
-            //Console.WriteLine($"ans = {newEvaluator.EvaluateTree(newTree)}");
-
-            //controller測試
-            NewTreeController ntc = new NewTreeController();
-            ntc.Add(1);
-            ntc.Add(AddOp);
-
-            ntc.LeftBracket();
-            ntc.Add(2);
-            ntc.Add(AddOp);
-            ntc.Add(3);
-            ntc.RightBracket();
-
-            ntc.Add(MultiplyOp);
-
-            ntc.LeftBracket();
-            ntc.Add(4);
-            ntc.Add(MultiplyOp);
-            ntc.Add(5);
-            ntc.RightBracket();
-
-            ntc.Add(AddOp);
-            ntc.Add(6);
-            ntc.Add(MultiplyOp);
-            ntc.Add(7);
-            Console.WriteLine($"ans = {ntc.GetResult()}");
-
-            //測試
-            string num = "30.";
-            decimal.TryParse(num, out decimal d);
-            Console.WriteLine($"d = {d}");
+            FrameObject fo = new FrameObject();
+            fo.PanelString = "z";
+            test(fo);
             
+            Console.WriteLine(fo.SubPanelString);
+            Console.WriteLine("panel = " + fo.PanelString);
         }
+        
+        private void test(FrameObject fo)
+        {
+            
+            fo.SubPanelString = "acg";
+            fo.AppendPanel("abc");
+        }
+
 
         /// <summary>
         /// 主數字面板
@@ -117,74 +67,47 @@ namespace Calculator
         /// </summary>
         /// <param name="sender">按鈕</param>
         /// <param name="e">點擊事件</param>
-        private void All_Button_Click(object sender, EventArgs e)
+        private async void All_Button_Click(object sender, EventArgs e)
         {
+            //按鈕相關屬性
             var button = (Button)sender;
+            var text = button.Text;
+            var tag = button.Tag.ToString();
 
-            ////原做法
-            //FrameLogic.WhatToDo(button.Text, this);
-            PanelString += button.Text;
-            PanelShow(PanelString);
+            //現有畫面
+            var frame = new FrameObject(Panel, SubPanel);
 
-            //新
-            switch (button.Tag.ToString())
-            {
-                case "Number":
-                    NumberLimit();
-                    if (!nic.AddNumber(button.Text))
-                    {
-                        PanelString = PanelString.Substring(0, PanelString.Length - 1);
-                        PanelShow(PanelString);
-                    }
-                    break;
-                case "Operator":
-                    OperatorLimit();
-                    nic.SetOperator(button.Text);
-                    nc.OperatorRequest(nic.GenerateCurrentExpression());
-                    if (LastTag.Equals("Operator"))
-                    {
-                        PanelString = PanelString.Substring(0, PanelString.Length - 2);
-                        PanelString += button.Text;
-                        PanelShow(PanelString);
-                    }
-                    break;
-                case "LeftBracket":
-                    nic.SetLeftBracket();
-                    LeftBracketLimit();
-                    break;
-                case "RightBracket":
-                    nic.SetRightBracket();
-                    RightBracketLimit();
-                    break;
-                case "Equal":
-                    nc.EqualRequest(nic.GenerateCurrentEqualExpression(), this);
-                    PanelString = string.Empty;
-                    break;
-                case "Clear":
-                    ClearLimit();
-                    nic.Clear();
-                    nc.ClearRequest();
-                    PanelString = string.Empty;
-                    PanelShow(PanelString);
-                    break;
-                case "ClearError":
-                    //limit跟number一樣
-                    ClearErrorLimit();
-                    var BackLength = nic.NumberStr.Length + 2;
-                    PanelString= PanelString.Substring(0, Panel.Text.Length - BackLength);
-                    PanelShow(PanelString);
-                    nic.ClearError();
-                    break;
-                case "BackSpace":
-                    nic.BackSpace();
-                    PanelString = PanelString.Substring(0, PanelString.Length - 2);
-                    PanelShow(PanelString);
-                    break;
-                default:
-                    break;
-            }
-            LastTag = button.Tag.ToString();
+            //等候計算
+            await FrameLogic.dealer(frame, tag, text);
+
+            //按鈕禁用與解禁
+            Enable(frame.EnableList);
+
+            //畫面更新
+            Panel.Text = frame.PanelString;
+            SubPanel.Text = frame.SubPanelString;
         }
+        
+
+        private void Enable(List<string> enableList)
+        {
+            foreach (var item in this.Controls)
+            {
+                if (!(item is Button) || ((Button)item).Tag == null)
+                {
+                    continue;
+                }
+                if (enableList.Contains(((Button)item).Tag.ToString()))
+                {
+                    ((Button)item).Enabled = true;
+                }
+                else
+                {
+                    ((Button)item).Enabled = false;
+                }
+            }
+        }
+
         
         //新做法
         private void LeftBracketLimit()
@@ -253,6 +176,25 @@ namespace Calculator
                     continue;
                 }
                 if (!((Button)item).Tag.Equals("LeftBracket"))
+                {
+                    ((Button)item).Enabled = true;
+                }
+                else
+                {
+                    ((Button)item).Enabled = false;
+                }
+            }
+        }
+
+        private void EqualLimit()
+        {
+            foreach (var item in this.Controls)
+            {
+                if (!(item is Button) || ((Button)item).Tag == null)
+                {
+                    continue;
+                }
+                if (((Button)item).Tag.Equals("Number") || ((Button)item).Tag.Equals("LeftBracket") )
                 {
                     ((Button)item).Enabled = true;
                 }

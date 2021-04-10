@@ -19,10 +19,20 @@ namespace WebApi.Objects
         {
             TreeStack.Peek().Add(Operator);
         }
+
+        public void Modify(BinaryOperator Operator)
+        {
+            TreeStack.Peek().ModifyOperator(Operator);
+        }
         
         public void Add(decimal number)
         {
             TreeStack.Peek().Add(number);
+        }
+        public void Add(decimal number, List<UnaryOperator> unaryList)
+        {
+            TreeStack.Peek().Add(number);
+            unaryList.ForEach(x => ExecuteUnary(x));
         }
 
         /// <summary>
@@ -62,6 +72,20 @@ namespace WebApi.Objects
         {
             TreeStack = new Stack<ExpressionTree>();
             TreeStack.Push(new ExpressionTree());
+        }
+
+        public void ExecuteUnary(UnaryOperator unaryOperator)
+        {
+            var tree = TreeStack.Peek();
+            var formula = unaryOperator.Formula;
+
+
+            var number = tree.CurrentNode.value.Number;
+            if (!number.HasValue)
+            {
+                throw new Exception("單元運算子輸入錯誤");
+            }
+            tree.CurrentNode.value.Number = formula(number ?? 0);
         }
     }
 }

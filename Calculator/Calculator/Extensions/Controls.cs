@@ -22,16 +22,19 @@ namespace Calculator.Extensions
             textBox.Text = str;
         }
 
-        /// <summary>
-        /// Debug用的
-        /// </summary>
-        /// <param name="list">stringList</param>
-        /// <returns>string</returns>
-        public static string Print(this List<string> list)
+        public static void AppendText(this TextBox textBox, string str)
         {
-            string result = string.Empty;
-            list.ForEach(x => result += $"{x}, ");
-            return result;
+            textBox.Text = textBox.Text + str;
+        }
+
+        public static string Last(this TextBox textBox, string str)
+        {
+            return textBox.Text.Last().ToString();
+        }
+
+        public static void RemoveLast(this TextBox textBox, int length)
+        {
+            textBox.Text = textBox.Text.Substring(0, textBox.Text.Length - length);
         }
     }
 }

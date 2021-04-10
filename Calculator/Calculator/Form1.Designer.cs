@@ -78,6 +78,7 @@
             this.ButtonNegate.Name = "ButtonNegate";
             this.ButtonNegate.Size = new System.Drawing.Size(70, 74);
             this.ButtonNegate.TabIndex = 8;
+            this.ButtonNegate.Tag = "Unary";
             this.ButtonNegate.Text = "±";
             this.ButtonNegate.UseVisualStyleBackColor = true;
             this.ButtonNegate.Click += new System.EventHandler(this.All_Button_Click);
@@ -363,7 +364,7 @@
             this.button14.Name = "button14";
             this.button14.Size = new System.Drawing.Size(70, 74);
             this.button14.TabIndex = 34;
-            this.button14.Tag = "";
+            this.button14.Tag = "Unary";
             this.button14.Text = "√";
             this.button14.UseVisualStyleBackColor = true;
             this.button14.Click += new System.EventHandler(this.All_Button_Click);

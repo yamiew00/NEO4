@@ -97,6 +97,7 @@
     <Compile Include="Objects\ExpressionTree.cs" />
     <Compile Include="Objects\Node.cs" />
     <Compile Include="Objects\ExpressionController.cs" />
+    <Compile Include="Objects\UnaryOperator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setting\Operators.cs" />
   </ItemGroup>

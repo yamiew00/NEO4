@@ -7,6 +7,7 @@ namespace WebApi.Models
 {
     public enum ExpType
     {
+        OP,
         NUM_OP,
         LB_NUM_OP,
         NUM_RB_OP
@@ -14,22 +15,27 @@ namespace WebApi.Models
 
     public class Expression
     {
-        public char? Operator;
+        public char? BinaryOperator;
         public decimal? Number;
         public bool LeftBracket;
         public bool RightBracket;
+        public List<char> UnaryList;
 
         public ExpType Type()
         {
-            if (Operator.HasValue && Number.HasValue && LeftBracket == false && RightBracket == false)
+            if (BinaryOperator.HasValue && !Number.HasValue && LeftBracket == false && RightBracket == false)
+            {
+                return ExpType.OP;
+            }
+            else if (BinaryOperator.HasValue && Number.HasValue && LeftBracket == false && RightBracket == false)
             {
                 return ExpType.NUM_OP;
             }
-            else if (Operator.HasValue && Number.HasValue && LeftBracket == true && RightBracket == false)
+            else if (BinaryOperator.HasValue && Number.HasValue && LeftBracket == true && RightBracket == false)
             {
                 return ExpType.LB_NUM_OP;
             }
-            else if (Operator.HasValue && Number.HasValue && LeftBracket == false && RightBracket == true)
+            else if (BinaryOperator.HasValue && Number.HasValue && LeftBracket == false && RightBracket == true)
             {
                 return ExpType.NUM_RB_OP;
             }

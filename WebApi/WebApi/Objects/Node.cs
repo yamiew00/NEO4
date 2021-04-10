@@ -103,6 +103,5 @@ namespace WebApi.Objects
         {
             return (value == null) ? false : value.Operator != null;
         }
-
     }
 }

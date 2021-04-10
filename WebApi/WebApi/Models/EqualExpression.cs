@@ -15,6 +15,7 @@ namespace WebApi.Models
     {
         public decimal? Number;
         public bool RightBracket;
+        public List<char> UnaryList;
 
         public EqualType Type()
         {

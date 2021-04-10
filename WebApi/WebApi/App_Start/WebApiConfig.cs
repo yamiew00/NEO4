@@ -13,12 +13,6 @@ namespace WebApi
 
             // Web API 路由
             config.MapHttpAttributeRoutes();
-
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi, debug用",
-                routeTemplate: "api/default/{id}",
-                defaults: new { controller = "Input", id = RouteParameter.Optional}
-            );
             
             //輸入
             config.Routes.MapHttpRoute(

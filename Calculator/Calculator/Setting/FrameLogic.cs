@@ -1,77 +1,137 @@
-﻿using Calculator.Tools;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Calculator.Controllers;
+using Calculator.Extensions;
+using Calculator.Objects;
 
 namespace Calculator.Setting
 {
-    /// <summary>
-    /// 畫面邏輯的設定
-    /// </summary>
     public static class FrameLogic
     {
-        /// <summary>
-        /// 輸入器
-        /// </summary>
-        private static InputController IC = InputController.GetInstance();
+        private static NetworkController NetworkController = NetworkController.GetInstance();
+        private static InputController InputController = InputController.GetInstance();
+        private static string LastTag = string.Empty; //這個該怎麼處理?
 
-        /// <summary>
-        /// 指令集
-        /// </summary>
-        private static List<Commands> CommandList = new List<Commands>
+        public static Dictionary<string, Func<string, FrameObject, Task>> Actions =new Dictionary<string, Func<string, FrameObject, Task>>()
         {
-            new Commands("=", (form) => 
             {
-                decimal ans = IC.GetResult();
-                //秀畫面
-                form.SubPanelShow($"{IC.GetExpression()} = ");
-                form.PanelShow(ans.ToString());
-            }),
-            new Commands("C", (form) => 
+                "Number", (text, logicObject) =>
+                Task.Run(() =>
+                {
+                    if (InputController.AddNumber(text))
+                    {
+                        logicObject.AppendPanel(text);
+                    }
+                    logicObject.SetEnable("Number", "Operator", "RightBracket", "Equal", "Clear", "ClearError", "BackSpace", "Unary");
+                })
+            },
             {
-                IC.Clear();
-                //秀畫面
-                form.SubPanelShow("");
-                form.PanelShow("");
-            }),
-            new Commands("CE", (form) => 
+                "Operator", (text, logicObject) =>
+                Task.Run(() =>
+                {
+                    InputController.SetOperator(text);
+                    NetworkController.OperatorRequest(InputController.GenerateCurrentExpression());
+                    if (LastTag.Equals("Operator"))
+                    {
+                        logicObject.PanelString = logicObject.PanelString.RemoveLast(1);
+                    }
+                    logicObject.AppendPanel(text);
+                    logicObject.SetEnable("Number", "LeftBracket", "Clear", "Operator");
+                })
+            },
             {
-                IC.ClearError();
-                //秀畫面
-                form.SubPanelShow($"{IC.GetExpression()}");
-                form.PanelShow("0");
-            }),
-            new Commands("⌫", (form) => 
+                "LeftBracket", (text, logicObject) =>
+                Task.Run(() =>
+                {
+                    InputController.SetLeftBracket();
+                    logicObject.AppendPanel(text);
+                    logicObject.SetEnable("Number","RightBracket", "Clear");
+                })
+            },
             {
-                IC.BackSpace();
-                //秀畫面
-                form.SubPanelShow("");
-                form.PanelShow(IC.GetExpression());
-            })
+                "RightBracket", (text, logicObject) =>
+                Task.Run(() =>
+                {
+                    InputController.SetRightBracket();
+                    logicObject.AppendPanel(text);
+                    logicObject.SetEnable("Operator", "Equal", "Clear");
+                })
+            },
+            {
+                "Equal", (text, logicObject) =>
+                Task.Run(async () =>
+                {
+                    //強轉form1真的可以嗎
+                    //await Task.Run(async() => await Task.WhenAll(NetworkController.EqualRequest(InputController.GenerateCurrentEqualExpression(),logicObject)));
+                    await NetworkController.EqualRequest(InputController.GenerateCurrentEqualExpression(),logicObject);
+                    Console.WriteLine("sub = " + logicObject.SubPanelString);
+                    logicObject.AppendPanel(text);
+                    logicObject.SetEnable("Number", "LeftBracket");
+                })
+            },
+            {
+                "Clear", (text, logicObject) =>
+                Task.Run(() =>
+                {
+                    InputController.Clear();
+                    NetworkController.ClearRequest();
+                    logicObject.PanelString = string.Empty;
+                    logicObject.SetEnable("Number", "LeftBracket");
+                })
+            },
+            {
+                "ClearError", (text, logicObject) =>
+                Task.Run(() =>
+                {
+                    var BackLength = InputController.NumberStr.Length + 2;
+                    logicObject.PanelString = logicObject.PanelString.RemoveLast(BackLength);
+                    InputController.ClearError();
+                    logicObject.SetEnable("Number", "Operator","LeftBracket", "RightBracket", "Equal", "Clear");
+                })
+            },
+            {
+                //Limit沒做
+                "BackSpace", (text, logicObject) =>
+                Task.Run(() =>
+                {
+                    InputController.BackSpace();
+                    logicObject.PanelString = logicObject.PanelString.RemoveLast(1);
+                    logicObject.SetEnable("Number", "Operator", "LeftBracket", "RightBracket", "Equal", "Clear", "ClearError", "BackSpace", "Unary");
+                })
+            },
+            {
+                //Limit沒做
+                "Unary", (text, logicObject) =>
+                Task.Run(() =>
+                {
+                    InputController.AddUnary(text);
+                    logicObject.SetEnable("Operator","RightBracket", "Equal", "Clear", "BackSpace", "Unary");
+                })
+            }
+
         };
 
-        /// <summary>
-        /// 按指令集做事，不在指令集中的就直接傳給輸入器
-        /// </summary>
-        /// <param name="command">指令</param>
-        /// <param name="form">指定的Form</param>
-        public static void WhatToDo(string command, Form1 form)
+        public static Task dealer(FrameObject frameObject, string tag, string text)
         {
-            var action = CommandList.Where(x => x.Command == command);
+            return Task.Run(async () =>
+            {
+                //按完等號之後需要清空畫面
+                if (LastTag.Equals("Equal"))
+                {
+                    frameObject.PanelString = string.Empty;
+                    frameObject.SubPanelString = string.Empty;
+                }
 
-            //action不為null表現畫面層有要處理事情，null則將接到的任何東西往裡面傳
-            if (action.Count() > 0)
-            {
-                action.First().Action.Invoke(form);
-            }
-            else
-            {
-                IC.Input(command);
-                form.PanelShow(IC.GetExpression());
-            }
+                //按tag做事
+                await Actions[tag](text, frameObject);
+
+                //記錄下最後一次執行命令的tag
+                LastTag = tag;
+            });
         }
     }
 }
