@@ -10,17 +10,31 @@ using Calculator.Objects;
 
 namespace Calculator.Setting
 {
+    /// <summary>
+    /// 畫面邏輯
+    /// </summary>
     public static class FrameLogic
     {
+        /// <summary>
+        /// 網路控制
+        /// </summary>
         private static NetworkController NetworkController = NetworkController.GetInstance();
+
+        /// <summary>
+        /// 輸入控制
+        /// </summary>
         private static InputController InputController = InputController.GetInstance();
+
+        /// <summary>
+        /// 上次的執行Tag
+        /// </summary>
         private static string LastTag = string.Empty;
 
         /// <summary>
         /// 主畫面邏輯。以tag動作，處理了運算、畫面顯示以及按鈕禁用。與NetworkController、InputController連動。
         /// Key: tag； Value: 會回傳(text, frameObject)的Task的委派。
         /// </summary>
-        public static Dictionary<string, Func<string, FrameObject, Task>> Actions =new Dictionary<string, Func<string, FrameObject, Task>>()
+        public static Dictionary<string, Func<string, FrameObject, Task>> Actions = new Dictionary<string, Func<string, FrameObject, Task>>()
         {
             {
                 //tag, (Button.text, 目前的FrameObject)
@@ -42,7 +56,7 @@ namespace Calculator.Setting
                 Task.Run(() =>
                 {
                     InputController.SetOperator(text);
-                    NetworkController.OperatorRequest(InputController.GenerateCurrentExpression());
+                    NetworkController.OperatorRequest(InputController.GenerateOperatorExpression());
                     if (LastTag.Equals("Operator"))
                     {
                         frameObject.PanelString = frameObject.PanelString.RemoveLast(1);
@@ -58,7 +72,7 @@ namespace Calculator.Setting
                 {
                     InputController.SetLeftBracket();
                     frameObject.AppendPanel(text);
-                    frameObject.SetEnable("Number","RightBracket", "Clear");
+                    frameObject.SetEnable("Number", "RightBracket", "Clear");
                 })
             },
             {
@@ -76,7 +90,7 @@ namespace Calculator.Setting
                 "Equal", (text, frameObject) =>
                 Task.Run(async () =>
                 {
-                    await NetworkController.EqualRequest(InputController.GenerateCurrentEqualExpression(),frameObject);
+                    await NetworkController.EqualRequest(InputController.GenerateCurrentEqualExpression(), frameObject);
                     frameObject.AppendPanel(text);
                     frameObject.SetEnable("Number", "LeftBracket");
                 })
@@ -100,7 +114,7 @@ namespace Calculator.Setting
                     var BackLength = InputController.NumberStr.Length + 2;
                     frameObject.PanelString = frameObject.PanelString.RemoveLast(BackLength);
                     InputController.ClearError();
-                    frameObject.SetEnable("Number", "Operator","LeftBracket", "RightBracket", "Equal", "Clear");
+                    frameObject.SetEnable("Number", "Operator", "LeftBracket", "RightBracket", "Equal", "Clear");
                 })
             },
             {
@@ -120,7 +134,7 @@ namespace Calculator.Setting
                 {
                     InputController.AddUnary(text);
                     frameObject.AppendPanel(text);
-                    frameObject.SetEnable("Operator","RightBracket", "Equal", "Clear", "BackSpace", "Unary");
+                    frameObject.SetEnable("Operator", "RightBracket", "Equal", "Clear", "BackSpace", "Unary");
                 })
             }
         };

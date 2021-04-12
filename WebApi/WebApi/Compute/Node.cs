@@ -6,7 +6,7 @@ using System.Web;
 namespace WebApi.Objects
 {
     /// <summary>
-    /// 節點
+    /// 運算樹的節點
     /// </summary>
     public class Node
     {
@@ -26,40 +26,40 @@ namespace WebApi.Objects
         public Node RightNode { get; set; }
 
         /// <summary>
-        /// 值(數字或運算符)
+        /// 此節點的值(數值或是運算子擇一)
         /// </summary>
-        public Value NodeValue { get; set; }
+        public NodeValue Value { get; set; }
 
         /// <summary>
-        /// 值。如果有值，則其中一者必為空值
+        /// 值的類別。如果有值，則其中一者必為空值
         /// </summary>
-        public class Value
+        public class NodeValue
         {
             /// <summary>
-            /// 運算符
+            /// 運算子
             /// </summary>
             public BinaryOperator Operator { get; set; }
 
             /// <summary>
-            /// 數字
+            /// 數值(可空)
             /// </summary>
             public decimal? Number { get; set; }
 
             /// <summary>
-            /// 建構子
+            /// 運算子建構子
             /// </summary>
-            /// <param name="Operator">運算符</param>
-            public Value(BinaryOperator Operator)
+            /// <param name="Operator">運算子</param>
+            public NodeValue(BinaryOperator Operator)
             {
                 this.Operator = Operator;
                 this.Number = null;
             }
 
             /// <summary>
-            /// 建構子
+            /// 數值建樣子
             /// </summary>
-            /// <param name="Number">數字</param>
-            public Value(decimal? Number)
+            /// <param name="Number">數值</param>
+            public NodeValue(decimal? Number)
             {
                 this.Operator = null;
                 this.Number = Number;
@@ -67,9 +67,9 @@ namespace WebApi.Objects
         }
 
         /// <summary>
-        /// 建造者
+        /// 建造者模式
         /// </summary>
-        /// <returns></returns>
+        /// <returns>建造者實體</returns>
         public static Builder Build()
         {
             return new Builder();
@@ -96,12 +96,12 @@ namespace WebApi.Objects
             private Node RightNode;
 
             /// <summary>
-            /// 值
+            /// 節點值
             /// </summary>
-            private Value Value;
+            private NodeValue Value;
 
             /// <summary>
-            /// 設定父節點
+            /// 建造者模式(父節點)
             /// </summary>
             /// <param name="parentNode">父節點</param>
             /// <returns>建造者實體</returns>
@@ -112,7 +112,7 @@ namespace WebApi.Objects
             }
 
             /// <summary>
-            /// 設定左子節點
+            /// 建造者模式(左子節點)
             /// </summary>
             /// <param name="leftNode">左子節點</param>
             /// <returns>建造者實體</returns>
@@ -123,7 +123,7 @@ namespace WebApi.Objects
             }
 
             /// <summary>
-            /// 設定右子節點
+            /// 建造者模式(右子節點)
             /// </summary>
             /// <param name="rightNode">右子節點</param>
             /// <returns>建造者實體</returns>
@@ -134,31 +134,42 @@ namespace WebApi.Objects
             }
 
             /// <summary>
-            /// 設定運算符
+            /// 建造者模式(數值)
             /// </summary>
-            /// <param name="Operator">運算符</param>
+            /// <param name="value">數值</param>
+            /// <returns>建造者實體</returns>
+            public Builder SetValue(NodeValue value)
+            {
+                this.Value = value;
+                return this;
+            }
+
+            /// <summary>
+            /// 建造者模式(運算子)
+            /// </summary>
+            /// <param name="Operator">運算子</param>
             /// <returns>建造者實體</returns>
             public Builder SetOperator(BinaryOperator Operator)
             {
-                this.Value = new Value(Operator);
+                this.Value = new NodeValue(Operator);
                 return this;
             }
 
             /// <summary>
-            /// 設定數字
+            /// 建造者模式(數值)
             /// </summary>
-            /// <param name="number">數字</param>
+            /// <param name="number">數值</param>
             /// <returns>建造者實體</returns>
             public Builder SetNumber(decimal? number)
             {
-                this.Value = new Value(number);
+                this.Value = new NodeValue(number);
                 return this;
             }
 
             /// <summary>
-            /// 生產節點
+            /// 回傳設定好的節點
             /// </summary>
-            /// <returns>節點</returns>
+            /// <returns>設定好的節點</returns>
             public Node Exec()
             {
                 return new Node(ParentNode, LeftNode, RightNode, Value);
@@ -172,21 +183,21 @@ namespace WebApi.Objects
         /// <param name="leftNode">左子節點</param>
         /// <param name="rightNode">右子節點</param>
         /// <param name="value">數值</param>
-        public Node(Node parentNode, Node leftNode, Node rightNode, Value value)
+        public Node(Node parentNode, Node leftNode, Node rightNode, NodeValue value)
         {
             ParentNode = parentNode;
             LeftNode = leftNode;
             RightNode = rightNode;
-            this.NodeValue = value;
+            this.Value = value;
         }
-
+        
         /// <summary>
-        /// 判斷是否為運算符
+        /// 判斷此節點是否為運算子
         /// </summary>
-        /// <returns>是運算符的布林值</returns>
+        /// <returns>是運算子的布林值</returns>
         public bool IsOperator()
         {
-            return (NodeValue == null) ? false : NodeValue.Operator != null;
+            return (Value == null) ? false : Value.Operator != null;
         }
     }
 }

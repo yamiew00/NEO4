@@ -13,7 +13,7 @@ namespace WebApi.Objects
         /// <summary>
         /// 根節點
         /// </summary>
-        public Node Root { get; set; }
+        private Node Root { get; set; }
 
         /// <summary>
         /// 當前節點
@@ -21,9 +21,9 @@ namespace WebApi.Objects
         public Node CurrentNode { get; set; }
 
         /// <summary>
-        /// 前次節點。為了括號而存在的
+        /// 「上一次的當前節點」。為了「取消」上一次的動作而存在。只有在AddNumber後才會更新，AddOperator不會
         /// </summary>
-        public Node LastCurrentNode { get; set; }
+        private Node LastCurrentNode { get; set; }
 
         /// <summary>
         /// 建構子
@@ -35,12 +35,12 @@ namespace WebApi.Objects
         }
 
         /// <summary>
-        /// 新增運算符
+        /// 新增一個運算子(節點)
         /// </summary>
-        /// <param name="Operator">運算符</param>
+        /// <param name="Operator">運算子</param>
         public void Add(BinaryOperator Operator)
         {
-            //第一個運算case
+            //是第一個運算
             if (Root.ParentNode == null)
             {
                 Root.ParentNode = Node.Build()
@@ -51,11 +51,11 @@ namespace WebApi.Objects
                 return;
             }
 
-            //非第一個運算case，則一直找到優先度的最高點。從底往上升，升到優先度比自己小為止
+            //非第一個，則一直找到優先度的最高點。節點從底往上升，升到優先度比自己小為止
             Node tmp = CurrentNode;
             while (tmp.ParentNode != null
-                && (tmp.ParentNode.NodeValue.Operator != null
-                && tmp.ParentNode.NodeValue.Operator.Priority >= Operator.Priority))   
+                && (tmp.ParentNode.Value.Operator != null
+                && tmp.ParentNode.Value.Operator.Priority >= Operator.Priority))   
             {
                 tmp = tmp.ParentNode;
             }
@@ -63,14 +63,13 @@ namespace WebApi.Objects
             //處於最高點，以及非最高點的case
             if (tmp.ParentNode == null)
             {
-                //樹頂
-                //雙向關係
+                //如果是樹頂→頂上枝頭
                 Node newParentNode = Node.Build()
                                          .SetLeftNode(tmp)
                                          .SetOperator(Operator)
                                          .Exec();
-                tmp.ParentNode = newParentNode;
 
+                tmp.ParentNode = newParentNode;
                 CurrentNode = newParentNode;
             }
             else
@@ -81,15 +80,15 @@ namespace WebApi.Objects
                                         .SetOperator(Operator)
                                         .SetLeftNode(tmp)
                                         .Exec();
+
                 tmp.ParentNode.RightNode = newRightNode;
                 tmp.ParentNode = newRightNode;
-
                 CurrentNode = newRightNode;
             }
         }
 
         /// <summary>
-        /// 新增數字節點
+        /// 新增一個數字(節點)
         /// </summary>
         /// <param name="number">數字</param>
         public void Add(decimal number)
@@ -104,7 +103,7 @@ namespace WebApi.Objects
                 LastCurrentNode = Root;
             }
 
-            //非第一個數字，先預設輸入順序正確，也就是currentNode是運算符
+            //非第一個數字，預設輸入順序正確，也就是currentNode是運算符
             if (CurrentNode.IsOperator())
             {
                 CurrentNode.RightNode = Node.Build()
@@ -117,30 +116,30 @@ namespace WebApi.Objects
         }
 
         /// <summary>
-        /// 修改運算符
+        /// 取代上次新增的運算符。先讓樹回歸到上一次的狀態，再AddOperator。
         /// </summary>
-        /// <param name="Operator">運算符</param>
+        /// <param name="Operator">要更新的運算符</param>
         public void ModifyOperator(BinaryOperator Operator)
         {
             if (CurrentNode.ParentNode == null)
             {
-                //當前節點在樹頂的case
+                //樹頂的狀態
                 CurrentNode.LeftNode.ParentNode = null;
                 CurrentNode = LastCurrentNode;
             }
             else
             {
-                //當前節點不在樹頂的case
+                //非樹頂的狀態
                 CurrentNode.LeftNode.ParentNode = CurrentNode.ParentNode;
                 CurrentNode.ParentNode.RightNode = CurrentNode.LeftNode;
-                CurrentNode = CurrentNode.LeftNode; //多加這行了
+                CurrentNode = CurrentNode.LeftNode; 
             }
             //修改完之後再新增
             Add(Operator);
         }
 
         /// <summary>
-        /// 加一棵子樹進來
+        /// 加一棵子樹進來。為了括號的功能。
         /// </summary>
         /// <param name="tree">子樹</param>
         public void Add(ExpressionTree tree)
@@ -152,6 +151,7 @@ namespace WebApi.Objects
                 this.CurrentNode = tree.CurrentNode;
             }
 
+            //非第一個數字
             if (CurrentNode.IsOperator())
             {
                 Node topNode = tree.GetTop();
@@ -166,9 +166,9 @@ namespace WebApi.Objects
         }
 
         /// <summary>
-        /// 取得頂部節點
+        /// 取得當前的樹頂節點。
         /// </summary>
-        /// <returns>頂部節點</returns>
+        /// <returns>樹頂節點</returns>
         public Node GetTop()
         {
             //防呆

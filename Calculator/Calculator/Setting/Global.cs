@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 
 namespace Calculator.Setting
 {
+    /// <summary>
+    /// Global Setting
+    /// </summary>
     public static class Global
     {
         /// <summary>
         /// 用戶ID
         /// </summary>
-        public static int USER_ID = 1;
+        public static readonly int USER_ID = 1;
 
         /// <summary>
         /// 連接埠號
         /// </summary>
-        public static string PORT = "53104";
+        public static readonly string PORT = "53104";
     }
 }

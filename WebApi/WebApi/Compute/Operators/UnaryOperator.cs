@@ -6,7 +6,7 @@ using System.Web;
 namespace WebApi.Objects
 {
     /// <summary>
-    /// 單元運算符
+    /// 單元運算子
     /// </summary>
     public class UnaryOperator
     {

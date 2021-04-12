@@ -11,33 +11,30 @@ using WebApi.Setting;
 
 namespace WebApi.Controllers
 {
+    /// <summary>
+    /// 輸入控制
+    /// </summary>
     public class InputController : ApiController
     {
-        public InputController()
-        {
-
-        }
-        
-
         /// <summary>
-        /// 直接用這個。輸入用戶id。body應該會有數字(int)或運算符(char)
+        /// 輸入用戶id。body可能會有數字(int)、運算符(char)、左括號(bool)、右括號(bool)、單元運算列(List(char))
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        public IHttpActionResult PostWithBody(int userId)
+        /// <param name="userId">用戶id</param>
+        /// <returns>Response</returns>
+        public IHttpActionResult PostInputOperator(int userId)
         {
             //讀取body
-            Expression expression = Request.Content.ReadAsAsync<Expression>().Result;
+            OperatorExpression expression = Request.Content.ReadAsAsync<OperatorExpression>().Result;
             ExpressionController expIC = Users.GetExpressionController(userId);
-
+            
             char BinaryName = expression.BinaryOperator ?? ' ';
-
+            
             //引入字典
-            BinaryOperator binaryOperator = Operators.BinaryDic[BinaryName];
+            //BinaryOperator binaryOperator = Operators.BinaryDic[BinaryName];
+            BinaryOperator binaryOperator = Operators.GetBinary(BinaryName);
             List<UnaryOperator> unaryList = (expression.UnaryList == null) ? 
                 new List<UnaryOperator>() 
-                : expression.UnaryList.Select(x => Operators.UnaryDic[x]).ToList();
+                : expression.UnaryList.Select(x => Operators.GetUnary(x)).ToList();
             
             decimal number = expression.Number ?? 0;
 
@@ -68,15 +65,20 @@ namespace WebApi.Controllers
             return Ok(new { msg = "success"});   
         }
 
+        /// <summary>
+        /// 取得運算結果。body可能會有數字(int)、右括號(bool)、單元運算列(List(char))
+        /// </summary>
+        /// <param name="userIdForAns">用戶ID</param>
+        /// <returns>運算結果</returns>
         public IHttpActionResult PostAnswer(int userIdForAns)
         {
             //讀取body
             EqualExpression equalexpression = Request.Content.ReadAsAsync<EqualExpression>().Result;
-            ExpressionController expIC = Users.Dic[userIdForAns];
+            ExpressionController expIC = Users.GetExpressionController(userIdForAns);
 
             List<UnaryOperator> unaryList = (equalexpression.UnaryList == null) ?
                 new List<UnaryOperator>()
-                : equalexpression.UnaryList.Select(x => Operators.UnaryDic[x]).ToList();
+                : equalexpression.UnaryList.Select(x => Operators.GetUnary(x)).ToList();
 
             decimal number = equalexpression.Number ?? 0;
             decimal ans = 0;
@@ -96,28 +98,25 @@ namespace WebApi.Controllers
                     default:
                         throw new Exception("EqualType錯誤");
                 }
-            }catch(Exception)
+            }
+            catch (Exception)
             {
                 expIC.Clear();
                 System.Diagnostics.Debug.WriteLine("運算式錯誤");
                 return Ok("fail");
             }
-
             return Ok(ans);
         }
 
+        /// <summary>
+        /// Clear事件
+        /// </summary>
+        /// <param name="userIdForClear">用戶ID</param>
+        /// <returns>Response</returns>
         public IHttpActionResult GetClear(int userIdForClear)
         {
-            if (Users.Dic.Keys.Contains(userIdForClear))
-            {
-                ExpressionController expIC = Users.Dic[userIdForClear];
-                expIC.Clear();
-            }
-            
+            Users.GetExpressionController(userIdForClear).Clear(); 
             return Ok("success");
         }
-
-
-        
     }
 }

@@ -11,11 +11,9 @@ namespace WebApi.Objects
     public class ExpressionController
     {
         /// <summary>
-        /// 樹的stack
+        /// 存下樹的stack(為了判斷括號計算順序)
         /// </summary>
         private Stack<ExpressionTree> TreeStack = new Stack<ExpressionTree>();
-
-        private Evaluator Evaluator;
 
         /// <summary>
         /// 建構子
@@ -23,29 +21,28 @@ namespace WebApi.Objects
         public ExpressionController()
         {
             TreeStack.Push(new ExpressionTree());
-            Evaluator = new Evaluator();
         }
 
         /// <summary>
-        /// 為最外層的樹新增運算符
+        /// 新增一個運算子：在stack最頂層新增
         /// </summary>
-        /// <param name="Operator">運算符</param>
+        /// <param name="Operator">運算子</param>
         public void Add(BinaryOperator Operator)
         {
             TreeStack.Peek().Add(Operator);
         }
 
         /// <summary>
-        /// 為最外層的樹修改運算符
+        /// 更改上次運算子：在stack最頂層更改
         /// </summary>
-        /// <param name="Operator">運算符</param>
+        /// <param name="Operator">運算子</param>
         public void Modify(BinaryOperator Operator)
         {
             TreeStack.Peek().ModifyOperator(Operator);
         }
-        
+
         /// <summary>
-        /// 為最外層的數新增樹，並同時做單元運算
+        /// 新增一個經過單元運算的數字：在stack最頂層新增
         /// </summary>
         /// <param name="number">數字</param>
         /// <param name="unaryList">單元運算列</param>
@@ -56,7 +53,7 @@ namespace WebApi.Objects
         }
 
         /// <summary>
-        /// 左括號事件，為stack新增一個子樹
+        /// 左括號事件：在stack最頂層新增一個子樹
         /// </summary>
         public void LeftBracket()
         {
@@ -64,7 +61,7 @@ namespace WebApi.Objects
         }
 
         /// <summary>
-        /// 右括號事件，pop掉一棵子樹並新增至下一層的樹
+        /// 右括號事件：在stack最頂層pop掉一個子樹，並新增至下一棵樹的當前節點中
         /// </summary>
         public void RightBracket()
         {
@@ -73,16 +70,15 @@ namespace WebApi.Objects
         }
 
         /// <summary>
-        /// 運算出答案
+        /// 回傳計算結果
         /// </summary>
-        /// <returns></returns>
+        /// <returns>計算結果</returns>
         public decimal GetResult()
         {
-            //如果stack中還存在子樹，則必定有誤。
             if (TreeStack.Count == 1)
             {
-                //算完就pop
-                var answer = Evaluator.EvaluateTree(TreeStack.Pop());
+                //算完就pop掉
+                var answer = new Evaluator().EvaluateTree(TreeStack.Pop());
                 TreeStack.Push(new ExpressionTree());
                 return answer;
             }
@@ -93,7 +89,7 @@ namespace WebApi.Objects
         }
 
         /// <summary>
-        /// Clear事件
+        /// Clear事件，運算器重建。
         /// </summary>
         public void Clear()
         {
@@ -102,20 +98,20 @@ namespace WebApi.Objects
         }
 
         /// <summary>
-        /// 執行單元運算
+        /// 對當前數字進行單元運算。
         /// </summary>
-        /// <param name="unaryOperator">單元運算</param>
+        /// <param name="unaryOperator">單元運算列</param>
         public void ExecuteUnary(UnaryOperator unaryOperator)
         {
             var tree = TreeStack.Peek();
             var formula = unaryOperator.Formula;
 
-            var number = tree.CurrentNode.NodeValue.Number;
+            var number = tree.CurrentNode.Value.Number;
             if (!number.HasValue)
             {
                 throw new Exception("單元運算子輸入錯誤");
             }
-            tree.CurrentNode.NodeValue.Number = formula(number.Value);
+            tree.CurrentNode.Value.Number = formula(number ?? 0);
         }
     }
 }

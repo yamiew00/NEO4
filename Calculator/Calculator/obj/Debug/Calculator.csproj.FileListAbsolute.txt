@@ -18,3 +18,13 @@ C:\Users\user1\Desktop\新訓git\git第四關\Calculator\Calculator\obj\Debug\Ca
 C:\Users\user1\Desktop\新訓git\git第四關\Calculator\Calculator\obj\Debug\Calculator.csproj.CoreCompileInputs.cache
 C:\Users\user1\Desktop\新訓git\git第四關\Calculator\Calculator\obj\Debug\Calculator.exe
 C:\Users\user1\Desktop\新訓git\git第四關\Calculator\Calculator\obj\Debug\Calculator.pdb
+C:\Users\user1\Desktop\驗\Calculator\Calculator\bin\Debug\Calculator.exe.config
+C:\Users\user1\Desktop\驗\Calculator\Calculator\bin\Debug\Calculator.exe
+C:\Users\user1\Desktop\驗\Calculator\Calculator\bin\Debug\Calculator.pdb
+C:\Users\user1\Desktop\驗\Calculator\Calculator\obj\Debug\Calculator.csprojAssemblyReference.cache
+C:\Users\user1\Desktop\驗\Calculator\Calculator\obj\Debug\Calculator.Form1.resources
+C:\Users\user1\Desktop\驗\Calculator\Calculator\obj\Debug\Calculator.Properties.Resources.resources
+C:\Users\user1\Desktop\驗\Calculator\Calculator\obj\Debug\Calculator.csproj.GenerateResource.cache
+C:\Users\user1\Desktop\驗\Calculator\Calculator\obj\Debug\Calculator.csproj.CoreCompileInputs.cache
+C:\Users\user1\Desktop\驗\Calculator\Calculator\obj\Debug\Calculator.exe
+C:\Users\user1\Desktop\驗\Calculator\Calculator\obj\Debug\Calculator.pdb

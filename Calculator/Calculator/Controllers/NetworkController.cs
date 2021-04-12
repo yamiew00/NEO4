@@ -11,16 +11,35 @@ using Calculator.Extensions;
 
 namespace Calculator.Controllers
 {
+    /// <summary>
+    /// 網路控制
+    /// </summary>
     public class NetworkController
     {
+        /// <summary>
+        /// 唯一實體
+        /// </summary>
         private static NetworkController Instance;
 
+        /// <summary>
+        /// Json字樣
+        /// </summary>
         private const string JSON_MEDIA_TYPE = "application/json";
 
-        private string BASE_URI_PATH;
+        /// <summary>
+        /// 初始路徑
+        /// </summary>
+        private readonly string BASE_URI_PATH;
 
-        HttpClient Client;
+        /// <summary>
+        /// HttpClient實體
+        /// </summary>
+        private HttpClient Client;
 
+        /// <summary>
+        /// 取得唯一實體
+        /// </summary>
+        /// <returns>實體</returns>
         public static NetworkController GetInstance()
         {
             if (Instance == null)
@@ -31,22 +50,30 @@ namespace Calculator.Controllers
             return Instance;
         }
         
+        /// <summary>
+        /// 建構子
+        /// </summary>
         private NetworkController()
         {
             Client = new HttpClient();
             BASE_URI_PATH = "http://localhost:" + Global.PORT;
         }
         
+        /// <summary>
+        /// 產生完整網址
+        /// </summary>
+        /// <param name="str">延伸路徑</param>
+        /// <returns>完整網址</returns>
         private string Path(string str)
         {
             return BASE_URI_PATH + str;
         }
 
         /// <summary>
-        /// 按下運算符後，向後端送出當前輸入結果。
+        /// 按下運算符後的api，向後端送出當前輸入結果。
         /// </summary>
         /// <param name="expression">當前運算式</param>
-        public async void OperatorRequest(Expression expression)
+        public async void OperatorRequest(OperatorExpression expression)
         {
             string jsonString = expression.ToJson();
             
@@ -66,8 +93,12 @@ namespace Calculator.Controllers
             var msg = await response.Content.ReadAsStringAsync();
         }
         
-
-        //新的
+        /// <summary>
+        /// 等號API
+        /// </summary>
+        /// <param name="equalExpression">等號表達式</param>
+        /// <param name="frameObject">畫面處理</param>
+        /// <returns>等待回傳結果</returns>
         public async Task EqualRequest(EqualExpression equalExpression, FrameObject frameObject)
         {
             string jsonString = equalExpression.ToJson();
@@ -96,6 +127,9 @@ namespace Calculator.Controllers
             }
         }
 
+        /// <summary>
+        /// 清除API
+        /// </summary>
         public async void ClearRequest()
         {
             var uri = Path("/api/clear/" + Global.USER_ID);

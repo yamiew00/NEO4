@@ -6,50 +6,81 @@ using System.Threading.Tasks;
 
 namespace Calculator.utils
 {
+    /// <summary>
+    /// 做Json字串用的
+    /// </summary>
     public class JsonBuilder
     {
-        public string JsonString;
-        private int count;
+        /// <summary>
+        /// Json字串
+        /// </summary>
+        private string JsonString;
 
+        /// <summary>
+        /// 個數
+        /// </summary>
+        private int Count;
+
+        /// <summary>
+        /// 建構子
+        /// </summary>
         public JsonBuilder()
         {
             JsonString = "{";
-            count = 0;
+            Count = 0;
         }
 
+        /// <summary>
+        /// 設定單個值(字串)
+        /// </summary>
+        /// <param name="key">Key</param>
+        /// <param name="value">Value(字串)</param>
+        /// <returns>JsonBuilder</returns>
         public JsonBuilder SetStringValue(string key, string value)
         {
-            if (count == 0)
+            if (Count == 0)
             {
                 JsonString += $"\"{key}\" : \"{value}\"";
-                count++;
+                Count++;
             }
             else
             {
                 JsonString += $",\"{key}\" : \"{value}\"";
-                count++;
+                Count++;
             }
             return this;
         }
 
+        /// <summary>
+        /// 設定單個值(非字串)
+        /// </summary>
+        /// <param name="key">Key</param>
+        /// <param name="value">Value(非字串)</param>
+        /// <returns>JsonBuilder</returns>
         public JsonBuilder SetObjectValue(string key, object value)
         {
             //ToLower是為了處理false.toString()會變成False的問題。Json中的布林值必須是小寫
             string valueString = (value == null) ? "null" : value.ToString().ToLower();
             
-            if (count == 0)
+            if (Count == 0)
             {
                 JsonString += $"\"{key}\" : {valueString}";
-                count++;
+                Count++;
             }
             else
             {
                 JsonString += $",\"{key}\" : {valueString}";
-                count++;
+                Count++;
             }
             return this;
         }
 
+        /// <summary>
+        /// 設定List(字串)
+        /// </summary>
+        /// <param name="key">Key</param>
+        /// <param name="list">List Value(字串)</param>
+        /// <returns>JsonBuilder</returns>
         public JsonBuilder SetStringListValue(string key, List<string> list)
         {
             string value = "[";
@@ -66,7 +97,7 @@ namespace Calculator.utils
             }
             value += "]";
 
-            if (count == 0)
+            if (Count == 0)
             {
                 JsonString += $"\"{key}\" : {value}";
             }
@@ -78,6 +109,10 @@ namespace Calculator.utils
             return this;
         }
 
+        /// <summary>
+        /// 轉成最終Json格式
+        /// </summary>
+        /// <returns>Json String</returns>
         public override string ToString()
         {
             JsonString += "}";

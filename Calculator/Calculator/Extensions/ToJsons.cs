@@ -9,9 +9,17 @@ using Calculator.Setting;
 
 namespace Calculator.Extensions
 {
+    /// <summary>
+    /// Json擴充字元
+    /// </summary>
     public static class ToJsons
     {
-        public static string ToJson(this Expression expression)
+        /// <summary>
+        /// OperatorExpression轉Json
+        /// </summary>
+        /// <param name="expression">OperatorExpression</param>
+        /// <returns>Json字串</returns>
+        public static string ToJson(this OperatorExpression expression)
         {
             return new JsonBuilder().SetStringValue(JsonSetting.OPERATOR_STRING, expression.BinaryOperatorMark)
                                     .SetObjectValue(JsonSetting.NUMBER_STRING, expression.Number)
@@ -21,6 +29,11 @@ namespace Calculator.Extensions
                                     .ToString();
         }
 
+        /// <summary>
+        /// EqualExpression轉Json
+        /// </summary>
+        /// <param name="equalExpression">EqualExpression</param>
+        /// <returns>Json字串</returns>
         public static string ToJson(this EqualExpression equalExpression)
         {
            return new JsonBuilder().SetObjectValue(JsonSetting.NUMBER_STRING, equalExpression.Number)

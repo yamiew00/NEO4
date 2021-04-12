@@ -5,12 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
 namespace Calculator.Controllers
 {
+    /// <summary>
+    /// 輸入控制
+    /// </summary>
     public class InputController
     {
+        /// <summary>
+        /// 唯一實體
+        /// </summary>
         private static InputController Instance;
+
+        /// <summary>
+        /// 取得實體方法
+        /// </summary>
+        /// <returns></returns>
         public static InputController GetInstance()
         {
             if (Instance == null)
@@ -21,6 +31,9 @@ namespace Calculator.Controllers
             return Instance;
         }
 
+        /// <summary>
+        /// 建構子
+        /// </summary>
         private InputController()
         {
             NumberStr = string.Empty;
@@ -31,18 +44,41 @@ namespace Calculator.Controllers
             UnaryList = new List<string>();
         }
 
-        public string NumberStr {get;set;}
+        /// <summary>
+        /// 數字(字串)
+        /// </summary>
+        public string NumberStr {get; set; }
         
+        /// <summary>
+        /// 運算符(字串)
+        /// </summary>
         public string OperatorStr { get; set; }
 
+        /// <summary>
+        /// 是否為小數的布林
+        /// </summary>
         public bool IsNumeric { get; set; }
 
+        /// <summary>
+        /// 帶有左括號
+        /// </summary>
         public bool LeftBracket { get; set; }
 
+        /// <summary>
+        /// 帶有右括號
+        /// </summary>
         public bool RightBracket { get; set; }
 
+        /// <summary>
+        /// 單元運算列
+        /// </summary>
         public List<string> UnaryList { get; set; }
 
+        /// <summary>
+        /// 新增數字
+        /// </summary>
+        /// <param name="numberStr">數字字串</param>
+        /// <returns>新增成功</returns>
         public bool AddNumber(string numberStr)
         {
             if (numberStr.Equals("."))
@@ -59,31 +95,50 @@ namespace Calculator.Controllers
             return true;
         }
 
+        /// <summary>
+        /// 設定運算符
+        /// </summary>
+        /// <param name="operatorStr">運算符</param>
         public void SetOperator(string operatorStr)
         {
             OperatorStr = operatorStr;
         }
 
-        public  void SetLeftBracket()
+        /// <summary>
+        /// 設定左括號
+        /// </summary>
+        public void SetLeftBracket()
         {
             this.LeftBracket = true;
         }
 
+        /// <summary>
+        /// 設定右括號
+        /// </summary>
         public void SetRightBracket()
         {
             this.RightBracket = true;
         }
 
+        /// <summary>
+        /// Clear事件
+        /// </summary>
         public void Clear()
         {
             InitThis();
         }
 
+        /// <summary>
+        /// ClearError事件
+        /// </summary>
         public void ClearError()
         {
             NumberStr = string.Empty;
         }
 
+        /// <summary>
+        /// 返回鍵
+        /// </summary>
         public void BackSpace()
         {
             if (NumberStr.Length == 0)
@@ -93,7 +148,11 @@ namespace Calculator.Controllers
             NumberStr = NumberStr.Substring(0, NumberStr.Length - 1);
         }
 
-        public Expression GenerateCurrentExpression()
+        /// <summary>
+        /// 產生OperatorExpression
+        /// </summary>
+        /// <returns>OperatorExpression</returns>
+        public OperatorExpression GenerateOperatorExpression()
         {
             decimal? number = null;
             decimal num = 0;
@@ -102,13 +161,15 @@ namespace Calculator.Controllers
                 number = num;
             }
 
-
-            var expression = new Expression(number: number, binaryOperatorMark: OperatorStr, leftBracket: LeftBracket, rightBracket: RightBracket, unaryList: UnaryList);
+            var expression = new OperatorExpression(number: number, binaryOperatorMark: OperatorStr, leftBracket: LeftBracket, rightBracket: RightBracket, unaryList: UnaryList);
             InitThis();
             return expression;
-
         }
 
+        /// <summary>
+        /// 產生EqualExpression
+        /// </summary>
+        /// <returns>EqualExpression</returns>
         public EqualExpression GenerateCurrentEqualExpression()
         {
             decimal.TryParse(NumberStr, out decimal number);
@@ -117,6 +178,9 @@ namespace Calculator.Controllers
             return equalExpression;
         }
 
+        /// <summary>
+        /// 初始化
+        /// </summary>
         private void InitThis()
         {
             NumberStr = string.Empty;
@@ -127,6 +191,10 @@ namespace Calculator.Controllers
             UnaryList = new List<string>();
         }
 
+        /// <summary>
+        /// 新增單元運算
+        /// </summary>
+        /// <param name="unary">單元運算子</param>
         public void AddUnary(string unary)
         {
             UnaryList.Add(unary);
