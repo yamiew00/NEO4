@@ -14,108 +14,125 @@ namespace Calculator.Setting
     {
         private static NetworkController NetworkController = NetworkController.GetInstance();
         private static InputController InputController = InputController.GetInstance();
-        private static string LastTag = string.Empty; //這個該怎麼處理?
+        private static string LastTag = string.Empty;
 
+        /// <summary>
+        /// 主畫面邏輯。以tag動作，處理了運算、畫面顯示以及按鈕禁用。與NetworkController、InputController連動。
+        /// Key: tag； Value: 會回傳(text, frameObject)的Task的委派。
+        /// </summary>
         public static Dictionary<string, Func<string, FrameObject, Task>> Actions =new Dictionary<string, Func<string, FrameObject, Task>>()
         {
             {
-                "Number", (text, logicObject) =>
+                //tag, (Button.text, 目前的FrameObject)
+                "Number", (text, frameObject) =>
                 Task.Run(() =>
                 {
+                    //判斷新增數字是否成功
                     if (InputController.AddNumber(text))
                     {
-                        logicObject.AppendPanel(text);
+                        frameObject.AppendPanel(text);
                     }
-                    logicObject.SetEnable("Number", "Operator", "RightBracket", "Equal", "Clear", "ClearError", "BackSpace", "Unary");
+                    //禁用表
+                    frameObject.SetEnable("Number", "Operator", "RightBracket", "Equal", "Clear", "ClearError", "BackSpace", "Unary");
                 })
             },
             {
-                "Operator", (text, logicObject) =>
+                //tag, (Button.text, 目前的FrameObject)
+                "Operator", (text, frameObject) =>
                 Task.Run(() =>
                 {
                     InputController.SetOperator(text);
                     NetworkController.OperatorRequest(InputController.GenerateCurrentExpression());
                     if (LastTag.Equals("Operator"))
                     {
-                        logicObject.PanelString = logicObject.PanelString.RemoveLast(1);
+                        frameObject.PanelString = frameObject.PanelString.RemoveLast(1);
                     }
-                    logicObject.AppendPanel(text);
-                    logicObject.SetEnable("Number", "LeftBracket", "Clear", "Operator");
+                    frameObject.AppendPanel(text);
+                    frameObject.SetEnable("Number", "LeftBracket", "Clear", "Operator");
                 })
             },
             {
-                "LeftBracket", (text, logicObject) =>
+                //tag, (Button.text, 目前的FrameObject)
+                "LeftBracket", (text, frameObject) =>
                 Task.Run(() =>
                 {
                     InputController.SetLeftBracket();
-                    logicObject.AppendPanel(text);
-                    logicObject.SetEnable("Number","RightBracket", "Clear");
+                    frameObject.AppendPanel(text);
+                    frameObject.SetEnable("Number","RightBracket", "Clear");
                 })
             },
             {
-                "RightBracket", (text, logicObject) =>
+                //tag, (Button.text, 目前的FrameObject)
+                "RightBracket", (text, frameObject) =>
                 Task.Run(() =>
                 {
                     InputController.SetRightBracket();
-                    logicObject.AppendPanel(text);
-                    logicObject.SetEnable("Operator", "Equal", "Clear");
+                    frameObject.AppendPanel(text);
+                    frameObject.SetEnable("Operator", "Equal", "Clear");
                 })
             },
             {
-                "Equal", (text, logicObject) =>
+                //tag, (Button.text, 目前的FrameObject)
+                "Equal", (text, frameObject) =>
                 Task.Run(async () =>
                 {
-                    //強轉form1真的可以嗎
-                    //await Task.Run(async() => await Task.WhenAll(NetworkController.EqualRequest(InputController.GenerateCurrentEqualExpression(),logicObject)));
-                    await NetworkController.EqualRequest(InputController.GenerateCurrentEqualExpression(),logicObject);
-                    Console.WriteLine("sub = " + logicObject.SubPanelString);
-                    logicObject.AppendPanel(text);
-                    logicObject.SetEnable("Number", "LeftBracket");
+                    await NetworkController.EqualRequest(InputController.GenerateCurrentEqualExpression(),frameObject);
+                    frameObject.AppendPanel(text);
+                    frameObject.SetEnable("Number", "LeftBracket");
                 })
             },
             {
-                "Clear", (text, logicObject) =>
+                //tag, (Button.text, 目前的FrameObject)
+                "Clear", (text, frameObject) =>
                 Task.Run(() =>
                 {
                     InputController.Clear();
                     NetworkController.ClearRequest();
-                    logicObject.PanelString = string.Empty;
-                    logicObject.SetEnable("Number", "LeftBracket");
+                    frameObject.PanelString = string.Empty;
+                    frameObject.SetEnable("Number", "LeftBracket");
                 })
             },
             {
-                "ClearError", (text, logicObject) =>
+                //tag, (Button.text, 目前的FrameObject)
+                "ClearError", (text, frameObject) =>
                 Task.Run(() =>
                 {
                     var BackLength = InputController.NumberStr.Length + 2;
-                    logicObject.PanelString = logicObject.PanelString.RemoveLast(BackLength);
+                    frameObject.PanelString = frameObject.PanelString.RemoveLast(BackLength);
                     InputController.ClearError();
-                    logicObject.SetEnable("Number", "Operator","LeftBracket", "RightBracket", "Equal", "Clear");
+                    frameObject.SetEnable("Number", "Operator","LeftBracket", "RightBracket", "Equal", "Clear");
                 })
             },
             {
-                //Limit沒做
-                "BackSpace", (text, logicObject) =>
+                //tag, (Button.text, 目前的FrameObject)
+                "BackSpace", (text, frameObject) =>
                 Task.Run(() =>
                 {
                     InputController.BackSpace();
-                    logicObject.PanelString = logicObject.PanelString.RemoveLast(1);
-                    logicObject.SetEnable("Number", "Operator", "LeftBracket", "RightBracket", "Equal", "Clear", "ClearError", "BackSpace", "Unary");
+                    frameObject.PanelString = frameObject.PanelString.RemoveLast(1);
+                    frameObject.SetEnable("Number", "Operator", "LeftBracket", "RightBracket", "Equal", "Clear", "ClearError", "BackSpace", "Unary");
                 })
             },
             {
-                //Limit沒做
-                "Unary", (text, logicObject) =>
+                //tag, (Button.text, 目前的FrameObject)
+                "Unary", (text, frameObject) =>
                 Task.Run(() =>
                 {
                     InputController.AddUnary(text);
-                    logicObject.SetEnable("Operator","RightBracket", "Equal", "Clear", "BackSpace", "Unary");
+                    frameObject.AppendPanel(text);
+                    frameObject.SetEnable("Operator","RightBracket", "Equal", "Clear", "BackSpace", "Unary");
                 })
             }
-
         };
 
-        public static Task dealer(FrameObject frameObject, string tag, string text)
+        /// <summary>
+        /// 根據「上一次執行命令的tag」，來決定該做什麼事
+        /// </summary>
+        /// <param name="frameObject">目前的frameObject</param>
+        /// <param name="tag">control的tag</param>
+        /// <param name="text">control的text</param>
+        /// <returns></returns>
+        public static Task FrameDealer(FrameObject frameObject, string tag, string text)
         {
             return Task.Run(async () =>
             {
@@ -129,7 +146,7 @@ namespace Calculator.Setting
                 //按tag做事
                 await Actions[tag](text, frameObject);
 
-                //記錄下最後一次執行命令的tag
+                //記錄這次執行命令的tag
                 LastTag = tag;
             });
         }

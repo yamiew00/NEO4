@@ -33,6 +33,7 @@ namespace WebApi.Controllers
 
             char BinaryName = expression.BinaryOperator ?? ' ';
 
+            //引入字典
             BinaryOperator binaryOperator = Operators.BinaryDic[BinaryName];
             List<UnaryOperator> unaryList = (expression.UnaryList == null) ? 
                 new List<UnaryOperator>() 
@@ -40,7 +41,7 @@ namespace WebApi.Controllers
             
             decimal number = expression.Number ?? 0;
 
-            //處理三種case
+            //處理四種case
             switch (expression.Type())
             {
                 case ExpType.OP:
@@ -61,7 +62,7 @@ namespace WebApi.Controllers
                     expIC.Add(binaryOperator);
                     break;
                 default:
-                    throw new Exception("ExpressionType錯誤");
+                    throw new Exception("運算表達格式錯誤");
             }
             
             return Ok(new { msg = "success"});   
@@ -115,6 +116,8 @@ namespace WebApi.Controllers
             
             return Ok("success");
         }
+
+
         
     }
 }

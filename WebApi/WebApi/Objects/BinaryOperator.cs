@@ -5,6 +5,9 @@ using System.Web;
 
 namespace WebApi.Objects
 {
+    /// <summary>
+    /// 雙元運算子
+    /// </summary>
     public class BinaryOperator
     {
         /// <summary>

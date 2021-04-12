@@ -12,13 +12,7 @@ namespace Calculator.Objects
         public List<string> EnableList { get; set; }
         public string PanelString { get; set; }
         public string SubPanelString { get; set; }
-
-        public FrameObject()
-        {
-            PanelString = string.Empty;
-            PanelString = string.Empty;
-            EnableList = new List<string>();
-        }
+        
 
         public FrameObject(TextBox panel, TextBox subPanel)
         {

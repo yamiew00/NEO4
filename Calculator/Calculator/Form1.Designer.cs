@@ -56,7 +56,6 @@
             this.button11 = new System.Windows.Forms.Button();
             this.button12 = new System.Windows.Forms.Button();
             this.button14 = new System.Windows.Forms.Button();
-            this.button10 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // ButtonDecimalPoint
@@ -369,24 +368,11 @@
             this.button14.UseVisualStyleBackColor = true;
             this.button14.Click += new System.EventHandler(this.All_Button_Click);
             // 
-            // button10
-            // 
-            this.button10.Font = new System.Drawing.Font("新細明體", 27F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.button10.Location = new System.Drawing.Point(334, 429);
-            this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(70, 74);
-            this.button10.TabIndex = 35;
-            this.button10.Tag = "1, (a - c) / c * 100";
-            this.button10.Text = "§";
-            this.button10.UseVisualStyleBackColor = true;
-            this.button10.Click += new System.EventHandler(this.All_Button_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(430, 504);
-            this.Controls.Add(this.button10);
             this.Controls.Add(this.button14);
             this.Controls.Add(this.button12);
             this.Controls.Add(this.button11);
@@ -446,7 +432,6 @@
         private System.Windows.Forms.Button button11;
         private System.Windows.Forms.Button button12;
         private System.Windows.Forms.Button button14;
-        private System.Windows.Forms.Button button10;
     }
 }
 

@@ -6,21 +6,21 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Calculator.Setting;
+using Calculator.Extensions;
 
 namespace Calculator.Controllers
 {
     public class NetworkController
     {
         private static NetworkController Instance;
-        private const string OPERATOR_STRING = "BinaryOperator";
-        private const string NUMBER_STRING = "number";
-        private const string LEFTBRACKET_STRING = "LeftBracket";
-        private const string RIGHTBRACKET_STRING = "RightBracket";
-        private const string UNARYLIST_STRING = "UnaryList";
 
-        private const string PORT = "53104";
+        private const string JSON_MEDIA_TYPE = "application/json";
 
-        //private const string uri = "http://localhost:53104/api/postwithbody/1";
+        private string BASE_URI_PATH;
+
+        HttpClient Client;
+
         public static NetworkController GetInstance()
         {
             if (Instance == null)
@@ -34,88 +34,45 @@ namespace Calculator.Controllers
         private NetworkController()
         {
             Client = new HttpClient();
+            BASE_URI_PATH = "http://localhost:" + Global.PORT;
+        }
+        
+        private string Path(string str)
+        {
+            return BASE_URI_PATH + str;
         }
 
-        HttpClient Client;
-
+        /// <summary>
+        /// 按下運算符後，向後端送出當前輸入結果。
+        /// </summary>
+        /// <param name="expression">當前運算式</param>
         public async void OperatorRequest(Expression expression)
         {
-            JsonBuilder jsonBuilder = new JsonBuilder();
-
-            Console.WriteLine($"BinaryOperatorMark is null = {expression.BinaryOperatorMark == null}");
-            Console.WriteLine($"Number is null = {expression.Number == null}");
-            Console.WriteLine($"UnaryList is null = {expression.UnaryList == null}");
-
-            //string sample = "{\"Operator\" : \"x\",\"number\" : 3,\"LeftBracket\" : false,\"RightBracket\" : false}";
-            string jsonString = jsonBuilder.SetStringValue(OPERATOR_STRING, expression.BinaryOperatorMark)
-                                           .SetObjectValue(NUMBER_STRING, expression.Number)
-                                           .SetObjectValue(LEFTBRACKET_STRING, expression.LeftBracket)
-                                           .SetObjectValue(RIGHTBRACKET_STRING, expression.RightBracket)
-                                           .SetStringListValue(UNARYLIST_STRING, expression.UnaryList)
-                                           .ToString();
-
+            string jsonString = expression.ToJson();
             
-
-            var uri = "http://localhost:" + PORT + "/api/postwithbody/1";
+            var uri = Path("/api/postwithbody/" + Global.USER_ID);
 
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(uri),
-                Content = new StringContent(jsonString, Encoding.UTF8, "application/json")
+                Content = new StringContent(jsonString, Encoding.UTF8, JSON_MEDIA_TYPE)
             };
 
             HttpResponseMessage response = await Client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
-            //Debug區
+            //印出訊息
             var msg = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(msg);
         }
-
-        public async void EqualRequest(EqualExpression equalExpression, Form1 form)
-        {
-            JsonBuilder jsonBuilder = new JsonBuilder();
-            string jsonString = jsonBuilder.SetObjectValue(NUMBER_STRING, equalExpression.Number)
-                                           .SetObjectValue(RIGHTBRACKET_STRING, equalExpression.RightBracket)
-                                           .SetStringListValue(UNARYLIST_STRING, equalExpression.UnaryList)
-                                           .ToString();
-
-            var uri = "http://localhost:" + PORT + "/api/getanswer/1";
-
-            var request = new HttpRequestMessage
-            {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri(uri),
-                Content = new StringContent(jsonString, Encoding.UTF8, "application/json")
-            };
-
-            HttpResponseMessage response = await Client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            
-            var result = await response.Content.ReadAsStringAsync();
-            
-            if (decimal.TryParse(result, out decimal d))
-            {
-                form.SubPanelShow(result);
-            }
-            else
-            {
-                form.SubPanelShow("運算式錯誤");
-            }
-            
-        }
+        
 
         //新的
         public async Task EqualRequest(EqualExpression equalExpression, FrameObject frameObject)
         {
-            JsonBuilder jsonBuilder = new JsonBuilder();
-            string jsonString = jsonBuilder.SetObjectValue(NUMBER_STRING, equalExpression.Number)
-                                           .SetObjectValue(RIGHTBRACKET_STRING, equalExpression.RightBracket)
-                                           .SetStringListValue(UNARYLIST_STRING, equalExpression.UnaryList)
-                                           .ToString();
+            string jsonString = equalExpression.ToJson();
 
-            var uri = "http://localhost:" + PORT + "/api/getanswer/1";
+            var uri = Path("/api/getanswer/" + Global.USER_ID);
 
             var request = new HttpRequestMessage
             {
@@ -137,12 +94,11 @@ namespace Calculator.Controllers
             {
                 frameObject.SubPanelString = "運算式錯誤";
             }
-            
         }
 
         public async void ClearRequest()
         {
-            var uri = "http://localhost:" + PORT + "/api/clear/1";
+            var uri = Path("/api/clear/" + Global.USER_ID);
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Get,

@@ -46,16 +46,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\OuterController.cs" />
+    <Compile Include="Extensions\ToJsons.cs" />
     <Compile Include="Extensions\Strings.cs" />
     <Compile Include="Objects\EqualExpression.cs" />
     <Compile Include="Objects\Expression.cs" />
     <Compile Include="Objects\FrameObject.cs" />
-    <Compile Include="Objects\MainPack.cs" />
+    <Compile Include="Setting\Global.cs" />
+    <Compile Include="Setting\JsonSetting.cs" />
     <Compile Include="utils\JsonBuilder.cs" />
     <Compile Include="Controllers\NetworkController.cs" />
     <Compile Include="Controllers\InputController.cs" />
-    <Compile Include="Extensions\Controls.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -91,8 +91,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="NewThings\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
