@@ -19,7 +19,7 @@ namespace Calculator.Objects
         /// <summary>
         /// 雙元運算符
         /// </summary>
-        public string BinaryOperatorMark { get; set; }
+        public string BinaryOperator { get; set; }
 
         /// <summary>
         /// 單元運算列
@@ -47,7 +47,7 @@ namespace Calculator.Objects
         public OperatorExpression(decimal? number, string binaryOperatorMark, bool leftBracket, bool rightBracket, List<string> unaryList)
         {
             Number = number;
-            BinaryOperatorMark = binaryOperatorMark;
+            BinaryOperator = binaryOperatorMark;
             LeftBracket = leftBracket;
             RightBracket = rightBracket;
             UnaryList = unaryList;

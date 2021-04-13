@@ -18,7 +18,11 @@ namespace WebApi.Objects
         public decimal EvaluateTree(ExpressionTree tree)
         {
             Node top = tree.GetTop();
-            decimal ans = PackNode(top).NodeValue.Number ?? 0;
+            if (top.NodeValue.Number.HasValue)
+            {
+                return top.NodeValue.Number.Value;
+            }
+            decimal ans = PackNode(top).NodeValue.Number.Value;
             return ans;
         }
 

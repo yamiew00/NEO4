@@ -45,6 +45,7 @@ namespace WebApi.Controllers
                     expIC.Modify(binaryOperator);
                     break;
                 case ExpType.NUM_OP:
+                    System.Diagnostics.Debug.WriteLine("NUM_OP");
                     expIC.Add(number, unaryList);
                     expIC.Add(binaryOperator);
                     break;
@@ -80,18 +81,18 @@ namespace WebApi.Controllers
                 new List<UnaryOperator>()
                 : equalexpression.UnaryList.Select(x => Operators.GetUnary(x)).ToList();
 
-            decimal number = equalexpression.Number ?? 0;
+            decimal? number = equalexpression.Number;
             decimal ans = 0;
             try
             {
                 switch (equalexpression.Type())
                 {
                     case EqualType.NUM_EQUAL:
-                        expIC.Add(number, unaryList);
+                        expIC.Add(number.Value, unaryList);
                         ans = expIC.GetResult();
                         break;
                     case EqualType.NUM_RB_EQUAL:
-                        expIC.Add(number, unaryList);
+                        expIC.Add(number.Value, unaryList);
                         expIC.RightBracket();
                         ans = expIC.GetResult();
                         break;

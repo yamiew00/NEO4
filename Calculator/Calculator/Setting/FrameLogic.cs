@@ -53,16 +53,20 @@ namespace Calculator.Setting
             {
                 //tag, (Button.text, 目前的FrameObject)
                 "Operator", (text, frameObject) =>
-                Task.Run(() =>
+                Task.Run(async () =>
                 {
                     InputController.SetOperator(text);
-                    NetworkController.OperatorRequest(InputController.GenerateOperatorExpression());
                     if (LastTag.Equals("Operator"))
                     {
                         frameObject.PanelString = frameObject.PanelString.RemoveLast(1);
                     }
                     frameObject.AppendPanel(text);
                     frameObject.SetEnable("Number", "LeftBracket", "Clear", "Operator");
+                    
+                    //裡面也有畫面處理
+                    await NetworkController.OperatorRequest(InputController.GenerateOperatorExpression(), frameObject);
+                    
+                    
                 })
             },
             {

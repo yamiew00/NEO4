@@ -112,7 +112,8 @@ namespace WebApi.Objects
                                             .SetNumber(number)
                                             .Exec();
                 CurrentNode = CurrentNode.RightNode;
-                LastCurrentNode = CurrentNode.RightNode;
+                LastCurrentNode = CurrentNode;
+                System.Diagnostics.Debug.WriteLine($"here {LastCurrentNode == null}");
             }
         }
 
@@ -127,6 +128,8 @@ namespace WebApi.Objects
                 //當前節點在樹頂的case
                 CurrentNode.LeftNode.ParentNode = null;
                 CurrentNode = LastCurrentNode;
+                System.Diagnostics.Debug.WriteLine($"{CurrentNode == null}");
+                System.Diagnostics.Debug.WriteLine($"{LastCurrentNode == null}");
             }
             else
             {

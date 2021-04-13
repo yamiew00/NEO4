@@ -28,3 +28,6 @@ C:\Users\user1\Desktop\驗\Calculator\Calculator\obj\Debug\Calculator.csproj.Gen
 C:\Users\user1\Desktop\驗\Calculator\Calculator\obj\Debug\Calculator.csproj.CoreCompileInputs.cache
 C:\Users\user1\Desktop\驗\Calculator\Calculator\obj\Debug\Calculator.exe
 C:\Users\user1\Desktop\驗\Calculator\Calculator\obj\Debug\Calculator.pdb
+C:\Users\user1\Desktop\新訓\第四關\Calculator\Calculator\bin\Debug\Newtonsoft.Json.dll
+C:\Users\user1\Desktop\新訓\第四關\Calculator\Calculator\bin\Debug\Newtonsoft.Json.xml
+C:\Users\user1\Desktop\新訓\第四關\Calculator\Calculator\obj\Debug\Calculator.csproj.CopyComplete

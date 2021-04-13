@@ -1,5 +1,4 @@
 ﻿using Calculator.Objects;
-using Calculator.utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Calculator.Setting;
 using Calculator.Extensions;
+using Newtonsoft.Json;
 
 namespace Calculator.Controllers
 {
@@ -73,10 +73,11 @@ namespace Calculator.Controllers
         /// 按下運算符後的api，向後端送出當前輸入結果。
         /// </summary>
         /// <param name="expression">當前運算式</param>
-        public async void OperatorRequest(OperatorExpression expression)
+        public async Task OperatorRequest(OperatorExpression expression, FrameObject frameObject)
         {
-            string jsonString = expression.ToJson();
             
+            string jsonString = expression.ToJson<OperatorExpression>();
+
             var uri = Path("/api/postwithbody/" + Global.USER_ID);
 
             var request = new HttpRequestMessage
@@ -86,11 +87,24 @@ namespace Calculator.Controllers
                 Content = new StringContent(jsonString, Encoding.UTF8, JSON_MEDIA_TYPE)
             };
 
-            HttpResponseMessage response = await Client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+            HttpResponseMessage response;
+            try
+            {
+                response = await Client.SendAsync(request);
+                response.EnsureSuccessStatusCode();
 
-            //印出訊息
-            var msg = await response.Content.ReadAsStringAsync();
+                //接住response
+                var msg = await response.Content.ReadAsStringAsync();
+            }
+            catch(HttpRequestException)
+            {
+                frameObject.SubPanelString = "運算式錯誤";
+                frameObject.PanelString = string.Empty;
+                frameObject.SetEnable("Number", "LeftBracket");
+                ClearRequest();
+            }
+
+
         }
         
         /// <summary>
@@ -101,7 +115,7 @@ namespace Calculator.Controllers
         /// <returns>等待回傳結果</returns>
         public async Task EqualRequest(EqualExpression equalExpression, FrameObject frameObject)
         {
-            string jsonString = equalExpression.ToJson();
+            string jsonString = equalExpression.ToJson<EqualExpression>();
 
             var uri = Path("/api/getanswer/" + Global.USER_ID);
 
@@ -141,6 +155,7 @@ namespace Calculator.Controllers
 
             HttpResponseMessage response = await Client.SendAsync(request);
             response.EnsureSuccessStatusCode();
+            
         }
     }
 }
