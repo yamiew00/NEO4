@@ -136,6 +136,7 @@ namespace Calculator.Controllers
             else
             {
                 frameObject.SubPanelString = "運算式錯誤";
+                Console.WriteLine($"errorMessage = {result}");
             }
         }
 

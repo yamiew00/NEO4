@@ -28,7 +28,12 @@ namespace WebApi.Models
         /// <summary>
         /// 數字→右括號→運算符
         /// </summary>
-        NUM_RB_OP
+        NUM_RB_OP,
+
+        /// <summary>
+        /// 左括號→數字→右括號→運算符
+        /// </summary>
+        LB_NUM_RB_OP
     }
 
     /// <summary>
@@ -82,6 +87,10 @@ namespace WebApi.Models
             else if (BinaryOperator.HasValue && Number.HasValue && LeftBracket == false && RightBracket == true)
             {
                 return ExpType.NUM_RB_OP;
+            }
+            else if(BinaryOperator.HasValue && Number.HasValue && LeftBracket == true && RightBracket == true)
+            {
+                return ExpType.LB_NUM_RB_OP;
             }
             else
             {

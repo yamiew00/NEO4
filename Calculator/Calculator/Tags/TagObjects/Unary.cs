@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Calculator.Controllers;
 using Calculator.Objects;
+using Calculator.Extensions;
 
 namespace Calculator.Frames
 {
@@ -56,7 +57,11 @@ namespace Calculator.Frames
             return Task.Run(() => 
             {
                 InputController.Instance.AddUnary(text);
+                var LastNumberStr = InputController.Instance.NumberStr;
+                
+                frameObject.PanelString = frameObject.PanelString.RemoveLast(LastNumberStr.Length);
                 frameObject.AppendPanel(text);
+                frameObject.AppendPanel(LastNumberStr);
             });
         }
     }

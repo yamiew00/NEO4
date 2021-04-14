@@ -151,8 +151,7 @@ namespace WebApi.Objects
                 this.Root = tree.Root;
                 this.CurrentNode = tree.CurrentNode;
             }
-
-            if (CurrentNode.IsOperator())
+            else if (CurrentNode.IsOperator())
             {
                 Node topNode = tree.GetTop();
                 CurrentNode.RightNode = topNode;
@@ -160,6 +159,10 @@ namespace WebApi.Objects
 
                 //主樹現有node必須是子樹的頂端
                 CurrentNode = topNode;
+            }
+            else
+            {
+                throw new Exception("非標準子樹");
             }
 
             this.LastCurrentNode = tree.GetTop();

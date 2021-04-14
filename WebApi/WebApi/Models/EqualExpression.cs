@@ -18,7 +18,12 @@ namespace WebApi.Models
         /// <summary>
         /// 數字→右括號→等號
         /// </summary>
-        NUM_RB_EQUAL
+        NUM_RB_EQUAL,
+
+        /// <summary>
+        /// 左括號→數字→右括號→等號
+        /// </summary>
+        LB_NUM_RB_EQUAL
     }
 
     /// <summary>
@@ -30,6 +35,8 @@ namespace WebApi.Models
         /// 數字
         /// </summary>
         public decimal? Number;
+
+        public bool LeftBracket;
 
         /// <summary>
         /// 右括號
@@ -47,13 +54,17 @@ namespace WebApi.Models
         /// <returns>EqualType</returns>
         public EqualType Type()
         {
-            if (Number.HasValue && RightBracket == false )
+            if (Number.HasValue && LeftBracket == false && RightBracket == false )
             {
                 return EqualType.NUM_EQUAL;
             }
-            else if (Number.HasValue && RightBracket == true)
+            else if (Number.HasValue && LeftBracket == false && RightBracket == true)
             {
                 return EqualType.NUM_RB_EQUAL;
+            }
+            else if (Number.HasValue && LeftBracket == true && RightBracket == true)
+            {
+                return EqualType.LB_NUM_RB_EQUAL;
             }
             else
             {

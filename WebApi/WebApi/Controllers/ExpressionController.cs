@@ -69,6 +69,7 @@ namespace WebApi.Objects
         public void RightBracket()
         {
             var subTree = TreeStack.Pop();
+
             TreeStack.Peek().Add(subTree);
         }
 

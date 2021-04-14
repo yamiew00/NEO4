@@ -14,6 +14,7 @@ using Calculator.Objects;
 using Calculator.Setting;
 using Calculator.Frames;
 using Calculator.Tags;
+using System.Configuration;
 
 namespace Calculator
 {
@@ -31,6 +32,10 @@ namespace Calculator
 
             //計算機初始化
             NetworkController.Instance.ClearRequest();
+
+            //測試
+            string keyname = ConfigurationManager.AppSettings["DB"];
+            Console.WriteLine(keyname);
         }
 
         /// <summary>

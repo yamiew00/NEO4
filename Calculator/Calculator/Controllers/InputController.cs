@@ -174,12 +174,7 @@ namespace Calculator.Controllers
         /// <returns>OperatorExpression</returns>
         public OperatorExpression CreateOperatorExpression()
         {
-            decimal? number = null;
-            decimal num = 0;
-            if (decimal.TryParse(NumberStr, out num))
-            {
-                number = num;
-            }
+            decimal.TryParse(NumberStr, out decimal number);
 
             var expression = new OperatorExpression(number: number, binaryOperatorMark: OperatorStr, leftBracket: LeftBracket, rightBracket: RightBracket, unaryList: UnaryList);
             InitThis();
@@ -193,7 +188,7 @@ namespace Calculator.Controllers
         public EqualExpression CreateEqualExpression()
         {
             decimal.TryParse(NumberStr, out decimal number);
-            var equalExpression = new EqualExpression(number: number, rightBracket: RightBracket, unaryList: UnaryList);
+            var equalExpression = new EqualExpression(number: number, leftBracket: LeftBracket , rightBracket: RightBracket, unaryList: UnaryList);
             InitThis();
             return equalExpression;
         }

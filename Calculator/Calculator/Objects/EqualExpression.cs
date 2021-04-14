@@ -17,6 +17,11 @@ namespace Calculator.Objects
         public decimal? Number { get; set; }
 
         /// <summary>
+        /// 左括號
+        /// </summary>
+        public bool LeftBracket { get; set; }
+
+        /// <summary>
         /// 右括號
         /// </summary>
         public bool RightBracket { get; set; }
@@ -32,9 +37,10 @@ namespace Calculator.Objects
         /// <param name="number">數字</param>
         /// <param name="rightBracket">右括號</param>
         /// <param name="unaryList">單元運算列</param>
-        public EqualExpression(decimal? number, bool rightBracket, List<string> unaryList)
+        public EqualExpression(decimal? number, bool leftBracket, bool rightBracket, List<string> unaryList)
         {
             Number = number;
+            LeftBracket = leftBracket;
             RightBracket = rightBracket;
             UnaryList = unaryList;
         }
