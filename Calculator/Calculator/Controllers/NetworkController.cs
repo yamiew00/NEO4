@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using Calculator.Setting;
 using Calculator.Extensions;
 using Newtonsoft.Json;
+using System.Net.Sockets;
+using System.Net;
+using System.Windows.Forms;
 
 namespace Calculator.Controllers
 {
@@ -19,7 +22,27 @@ namespace Calculator.Controllers
         /// <summary>
         /// 唯一實體
         /// </summary>
-        private static NetworkController Instance;
+        private static NetworkController _instance = new NetworkController();
+
+        /// <summary>
+        /// 實體的get方法
+        /// </summary>
+        public static NetworkController Instance
+        {
+            get
+            {
+                return _instance;
+            }
+        }
+        
+        /// <summary>
+        /// 私有建構子
+        /// </summary>
+        private NetworkController()
+        {
+            Client = new HttpClient();
+            BASE_URI_PATH = "http://localhost:" + Global.PORT;
+        }
 
         /// <summary>
         /// Json字樣
@@ -35,29 +58,6 @@ namespace Calculator.Controllers
         /// HttpClient實體
         /// </summary>
         private HttpClient Client;
-
-        /// <summary>
-        /// 取得唯一實體
-        /// </summary>
-        /// <returns>實體</returns>
-        public static NetworkController GetInstance()
-        {
-            if (Instance == null)
-            {
-                Instance = new NetworkController();
-                return Instance;
-            }
-            return Instance;
-        }
-        
-        /// <summary>
-        /// 建構子
-        /// </summary>
-        private NetworkController()
-        {
-            Client = new HttpClient();
-            BASE_URI_PATH = "http://localhost:" + Global.PORT;
-        }
         
         /// <summary>
         /// 產生完整網址
@@ -72,14 +72,15 @@ namespace Calculator.Controllers
         /// <summary>
         /// 按下運算符後的api，向後端送出當前輸入結果。
         /// </summary>
-        /// <param name="expression">當前運算式</param>
+        /// <param name="expression">運算表達式</param>
+        /// <param name="frameObject">畫面相關物件</param>
+        /// <returns></returns>
         public async Task OperatorRequest(OperatorExpression expression, FrameObject frameObject)
         {
-            
             string jsonString = expression.ToJson<OperatorExpression>();
 
             var uri = Path("/api/postwithbody/" + Global.USER_ID);
-
+            
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
@@ -96,15 +97,12 @@ namespace Calculator.Controllers
                 //接住response
                 var msg = await response.Content.ReadAsStringAsync();
             }
-            catch(HttpRequestException)
+            catch (HttpRequestException)
             {
                 frameObject.SubPanelString = "運算式錯誤";
                 frameObject.PanelString = string.Empty;
-                frameObject.SetEnable("Number", "LeftBracket");
                 ClearRequest();
             }
-
-
         }
         
         /// <summary>
@@ -142,7 +140,7 @@ namespace Calculator.Controllers
         }
 
         /// <summary>
-        /// 清除API
+        /// 清除的API
         /// </summary>
         public async void ClearRequest()
         {
@@ -152,10 +150,21 @@ namespace Calculator.Controllers
                 Method = HttpMethod.Get,
                 RequestUri = new Uri(uri)
             };
-
-            HttpResponseMessage response = await Client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            
+            try
+            {
+                HttpResponseMessage response = await Client.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception exception)
+            {
+                if (exception is HttpRequestException)
+                {
+                    MessageBox.Show("無法連線，請確認網路或伺服器");
+                    System.Windows.Forms.Application.Exit();
+                    return;
+                }
+                throw;
+            }
         }
     }
 }

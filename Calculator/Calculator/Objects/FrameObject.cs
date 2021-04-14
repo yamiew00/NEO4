@@ -13,11 +13,6 @@ namespace Calculator.Objects
     public class FrameObject
     {
         /// <summary>
-        /// 啟用表
-        /// </summary>
-        public List<string> EnableList { get; set; }
-
-        /// <summary>
         /// 主畫面字串
         /// </summary>
         public string PanelString { get; set; }
@@ -34,7 +29,6 @@ namespace Calculator.Objects
         /// <param name="subPanel">副畫面TextBox</param>
         public FrameObject(TextBox panel, TextBox subPanel)
         {
-            EnableList = new List<string>();
             PanelString = panel.Text;
             SubPanelString = subPanel.Text;
         }
@@ -48,15 +42,6 @@ namespace Calculator.Objects
             PanelString = new StringBuilder().Append(PanelString)
                                              .Append(str)
                                              .ToString();
-        }
-
-        /// <summary>
-        /// 設定啟用表
-        /// </summary>
-        /// <param name="enableList">啟用表</param>
-        public void SetEnable(params string[] enableList)
-        {
-            EnableList = enableList.ToList();
         }
     }
 }

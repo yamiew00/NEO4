@@ -15,20 +15,18 @@ namespace Calculator.Controllers
         /// <summary>
         /// 唯一實體
         /// </summary>
-        private static InputController Instance;
+        private static InputController _instance = new InputController();
 
         /// <summary>
         /// 取得實體方法
         /// </summary>
         /// <returns></returns>
-        public static InputController GetInstance()
+        public static InputController Instance
         {
-            if (Instance == null)
+            get
             {
-                Instance = new InputController();
-                return Instance;
+                return _instance;
             }
-            return Instance;
         }
 
         /// <summary>
@@ -149,10 +147,32 @@ namespace Calculator.Controllers
         }
 
         /// <summary>
+        /// 新增單元運算
+        /// </summary>
+        /// <param name="unary">單元運算子</param>
+        public void AddUnary(string unary)
+        {
+            UnaryList.Add(unary);
+        }
+
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        private void InitThis()
+        {
+            NumberStr = string.Empty;
+            OperatorStr = string.Empty;
+            IsNumeric = false;
+            LeftBracket = false;
+            RightBracket = false;
+            UnaryList = new List<string>();
+        }
+
+        /// <summary>
         /// 產生OperatorExpression
         /// </summary>
         /// <returns>OperatorExpression</returns>
-        public OperatorExpression GenerateOperatorExpression()
+        public OperatorExpression CreateOperatorExpression()
         {
             decimal? number = null;
             decimal num = 0;
@@ -170,34 +190,12 @@ namespace Calculator.Controllers
         /// 產生EqualExpression
         /// </summary>
         /// <returns>EqualExpression</returns>
-        public EqualExpression GenerateCurrentEqualExpression()
+        public EqualExpression CreateEqualExpression()
         {
             decimal.TryParse(NumberStr, out decimal number);
             var equalExpression = new EqualExpression(number: number, rightBracket: RightBracket, unaryList: UnaryList);
             InitThis();
             return equalExpression;
-        }
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        private void InitThis()
-        {
-            NumberStr = string.Empty;
-            OperatorStr = string.Empty;
-            IsNumeric = false;
-            LeftBracket = false;
-            RightBracket = false;
-            UnaryList = new List<string>();
-        }
-
-        /// <summary>
-        /// 新增單元運算
-        /// </summary>
-        /// <param name="unary">單元運算子</param>
-        public void AddUnary(string unary)
-        {
-            UnaryList.Add(unary);
         }
     }
 }

@@ -25,16 +25,15 @@ namespace WebApi.Controllers
         {
             //讀取body
             OperatorExpression expression = Request.Content.ReadAsAsync<OperatorExpression>().Result;
-            ExpressionController expIC = Users.GetExpressionController(userId);
+            ExpressionController expController = Users.GetExpressionController(userId);
             
-            char BinaryName = expression.BinaryOperator ?? ' ';
+            char BinaryName = expression.BinaryOperator.Value;
             
             //引入字典
             //BinaryOperator binaryOperator = Operators.BinaryDic[BinaryName];
             BinaryOperator binaryOperator = Operators.GetBinary(BinaryName);
-            List<UnaryOperator> unaryList = (expression.UnaryList == null) ? 
-                new List<UnaryOperator>() 
-                : expression.UnaryList.Select(x => Operators.GetUnary(x)).ToList();
+            List<UnaryOperator> unaryList = (expression.UnaryList == null) ? new List<UnaryOperator>() 
+                                                                           : expression.UnaryList.Select(x => Operators.GetUnary(x)).ToList();
             
             decimal number = expression.Number ?? 0;
 
@@ -42,22 +41,21 @@ namespace WebApi.Controllers
             switch (expression.Type())
             {
                 case ExpType.OP:
-                    expIC.Modify(binaryOperator);
+                    expController.Modify(binaryOperator);
                     break;
                 case ExpType.NUM_OP:
-                    System.Diagnostics.Debug.WriteLine("NUM_OP");
-                    expIC.Add(number, unaryList);
-                    expIC.Add(binaryOperator);
+                    expController.Add(number, unaryList);
+                    expController.Add(binaryOperator);
                     break;
                 case ExpType.LB_NUM_OP:
-                    expIC.LeftBracket();
-                    expIC.Add(number, unaryList);
-                    expIC.Add(binaryOperator);
+                    expController.LeftBracket();
+                    expController.Add(number, unaryList);
+                    expController.Add(binaryOperator);
                     break;
                 case ExpType.NUM_RB_OP:
-                    expIC.Add(number, unaryList);
-                    expIC.RightBracket();
-                    expIC.Add(binaryOperator);
+                    expController.Add(number, unaryList);
+                    expController.RightBracket();
+                    expController.Add(binaryOperator);
                     break;
                 default:
                     throw new Exception("運算表達格式錯誤");
@@ -75,7 +73,7 @@ namespace WebApi.Controllers
         {
             //讀取body
             EqualExpression equalexpression = Request.Content.ReadAsAsync<EqualExpression>().Result;
-            ExpressionController expIC = Users.GetExpressionController(userIdForAns);
+            ExpressionController expController = Users.GetExpressionController(userIdForAns);
 
             List<UnaryOperator> unaryList = (equalexpression.UnaryList == null) ?
                 new List<UnaryOperator>()
@@ -88,13 +86,13 @@ namespace WebApi.Controllers
                 switch (equalexpression.Type())
                 {
                     case EqualType.NUM_EQUAL:
-                        expIC.Add(number.Value, unaryList);
-                        ans = expIC.GetResult();
+                        expController.Add(number.Value, unaryList);
+                        ans = expController.GetResult();
                         break;
                     case EqualType.NUM_RB_EQUAL:
-                        expIC.Add(number.Value, unaryList);
-                        expIC.RightBracket();
-                        ans = expIC.GetResult();
+                        expController.Add(number.Value, unaryList);
+                        expController.RightBracket();
+                        ans = expController.GetResult();
                         break;
                     default:
                         throw new Exception("EqualType錯誤");
@@ -102,8 +100,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-                expIC.Clear();
-                System.Diagnostics.Debug.WriteLine("運算式錯誤");
+                expController.Clear();
                 return Ok("fail");
             }
             return Ok(ans);

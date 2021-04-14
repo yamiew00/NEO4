@@ -12,6 +12,8 @@ using System.Linq.Expressions;
 using Calculator.Controllers;
 using Calculator.Objects;
 using Calculator.Setting;
+using Calculator.Frames;
+using Calculator.Tags;
 
 namespace Calculator
 {
@@ -26,13 +28,13 @@ namespace Calculator
         public Form1()
         {
             InitializeComponent();
-            
+
             //計算機初始化
-            NetworkController.GetInstance().ClearRequest();
+            NetworkController.Instance.ClearRequest();
         }
 
         /// <summary>
-        /// 全按鈕點擊事件
+        /// 全按鈕點擊事件，每個按鈕依tag決定功能類型(Itag)，依text決定功能內容。
         /// </summary>
         /// <param name="sender">按鈕</param>
         /// <param name="e">點擊事件</param>
@@ -43,20 +45,25 @@ namespace Calculator
             var text = button.Text;
             var tag = button.Tag.ToString();
 
-            //現有畫面，FrameObject擁有Panel，Subpanel以及按鈕禁用表
-            var frame = new FrameObject(TextBoxPanel, TextBoxSubPanel);
+            var frameObject = new FrameObject(TextBoxPanel, TextBoxSubPanel);
 
-            //等候計算
-            await FrameLogic.FrameDealer(frame, tag, text);
-
+            var tm = FrameManager.Instance;
+            tm.ChangeTag(tag);
+            await tm.SetFrame(text, frameObject);
+            var enableList = tm.GetEnableList();
+            
             //按鈕禁用與解禁
-            Enable(frame.EnableList);
+            Enable(enableList);
 
             //畫面更新
-            TextBoxPanel.Text = frame.PanelString;
-            TextBoxSubPanel.Text = frame.SubPanelString;
+            TextBoxPanel.Text = frameObject.PanelString;
+            TextBoxSubPanel.Text = frameObject.SubPanelString;
         }
         
+        /// <summary>
+        /// 決定可以使用的按鈕
+        /// </summary>
+        /// <param name="enableList">啟用表</param>
         private void Enable(List<string> enableList)
         {
             foreach (var item in this.Controls)
