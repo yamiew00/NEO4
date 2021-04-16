@@ -8,6 +8,8 @@ using WebApi.Objects;
 using WebApi.Models;
 using WebApi.DataBase;
 using WebApi.Setting;
+using WebApi.NewThing;
+using Newtonsoft.Json.Linq;
 
 namespace WebApi.Controllers
 {
@@ -108,15 +110,163 @@ namespace WebApi.Controllers
             return Ok(expController.GetResult());
         }
 
+
+
         /// <summary>
         /// Clear事件
         /// </summary>
         /// <param name="userIdForClear">用戶ID</param>
         /// <returns>Response</returns>
-        public IHttpActionResult GetClear(int userIdForClear)
+        //public IHttpActionResult GetClear(int userIdForClear)
+        //{
+        //    Users.GetExpressionController(userIdForClear).Clear(); 
+        //    return Ok("success");
+        //}
+
+
+
+
+
+
+
+
+
+
+        //以下新的
+        public IHttpActionResult PostNumber(int userIdWithNumber)
         {
-            Users.GetExpressionController(userIdForClear).Clear(); 
-            return Ok("success");
+            //讀取body
+            char number = (Request.Content.ReadAsAsync<NumberJson>().Result).Number;
+            //var updateString = Newcontroller.Instance.AddNumber(number);
+            var updateString = ComboController.Instance.Number(number);
+
+            JObject jObject = JObject.FromObject(new
+            {
+                update = new
+                {
+                    updateString
+                }
+            });
+            return Ok(jObject);
         }
+
+        public IHttpActionResult PostBinary(int userIdWithBinary)
+        {
+            //讀取body
+            char binary = (Request.Content.ReadAsAsync<BinaryJson>().Result).BinaryName;
+            //var result = Newcontroller.Instance.AddBinary(binary);
+            var result = ComboController.Instance.AddBinary(binary);
+
+            JObject jObject = JObject.FromObject(new
+            {
+                update = result
+            });
+
+            return Ok(jObject);
+        }
+
+        public IHttpActionResult GetEqual(int userIdWithEqual)
+        {
+            //var result = Newcontroller.Instance.Equal();
+            var result = ComboController.Instance.Equal();
+
+            JObject jObject = JObject.FromObject(new
+            {
+                update = new
+                {
+                    updateString = "=",
+                    answer = result
+                }
+            });
+            return Ok(jObject);
+        }
+
+        public IHttpActionResult GetLeftBracket(int userIdWithLeftBracket)
+        {
+            //Newcontroller.Instance.LeftBracket();
+            ComboController.Instance.LeftBracket();
+
+            JObject jObject = JObject.FromObject(new
+            {
+                update = new
+                {
+                    updateString = "("
+                }
+            });
+
+            return Ok(jObject);
+        }
+
+        public IHttpActionResult GetRightBracket(int userIdWithRightBracket)
+        {
+            //Newcontroller.Instance.RightBracket();
+            ComboController.Instance.RightBracket();
+            JObject jObject = JObject.FromObject(new
+            {
+                update = new
+                {
+                    updateString = ")"
+                }
+            });
+
+            return Ok(jObject);
+        }
+
+        public IHttpActionResult GetClear(int userIdWithClear)
+        {
+            //Newcontroller.Instance.Clear();
+            ComboController.Instance.Clear();
+            JObject jObject = JObject.FromObject(new
+            {
+                message = "success"
+            });
+
+            return Ok(jObject);
+        }
+
+        //可以再多加一個updateString = 0
+        public IHttpActionResult GetClearError(int userIdWithClearError)
+        {
+            //var RemoveLength = Newcontroller.Instance.ClearError();
+            var RemoveLength = ComboController.Instance.ClearError();
+
+            JObject jObject = JObject.FromObject(new
+            {
+                update = new
+                {
+                    RemoveLength
+                }
+            });
+
+            return Ok(jObject);
+        }
+
+        public IHttpActionResult GetBackSpace(int userIdWithBackSpace)
+        {
+            //var backSpaceJson = Newcontroller.Instance.BackSpace();
+            var backSpaceJson = ComboController.Instance.BackSpace();
+
+            JObject jObject = JObject.FromObject(new
+            {
+                update = backSpaceJson
+            });
+
+            return Ok(jObject);
+        }
+
+        public IHttpActionResult PostUnary(int userIdWithUnary)
+        {
+            char unary = (Request.Content.ReadAsAsync<UnaryJson>().Result).UnaryName;
+            //var result = Newcontroller.Instance.AddUnary(unary);
+            var result = ComboController.Instance.AddUnary(unary);
+
+            JObject jObject = JObject.FromObject(new
+            {
+                Update = result
+            });
+
+            return Ok(jObject);
+        }
+
     }
 }

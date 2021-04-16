@@ -39,6 +39,9 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,6 +55,19 @@
   <ItemGroup>
     <Compile Include="Extensions\ToJsons.cs" />
     <Compile Include="Extensions\Strings.cs" />
+    <Compile Include="News\JsonRequest\RequestBinaryJson.cs" />
+    <Compile Include="News\JsonRequest\RequestNumberJson.cs" />
+    <Compile Include="News\JsonRequest\RequestUnaryJson.cs" />
+    <Compile Include="News\JsonResponse\ResponseBackSpaceJson.cs" />
+    <Compile Include="News\JsonResponse\ResponseBinaryJson.cs" />
+    <Compile Include="News\JsonResponse\ResponseClearErrorJson.cs" />
+    <Compile Include="News\JsonResponse\ResponseClearJson.cs" />
+    <Compile Include="News\JsonResponse\ResponseEqualJson.cs" />
+    <Compile Include="News\JsonResponse\ResponseLeftBracketJson.cs" />
+    <Compile Include="News\JsonResponse\ResponseNumberJson.cs" />
+    <Compile Include="News\JsonResponse\ResponseRightBracketJson.cs" />
+    <Compile Include="News\JsonResponse\ResponseUnaryJson.cs" />
+    <Compile Include="News\NewNetworkController.cs" />
     <Compile Include="Tags\TagManager.cs" />
     <Compile Include="Tags\TagObjects\BackSpace.cs" />
     <Compile Include="Tags\TagObjects\Clear.cs" />
@@ -102,7 +118,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

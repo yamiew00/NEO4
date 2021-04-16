@@ -90,7 +90,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\BackSpaceJson.cs" />
+    <Compile Include="Models\BinaryJson.cs" />
     <Compile Include="Models\EqualExpression.cs" />
+    <Compile Include="Models\NumberJson.cs" />
     <Compile Include="Models\OperatorExpression.cs" />
     <Compile Include="Evaluate\Operators\BinaryOperator.cs" />
     <Compile Include="Evaluate\Evaluator.cs" />
@@ -98,6 +101,12 @@
     <Compile Include="Evaluate\Node.cs" />
     <Compile Include="Controllers\ExpressionController.cs" />
     <Compile Include="Evaluate\Operators\UnaryOperator.cs" />
+    <Compile Include="Models\Response\BinaryResponse.cs" />
+    <Compile Include="Models\UnaryJson.cs" />
+    <Compile Include="Models\UnaryResponseJson.cs" />
+    <Compile Include="NewThing\ComboController.cs" />
+    <Compile Include="NewThing\Newcontroller.cs" />
+    <Compile Include="NewThing\Number.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setting\Operators.cs" />
   </ItemGroup>

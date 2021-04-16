@@ -13,12 +13,12 @@ namespace Calculator.Setting
     public static class Global
     {
         /// <summary>
-        /// 用戶ID。從app.config找
+        /// 用戶ID
         /// </summary>
         public static readonly int USER_ID = int.Parse(ConfigurationManager.AppSettings["UserId"]);
 
         /// <summary>
-        /// 連接埠號。從app.config找
+        /// 連接埠號
         /// </summary>
         public static readonly string PORT = ConfigurationManager.AppSettings["Port"];
     }

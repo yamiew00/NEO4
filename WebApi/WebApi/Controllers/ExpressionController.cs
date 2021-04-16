@@ -118,5 +118,11 @@ namespace WebApi.Objects
             }
             tree.CurrentNode.NodeValue.Number = formula(number.Value);
         }
+
+        //新的
+        public void Add(decimal number)
+        {
+            TreeStack.Peek().Add(number);
+        }
     }
 }
