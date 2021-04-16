@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Calculator.News.JsonResponse
 {
-    public class ResponseBinaryJson
+    public class ResponseBackSpace
     {
         public Update Update;
         public Status Status;

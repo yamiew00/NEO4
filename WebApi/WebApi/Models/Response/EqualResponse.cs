@@ -5,18 +5,20 @@ using System.Web;
 
 namespace WebApi.Models.Response
 {
-    public class BinaryResponse: StatusMessage
+    public class EqualResponse: StatusMessage
     {
         public Updates Update;
-        
-        public BinaryResponse()
+        public decimal? Answer;
+
+        public EqualResponse()
         {
+
         }
 
-        public BinaryResponse(Updates update)
+        public EqualResponse(Updates update, decimal? answer)
         {
             Update = update;
+            Answer = answer;
         }
-        
     }
 }

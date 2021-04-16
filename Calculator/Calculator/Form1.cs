@@ -16,7 +16,8 @@ using Calculator.Frames;
 using Calculator.Tags;
 using System.Configuration;
 using Calculator.News;
-
+using Calculator.Exceptions;
+using Calculator.News.JsonResponse;
 
 namespace Calculator
 {
@@ -31,19 +32,15 @@ namespace Calculator
         public Form1()
         {
             InitializeComponent();
-
-            //計算機初始化
-            NetworkController.Instance.ClearRequest();
-
-            //測試
-            string keyname = ConfigurationManager.AppSettings["DB"];
-            Console.WriteLine(keyname);
-
+            
             //新Clear事件
             Task.Run(async () =>
             {
-                await NewNetworkController.Instance.ClearRequest();
+                //await NewNetworkController.Instance.ClearRequest();
+                await NewNetworkController.Instance.InitRequest();
             });
+            
+
         }
 
         /// <summary>
@@ -76,33 +73,46 @@ namespace Calculator
             {
                 var a = await NewNetworkController.Instance.NumberRequest(Convert.ToChar(text));
                 Console.WriteLine($"a = {a}");
-                AppendText(TextBoxPanel, a);
+                AppendText(TextBoxPanel, a.UpdateString);
             }
             else if (tag.Equals("Operator"))
             {
                 var a = await NewNetworkController.Instance.BinaryRequest(Convert.ToChar(text));
-                string updateString = a.update.updateString;
-                int removeLength = a.update.removeLength;
+                string updateString = a.UpdateString;
+                int removeLength = a.RemoveLength;
                 RemoveText(TextBoxPanel, removeLength);
                 AppendText(TextBoxPanel, updateString);
             }
             else if (tag.Equals("Equal"))
             {
-                var a = await NewNetworkController.Instance.EqualRequest();
-                string updateString = a.Update.UpdateString;
-                decimal answer = a.Update.answer;
-                AppendText(TextBoxPanel, updateString);
-                TextBoxSubPanel.Text = answer.ToString();
+                try
+                {
+                    var a = await NewNetworkController.Instance.EqualRequest();
+
+                    string updateString = a.Update.UpdateString;
+                    string answer = a.answer.ToString();
+                    AppendText(TextBoxPanel, updateString);
+                    TextBoxSubPanel.Text = answer;
+                }
+                catch(Exception exception)
+                {
+                    if (exception is Exception400)
+                    {
+                        TextBoxSubPanel.Text = "運算式錯誤";
+                        return;
+                    }
+                }
             }
             else if (tag.Equals("LeftBracket"))
             {
+                //幹麻不trycatch
                 var a = await NewNetworkController.Instance.LeftBracketRequest();
-                AppendText(TextBoxPanel, a);
+                AppendText(TextBoxPanel, a.UpdateString);
             }
             else if (tag.Equals("RightBracket"))
             {
                 var a = await NewNetworkController.Instance.RightBracketRequest();
-                AppendText(TextBoxPanel, a);
+                AppendText(TextBoxPanel, a.UpdateString);
             }
             else if (tag.Equals("Clear"))
             {
@@ -116,16 +126,15 @@ namespace Calculator
             else if (tag.Equals("ClearError"))
             {
                 var a = await NewNetworkController.Instance.ClearErrorRequest();
-                Console.WriteLine(a);
-                RemoveText(TextBoxPanel, a);
-                //補0這個也要問後端才對
+                RemoveText(TextBoxPanel, a.RemoveLength);
+                //補0這個也要問後端才對?
                 AppendText(TextBoxPanel, "0");
             }
             else if (tag.Equals("BackSpace"))
             {
                 var a = await NewNetworkController.Instance.BackSpaceRequest();
-                int removeLength = a.Update.RemoveLength;
-                string updateString = a.Update.UpdateString;
+                int removeLength = a.RemoveLength;
+                string updateString = a.UpdateString;
                 RemoveText(TextBoxPanel, removeLength);
                 AppendText(TextBoxPanel, updateString);
             }

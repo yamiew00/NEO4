@@ -87,13 +87,14 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\RequestController.cs" />
     <Compile Include="DataBase\Users.cs" />
+    <Compile Include="Exceptions\OrderException.cs" />
+    <Compile Include="Extensions\Jsons.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\BackSpaceJson.cs" />
-    <Compile Include="Models\BinaryJson.cs" />
+    <Compile Include="Models\Request\BinaryRequest.cs" />
     <Compile Include="Models\EqualExpression.cs" />
-    <Compile Include="Models\NumberJson.cs" />
+    <Compile Include="Models\Request\NumberRequest.cs" />
     <Compile Include="Models\OperatorExpression.cs" />
     <Compile Include="Evaluate\Operators\BinaryOperator.cs" />
     <Compile Include="Evaluate\Evaluator.cs" />
@@ -101,13 +102,24 @@
     <Compile Include="Evaluate\Node.cs" />
     <Compile Include="Controllers\ExpressionController.cs" />
     <Compile Include="Evaluate\Operators\UnaryOperator.cs" />
+    <Compile Include="Models\Response\BackSpaceResponse.cs" />
     <Compile Include="Models\Response\BinaryResponse.cs" />
-    <Compile Include="Models\UnaryJson.cs" />
-    <Compile Include="Models\UnaryResponseJson.cs" />
+    <Compile Include="Models\Response\ClearErrorResponse.cs" />
+    <Compile Include="Models\Response\ClearResponse.cs" />
+    <Compile Include="Models\Response\EqualResponse.cs" />
+    <Compile Include="Models\Response\LeftBracketResponse.cs" />
+    <Compile Include="Models\Response\NumberResponse.cs" />
+    <Compile Include="Models\Response\RightBracketResponse.cs" />
+    <Compile Include="Models\Response\Status.cs" />
+    <Compile Include="Models\Response\StatusMessage.cs" />
+    <Compile Include="Models\Response\UnaryResponse.cs" />
+    <Compile Include="Models\Response\Updates.cs" />
+    <Compile Include="Models\Request\UnaryRequest.cs" />
     <Compile Include="NewThing\ComboController.cs" />
     <Compile Include="NewThing\Newcontroller.cs" />
     <Compile Include="NewThing\Number.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Setting\CastRule.cs" />
     <Compile Include="Setting\Operators.cs" />
   </ItemGroup>
   <ItemGroup>

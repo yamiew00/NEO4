@@ -157,6 +157,7 @@ namespace Calculator.Controllers
                 HttpResponseMessage response = await Client.SendAsync(request);
                 response.EnsureSuccessStatusCode();
             }
+            //連線不應該由這裡處理
             catch (Exception exception)
             {
                 if (exception is HttpRequestException)
@@ -168,5 +169,7 @@ namespace Calculator.Controllers
                 throw;
             }
         }
+
+
     }
 }

@@ -5,15 +5,16 @@ using System.Web;
 
 namespace WebApi.Models.Response
 {
-    public class BinaryResponse: StatusMessage
+    public class LeftBracketResponse : StatusMessage
     {
         public Updates Update;
         
-        public BinaryResponse()
+        public LeftBracketResponse()
         {
+
         }
 
-        public BinaryResponse(Updates update)
+        public LeftBracketResponse(Updates update)
         {
             Update = update;
         }

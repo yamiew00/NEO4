@@ -5,15 +5,16 @@ using System.Web;
 
 namespace WebApi.Models.Response
 {
-    public class BinaryResponse: StatusMessage
+    public class UnaryResponse: StatusMessage
     {
         public Updates Update;
-        
-        public BinaryResponse()
+
+        public UnaryResponse()
         {
+
         }
 
-        public BinaryResponse(Updates update)
+        public UnaryResponse(Updates update)
         {
             Update = update;
         }

@@ -53,20 +53,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\Exception400.cs" />
     <Compile Include="Extensions\ToJsons.cs" />
     <Compile Include="Extensions\Strings.cs" />
     <Compile Include="News\JsonRequest\RequestBinaryJson.cs" />
     <Compile Include="News\JsonRequest\RequestNumberJson.cs" />
     <Compile Include="News\JsonRequest\RequestUnaryJson.cs" />
-    <Compile Include="News\JsonResponse\ResponseBackSpaceJson.cs" />
+    <Compile Include="News\JsonResponse\ResponseBackSpace.cs" />
     <Compile Include="News\JsonResponse\ResponseBinaryJson.cs" />
-    <Compile Include="News\JsonResponse\ResponseClearErrorJson.cs" />
-    <Compile Include="News\JsonResponse\ResponseClearJson.cs" />
-    <Compile Include="News\JsonResponse\ResponseEqualJson.cs" />
-    <Compile Include="News\JsonResponse\ResponseLeftBracketJson.cs" />
-    <Compile Include="News\JsonResponse\ResponseNumberJson.cs" />
-    <Compile Include="News\JsonResponse\ResponseRightBracketJson.cs" />
+    <Compile Include="News\JsonResponse\ResponseClearError.cs" />
+    <Compile Include="News\JsonResponse\ResponseClear.cs" />
+    <Compile Include="News\JsonResponse\ResponseEqual.cs" />
+    <Compile Include="News\JsonResponse\ResponseLeftBracket.cs" />
+    <Compile Include="News\JsonResponse\ResponseNumber.cs" />
+    <Compile Include="News\JsonResponse\ResponseRightBracket.cs" />
     <Compile Include="News\JsonResponse\ResponseUnaryJson.cs" />
+    <Compile Include="News\JsonResponse\Status.cs" />
+    <Compile Include="News\JsonResponse\Update.cs" />
     <Compile Include="News\NewNetworkController.cs" />
     <Compile Include="Tags\TagManager.cs" />
     <Compile Include="Tags\TagObjects\BackSpace.cs" />

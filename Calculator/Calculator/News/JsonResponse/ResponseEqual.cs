@@ -6,9 +6,16 @@ using System.Threading.Tasks;
 
 namespace Calculator.News.JsonResponse
 {
-    public class ResponseBinaryJson
+    public class ResponseEqual
     {
         public Update Update;
         public Status Status;
+        public decimal? answer;
+
+        public ResponseEqual(Update update, decimal? answer)
+        {
+            Update = update;
+            this.answer = answer;
+        }
     }
 }

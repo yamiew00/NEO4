@@ -33,7 +33,8 @@ namespace WebApi.NewThing
 
         public Number Number;
         
-        public string AddNumber(char number)
+        
+        public NumberResponse AddNumber(char number)
         {
             //小數點case
             if (number.Equals('.'))
@@ -43,19 +44,19 @@ namespace WebApi.NewThing
                 {
                     Number = new Number();
                     Number.AddDigit(number);
-                    return "0.";
+                    return new NumberResponse(new Updates(removeLength: 0, updateString: "0."));
                 }
                 //若有值→判斷是否已為小數
                 if (Number.IsNumeric)
                 {
                     //已經是小數→不回傳值
-                    return string.Empty;
+                    return new NumberResponse(new Updates(removeLength: 0, updateString: string.Empty));
                 }
                 else
                 {
                     //不是小數→更新小數點
                     Number.AddDigit(number);
-                    return ".";
+                    return new NumberResponse(new Updates(removeLength: 0, updateString: "."));
                 }
             }
 
@@ -74,7 +75,7 @@ namespace WebApi.NewThing
             {
                 Number.AddDigit(number);
             }
-            return number.ToString();
+            return new NumberResponse(new Updates(removeLength: 0, updateString: number.ToString()));
         }
 
         //binary combo要記得
@@ -96,8 +97,8 @@ namespace WebApi.NewThing
                 Number = null;
                 expController.Add(binaryOperator);
             }
-            
-            return new BinaryResponse(removeLength: 0, updateString: binary.ToString());
+
+            return new BinaryResponse(new Updates(removeLength: 0, updateString: binary.ToString()));
         }
 
         public BinaryResponse ModifyBinary(char binary)
@@ -108,10 +109,10 @@ namespace WebApi.NewThing
                 throw new Exception("ModifyBinary時Number不能有值");
             }
             expController.Modify(binaryOperator);
-            return new BinaryResponse(removeLength: 1, updateString: binary.ToString());
+            return new BinaryResponse(new Updates(removeLength: 1, updateString: binary.ToString()));
         }
 
-        public decimal Equal()
+        public EqualResponse Equal()
         {
             //這裡的case應該還有更多
             if (Number != null)
@@ -119,7 +120,8 @@ namespace WebApi.NewThing
                 expController.Add(Number.Value.Value);
                 Number = null;
             }
-            return expController.GetResult();
+
+            return new EqualResponse(new Updates(removeLength: 0, updateString: "="), answer: expController.GetResult());
         }
 
         public void LeftBracket()
@@ -136,8 +138,7 @@ namespace WebApi.NewThing
                 expController.Add(Number.Value.Value);
                 System.Diagnostics.Debug.WriteLine("value = " + Number.Value.Value);
             }
-
-
+            
             expController.RightBracket();
             Number = null;
         }
@@ -148,25 +149,25 @@ namespace WebApi.NewThing
             expController.Clear();
         }
 
-        public int ClearError()
+        public ClearErrorResponse ClearError()
         {
             if (Number == null)
             {
-                return 0;
+                return new ClearErrorResponse(new Updates(removeLength: 0, updateString: string.Empty));
             }
             int length = Number.Value.Value.ToString().Length;
             System.Diagnostics.Debug.WriteLine($"length = {length}");
             Number = new Number();
             
-            return length;
+            return new ClearErrorResponse(new Updates(removeLength: length, updateString: "0"));
         }
 
-        public BackSpaceJson BackSpace()
+        public BackSpaceResponse BackSpace()
         {
             int RemoveLength = 0;
             if (Number == null)
             {
-                return new BackSpaceJson(RemoveLength, string.Empty);
+                return new BackSpaceResponse(new Updates(removeLength: RemoveLength, updateString: string.Empty));
             }
 
             RemoveLength = Number.Value.Value.ToString().Length;
@@ -180,10 +181,10 @@ namespace WebApi.NewThing
             {
                 updateString += ".";
             }
-            return new BackSpaceJson(RemoveLength, updateString);
+            return new BackSpaceResponse(new Updates(RemoveLength, updateString));
         }
 
-        public UnaryResponseJson AddUnary(char unary)
+        public UnaryResponse AddUnary(char unary)
         {
             UnaryOperator unaryOperator = Operators.GetUnary(unary);
             var formula = unaryOperator.Formula;
@@ -191,7 +192,7 @@ namespace WebApi.NewThing
             int removeLength = 0;
             if (Number == null)
             {
-                return new UnaryResponseJson(removeLength, string.Empty);
+                return new UnaryResponse(new Updates(removeLength: removeLength, updateString: string.Empty));
             }
 
             removeLength = Number.Value.Value.ToString().Length;
@@ -207,7 +208,7 @@ namespace WebApi.NewThing
             {
                 updateString += ".";
             }
-            return new UnaryResponseJson(removeLength, updateString);
+            return new UnaryResponse(new Updates(removeLength, updateString));
         }
     }
 }

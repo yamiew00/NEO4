@@ -45,6 +45,13 @@ namespace WebApi
 
             //以下新的
             config.Routes.MapHttpRoute(
+                name: "Get, Init功能",
+                routeTemplate: "api/init/{userIdForInit}",
+                defaults: new { controller = "Request", userIdForInit = RouteParameter.Optional }
+            );
+
+
+            config.Routes.MapHttpRoute(
                 name: "Post, Number功能",
                 routeTemplate: "api/number/{userIdWithNumber}",
                 defaults: new { controller = "Request", userIdWithNumber = RouteParameter.Optional}

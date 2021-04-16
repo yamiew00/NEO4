@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Calculator.News.JsonResponse;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Calculator.News.JsonResponse
+namespace Calculator.News.JsonObject
 {
-    public class ResponseBinaryJson
+    public class ResponseNumber
     {
         public Update Update;
         public Status Status;
