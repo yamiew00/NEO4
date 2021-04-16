@@ -64,6 +64,10 @@ namespace Calculator.News
             {
                 return new Update();
             }
+            else if (status.Code == 400)
+            {
+                throw new Exception400("運算錯誤");
+            }
             else
             {
                 //未處理
@@ -252,7 +256,7 @@ namespace Calculator.News
         }
 
 
-        public async Task<ResponseUnaryJson> UnaryRequest(char text)
+        public async Task<Update> UnaryRequest(char text)
         {
             var uri = Path($"/api/unary/{Global.USER_ID}");
             RequestUnaryJson requestUnaryJson = new RequestUnaryJson(text);
@@ -269,7 +273,7 @@ namespace Calculator.News
             response.EnsureSuccessStatusCode();
 
             var msg = await response.Content.ReadAsAsync<ResponseUnaryJson>();
-            return msg;
+            return GetUpdateByCode(msg.Update, msg.Status);
         }
 
 

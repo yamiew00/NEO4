@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using WebApi.NewThing;
 using WebApi.Objects;
 
 namespace WebApi.DataBase
@@ -30,6 +31,25 @@ namespace WebApi.DataBase
 
             Dic.Add(userId, new ExpressionController());
             return Dic[userId];
+        }
+
+
+        /// <summary>
+        /// 用戶id對運算控制的字典
+        /// </summary>
+        private static Dictionary<int, CommandCaster> Dic2 = new Dictionary<int, CommandCaster>();
+
+
+        //thread-safe?
+        public static CommandCaster GetCommandCaster(int userId)
+        {
+            if (Dic2.Keys.Contains(userId))
+            {
+                return Dic2[userId];
+            }
+
+            Dic2.Add(userId, new CommandCaster());
+            return Dic2[userId];
         }
     }
 }

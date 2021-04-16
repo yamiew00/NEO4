@@ -17,6 +17,5 @@ namespace WebApi.Models.Response
         {
             Update = update;
         }
-        
     }
 }

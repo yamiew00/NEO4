@@ -8,11 +8,7 @@ namespace Calculator.News.JsonResponse
 {
     public class ResponseUnaryJson
     {
-        public Updates Update;
-        public class Updates
-        {
-            public int RemoveLength;
-            public string UpdateString;
-        }
+        public Update Update;
+        public Status Status;
     }
 }

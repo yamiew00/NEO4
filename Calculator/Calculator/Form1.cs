@@ -72,7 +72,6 @@ namespace Calculator
             if (tag.Equals("Number"))
             {
                 var a = await NewNetworkController.Instance.NumberRequest(Convert.ToChar(text));
-                Console.WriteLine($"a = {a}");
                 AppendText(TextBoxPanel, a.UpdateString);
             }
             else if (tag.Equals("Operator"))
@@ -98,7 +97,7 @@ namespace Calculator
                 {
                     if (exception is Exception400)
                     {
-                        TextBoxSubPanel.Text = "運算式錯誤";
+                        TextBoxSubPanel.Text = exception.Message;
                         return;
                     }
                 }
@@ -140,11 +139,21 @@ namespace Calculator
             }
             else if (tag.Equals("Unary"))
             {
-                var a = await NewNetworkController.Instance.UnaryRequest(Convert.ToChar(text));
-                int removeLength = a.Update.RemoveLength;
-                string updateString = a.Update.UpdateString;
-                RemoveText(TextBoxPanel, removeLength);
-                AppendText(TextBoxPanel, updateString);
+                try
+                {
+                    var a = await NewNetworkController.Instance.UnaryRequest(Convert.ToChar(text));
+                    int removeLength = a.RemoveLength;
+                    string updateString = a.UpdateString;
+                    RemoveText(TextBoxPanel, removeLength);
+                    AppendText(TextBoxPanel, updateString);
+                }
+                catch(Exception exception)
+                {
+                    if (exception is Exception400)
+                    {
+                        TextBoxSubPanel.Text = exception.Message;
+                    }
+                }
 
             }
 
