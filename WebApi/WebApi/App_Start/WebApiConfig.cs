@@ -18,30 +18,6 @@ namespace WebApi
         {
             // Web API 路由
             config.MapHttpAttributeRoutes();
-            
-            //輸入數字或運算符用的api，會傳入body
-            config.Routes.MapHttpRoute(
-                name: "輸入數字或運算符, 有body的Post",
-                routeTemplate: "api/postwithbody/{userId}",
-                defaults: new { controller = "Request", userId = RouteParameter.Optional}
-            );
-            
-            //回傳答案用的api
-            config.Routes.MapHttpRoute(
-                name: "Post, 回傳答案",
-                routeTemplate: "api/getanswer/{userIdForAns}",
-                defaults: new { controller = "Request", userIdForAns = RouteParameter.Optional}
-            );
-
-            //Clear現有功能
-            //config.Routes.MapHttpRoute(
-            //    name: "Get, Clear功能",
-            //    routeTemplate: "api/clear/{userIdForClear}",
-            //    defaults: new { controller = "Request", userIdForClear = RouteParameter.Optional}
-            //);
-
-
-
 
             //以下新的
             config.Routes.MapHttpRoute(
@@ -49,7 +25,6 @@ namespace WebApi
                 routeTemplate: "api/init/{userIdForInit}",
                 defaults: new { controller = "Request", userIdForInit = RouteParameter.Optional }
             );
-
 
             config.Routes.MapHttpRoute(
                 name: "Post, Number功能",
@@ -104,7 +79,6 @@ namespace WebApi
                 routeTemplate: "api/unary/{userIdWithUnary}",
                 defaults: new { controller = "Request", userIdWithUnary = RouteParameter.Optional }
             );
-
         }
     }
 }

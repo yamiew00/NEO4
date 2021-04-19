@@ -68,6 +68,10 @@ namespace Calculator.News
             {
                 throw new Exception400("運算錯誤");
             }
+            else if (status.Code == 999)
+            {
+                return new Update(-1, update.UpdateString);
+            }
             else
             {
                 //未處理

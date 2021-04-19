@@ -28,7 +28,6 @@ namespace WebApi.NewThing
             InputMachine.AddNumber('0');
         }
 
-
         private T CheckOrder<T>(Cast currentCast, Func<T> func) 
         {
             if (CastRule.IsTheOrderingLegit(PreviousCast, currentCast))
@@ -59,9 +58,32 @@ namespace WebApi.NewThing
 
             return CheckOrder<NumberResponse>(CurrentCast, () =>
             {
-                var successResponse = InputMachine.AddNumber(number);
+                NumberResponse successResponse;
+
+                //等號後輸入數字
+                if (PreviousCast == Cast.EQUAL)
+                {
+                    successResponse = InputMachine.AddNumber(number);
+                    successResponse.SetStatus(999);
+                    PreviousCast = CurrentCast;
+                    return successResponse;
+                }
+                
+                //bs測試
+                if ((PreviousCast == Cast.BACKSPACE || PreviousCast == Cast.CLEAR_ERROR) && InputMachine.Number.Value == 0)
+                {
+                    successResponse = InputMachine.AddNumber(number);
+                    successResponse.Update.RemoveLength += 1;
+                    //執行成功時記錄下這次的Cast
+                    PreviousCast = CurrentCast;
+                    return successResponse;
+                }
+
+                 successResponse = InputMachine.AddNumber(number);
                 //執行成功時記錄下這次的Cast
                 PreviousCast = CurrentCast;
+                
+                
                 return successResponse;
             });
 

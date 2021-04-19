@@ -10,5 +10,15 @@ namespace Calculator.News.JsonResponse
     {
         public int RemoveLength;
         public string UpdateString;
+
+        public Update()
+        {
+        }
+
+        public Update(int removeLength, string updateString)
+        {
+            RemoveLength = removeLength;
+            UpdateString = updateString;
+        }
     }
 }

@@ -1,23 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Calculator.Extensions;
-using System.Linq.Expressions;
-using Calculator.Controllers;
-using Calculator.Objects;
-using Calculator.Setting;
-using Calculator.Frames;
-using Calculator.Tags;
-using System.Configuration;
 using Calculator.News;
 using Calculator.Exceptions;
-using Calculator.News.JsonResponse;
+using System.Configuration;
+using Calculator.Setting;
 
 namespace Calculator
 {
@@ -39,8 +27,9 @@ namespace Calculator
                 //await NewNetworkController.Instance.ClearRequest();
                 await NewNetworkController.Instance.InitRequest();
             });
-            
 
+            //更新UserId
+            Global.UpdateUserId();
         }
 
         /// <summary>
@@ -55,24 +44,13 @@ namespace Calculator
             var text = button.Text;
             var tag = button.Tag.ToString();
 
-            //var frameObject = new FrameObject(TextBoxPanel, TextBoxSubPanel);
-
-            //var tm = FrameManager.Instance;
-            //tm.ChangeTag(tag);
-            //await tm.SetFrame(text, frameObject);
-            //var enableList = tm.GetEnableList();
-
-            ////按鈕禁用與解禁
-            //Enable(enableList);
-
-            ////畫面更新
-            //TextBoxPanel.Text = frameObject.PanelString;
-            //TextBoxSubPanel.Text = frameObject.SubPanelString;
-
             if (tag.Equals("Number"))
             {
                 var a = await NewNetworkController.Instance.NumberRequest(Convert.ToChar(text));
-                AppendText(TextBoxPanel, a.UpdateString);
+                string updateString = a.UpdateString;
+                int removeLength = (a.RemoveLength >= 0)? a.RemoveLength : TextBoxPanel.Text.Length;
+                RemoveText(TextBoxPanel, removeLength);
+                AppendText(TextBoxPanel, updateString);
             }
             else if (tag.Equals("Operator"))
             {

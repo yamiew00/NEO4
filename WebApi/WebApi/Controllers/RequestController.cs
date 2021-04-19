@@ -72,7 +72,10 @@ namespace WebApi.Controllers
             NumberResponse response = SetStatusCode<NumberResponse>(() => 
             {
                 var successResponse = commandCaster.AddNumber(number);
-                successResponse.SetStatus(200);
+                if (successResponse.Status == null)
+                {
+                    successResponse.SetStatus(200);
+                }
                 return successResponse;
             });
 

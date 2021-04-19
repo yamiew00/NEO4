@@ -21,5 +21,20 @@ namespace Calculator.Setting
         /// 連接埠號
         /// </summary>
         public static readonly string PORT = ConfigurationManager.AppSettings["Port"];
+
+        public static void UpdateUserId()
+        {
+            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+            var updatedId = Global.USER_ID + 1;
+
+            if (USER_ID == int.MaxValue)
+            {
+                updatedId = -1 * int.MaxValue;
+            }
+
+            configuration.AppSettings.Settings["UserId"].Value = updatedId.ToString();
+            configuration.Save();
+        }
     }
 }
