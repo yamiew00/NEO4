@@ -15,6 +15,9 @@ namespace WebApi.Objects
         /// </summary>
         private Stack<ExpressionTree> TreeStack = new Stack<ExpressionTree>();
 
+        /// <summary>
+        /// 運算方法的類別
+        /// </summary>
         private Evaluator Evaluator;
 
         /// <summary>
@@ -119,7 +122,10 @@ namespace WebApi.Objects
             tree.CurrentNode.NodeValue.Number = formula(number.Value);
         }
 
-        //新的
+        /// <summary>
+        /// 新增一個新數字
+        /// </summary>
+        /// <param name="number">新數字</param>
         public void Add(decimal number)
         {
             TreeStack.Peek().Add(number);

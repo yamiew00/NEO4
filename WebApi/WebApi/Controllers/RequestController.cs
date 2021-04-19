@@ -17,11 +17,17 @@ using WebApi.Exceptions;
 namespace WebApi.Controllers
 {
     /// <summary>
-    /// 輸入控制
+    /// 網路請求處理
     /// </summary>
     public class RequestController : ApiController
-    {       
-        private T SetStatusCode<T>(Func<T> func) where T: StatusMessage, new()
+    {
+        /// <summary>
+        /// 狀態碼檢查。若執行的過程中有拋出錯誤，則賦予相對應的狀態碼。
+        /// </summary>
+        /// <typeparam name="T">要回傳的TResult</typeparam>
+        /// <param name="func">正常使用情況下的執行過程</param>
+        /// <returns>TResult</returns>
+        private T SetStatusCode<T>(Func<T> func) where T : StatusMessage, new()
         {
             try
             {
@@ -45,6 +51,11 @@ namespace WebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// 初始化該用戶的功能執行者
+        /// </summary>
+        /// <param name="userIdForInit">用戶Id</param>
+        /// <returns>網路回應</returns>
         public IHttpActionResult GetInit(int userIdForInit)
         {
             //拿到該用戶的caster
@@ -60,7 +71,11 @@ namespace WebApi.Controllers
             }));
         }
 
-        //以下新的
+        /// <summary>
+        /// Post。使用者輸入數字
+        /// </summary>
+        /// <param name="userIdWithNumber">用戶Id</param>
+        /// <returns>網路回應</returns>
         public IHttpActionResult PostNumber(int userIdWithNumber)
         {
             //讀取body
@@ -82,6 +97,11 @@ namespace WebApi.Controllers
             return Ok(response.ToJson<NumberResponse>());
         }
 
+        /// <summary>
+        /// 使用者輸入雙元運算子
+        /// </summary>
+        /// <param name="userIdWithBinary">用戶Id</param>
+        /// <returns>網路回應</returns>
         public IHttpActionResult PostBinary(int userIdWithBinary)
         {
             //讀取body
@@ -100,11 +120,15 @@ namespace WebApi.Controllers
             return Ok(response.ToJson<BinaryResponse>());
         }
 
+        /// <summary>
+        /// 使用者輸入等號
+        /// </summary>
+        /// <param name="userIdWithEqual">用戶Id</param>
+        /// <returns>網路回應</returns>
         public IHttpActionResult GetEqual(int userIdWithEqual)
         {
             //拿到該用戶的caster
             CommandCaster commandCaster = Users.GetCommandCaster(userIdWithEqual);
-
 
             EqualResponse response = SetStatusCode<EqualResponse>(() =>
             {
@@ -116,6 +140,11 @@ namespace WebApi.Controllers
             return Ok(response.ToJson<EqualResponse>());
         }
 
+        /// <summary>
+        /// 使用者輸入左括號
+        /// </summary>
+        /// <param name="userIdWithLeftBracket">用戶Id</param>
+        /// <returns>網路回應</returns>
         public IHttpActionResult GetLeftBracket(int userIdWithLeftBracket)
         {
             //拿到該用戶的caster
@@ -132,6 +161,11 @@ namespace WebApi.Controllers
             return Ok(response.ToJson<LeftBracketResponse>());
         }
 
+        /// <summary>
+        /// 使用者輸入右括號
+        /// </summary>
+        /// <param name="userIdWithRightBracket">用戶Id</param>
+        /// <returns>網路回應</returns>
         public IHttpActionResult GetRightBracket(int userIdWithRightBracket)
         {
             //拿到該用戶的caster
@@ -147,6 +181,11 @@ namespace WebApi.Controllers
             return Ok(response.ToJson<RightBracketResponse>());
         }
 
+        /// <summary>
+        /// 使用者按下Clear
+        /// </summary>
+        /// <param name="userIdWithClear">用戶Id</param>
+        /// <returns>網路回應</returns>
         public IHttpActionResult GetClear(int userIdWithClear)
         {
             //拿到該用戶的caster
@@ -162,7 +201,11 @@ namespace WebApi.Controllers
             return Ok(response.ToJson<ClearResponse>());
         }
 
-        //可以再多加一個updateString = 0
+        /// <summary>
+        /// 使用者按下ClearError
+        /// </summary>
+        /// <param name="userIdWithClearError">用戶Id</param>
+        /// <returns>網路回應</returns>
         public IHttpActionResult GetClearError(int userIdWithClearError)
         {
             //拿到該用戶的caster
@@ -177,6 +220,11 @@ namespace WebApi.Controllers
             return Ok(response.ToJson<ClearErrorResponse>());
         }
 
+        /// <summary>
+        /// 使用者使用返回鍵
+        /// </summary>
+        /// <param name="userIdWithBackSpace">用戶Id</param>
+        /// <returns>網路回應</returns>
         public IHttpActionResult GetBackSpace(int userIdWithBackSpace)
         {
             //拿到該用戶的caster
@@ -191,6 +239,11 @@ namespace WebApi.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// 使用者輸入單元運算子
+        /// </summary>
+        /// <param name="userIdWithUnary">用戶Id</param>
+        /// <returns>網路回應</returns>
         public IHttpActionResult PostUnary(int userIdWithUnary)
         {
             char unary = (Request.Content.ReadAsAsync<UnaryRequest>().Result).UnaryName;
@@ -206,6 +259,5 @@ namespace WebApi.Controllers
             });
             return Ok(response.ToJson<UnaryResponse>());
         }
-
     }
 }

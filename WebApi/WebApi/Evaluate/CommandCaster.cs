@@ -10,17 +10,32 @@ using static WebApi.Setting.CastRule;
 
 namespace WebApi.NewThing
 {
+    /// <summary>
+    /// 功能執行判斷
+    /// </summary>
     public class CommandCaster
     {
+        /// <summary>
+        /// 數字處理器
+        /// </summary>
+        private NumberMachine InputMachine;
 
-        private InputMachine InputMachine;
-
+        /// <summary>
+        /// 上一次執行成功的功能
+        /// </summary>
         private Cast PreviousCast;
 
-        public CommandCaster(){
-            InputMachine = new InputMachine();
+        /// <summary>
+        /// 建構子
+        /// </summary>
+        public CommandCaster()
+        {
+            InputMachine = new NumberMachine();
         }
 
+        /// <summary>
+        /// 初始化
+        /// </summary>
         public void Init()
         {
             PreviousCast = Cast.NUMBER;
@@ -28,6 +43,13 @@ namespace WebApi.NewThing
             InputMachine.AddNumber('0');
         }
 
+        /// <summary>
+        /// 檢查previousCast→currentCast的順序是否符合規範，否則拋出例外
+        /// </summary>
+        /// <typeparam name="T">定義要回傳的TResult</typeparam>
+        /// <param name="currentCast">當前的功能</param>
+        /// <param name="func">若順序正確，則要執行的func</param>
+        /// <returns>TResult</returns>
         private T CheckOrder<T>(Cast currentCast, Func<T> func) 
         {
             if (CastRule.IsTheOrderingLegit(PreviousCast, currentCast))
@@ -40,6 +62,11 @@ namespace WebApi.NewThing
             }
         }
 
+        /// <summary>
+        /// 檢查previousCast→currentCast的順序是否符合規範，否則拋出例外
+        /// </summary>
+        /// <param name="currentCast">當前的功能</param>
+        /// <param name="action">若順序正確，則要執行的action</param>
         private void CheckOrder(Cast currentCast, Action action)
         {
             if (CastRule.IsTheOrderingLegit(PreviousCast, currentCast))
@@ -52,6 +79,11 @@ namespace WebApi.NewThing
             }
         }
 
+        /// <summary>
+        /// 新增數字
+        /// </summary>
+        /// <param name="number">數字</param>
+        /// <returns>數字響應</returns>
         public NumberResponse AddNumber(char number) 
         {
             Cast CurrentCast = Cast.NUMBER;
@@ -69,8 +101,8 @@ namespace WebApi.NewThing
                     return successResponse;
                 }
                 
-                //bs測試
-                if ((PreviousCast == Cast.BACKSPACE || PreviousCast == Cast.CLEAR_ERROR) && InputMachine.Number.Value == 0)
+                //backspace或clearerror之後的數字處理
+                if ((PreviousCast == Cast.BACKSPACE || PreviousCast == Cast.CLEAR_ERROR) && InputMachine.NumberField.Number == 0)
                 {
                     successResponse = InputMachine.AddNumber(number);
                     successResponse.Update.RemoveLength += 1;
@@ -83,13 +115,16 @@ namespace WebApi.NewThing
                 //執行成功時記錄下這次的Cast
                 PreviousCast = CurrentCast;
                 
-                
                 return successResponse;
             });
-
         }
 
-        public BinaryResponse AddBinary(char text)
+        /// <summary>
+        /// 新增雙元運算子
+        /// </summary>
+        /// <param name="binaryName">雙元運算子</param>
+        /// <returns>雙元運算子響應</returns>
+        public BinaryResponse AddBinary(char binaryName)
         {
             Cast CurrentCast = Cast.BINARY;
 
@@ -99,11 +134,11 @@ namespace WebApi.NewThing
 
               if (PreviousCast == Cast.BINARY)
               {
-                  successResponse = InputMachine.ModifyBinary(text);
+                  successResponse = InputMachine.ModifyBinary(binaryName);
               }
               else
               {
-                  successResponse = InputMachine.AddBinary(text);
+                  successResponse = InputMachine.AddBinary(binaryName);
               }
 
                 //執行成功時記錄下這次的Cast
@@ -112,6 +147,10 @@ namespace WebApi.NewThing
           });
         }
 
+        /// <summary>
+        /// 等號事件
+        /// </summary>
+        /// <returns>等號響應</returns>
         public EqualResponse Equal()
         {
             Cast CurrentCast = Cast.EQUAL;
@@ -126,6 +165,9 @@ namespace WebApi.NewThing
           });
         }
 
+        /// <summary>
+        /// 左括號事件
+        /// </summary>
         public void LeftBracket()
         {
             Cast CurrentCast = Cast.LEFT_BRACKET;
@@ -138,6 +180,9 @@ namespace WebApi.NewThing
             });
         }
 
+        /// <summary>
+        /// 右括號事件
+        /// </summary>
         public void RightBracket()
         {
             Cast CurrentCast = Cast.RIGHT_BRACKET;
@@ -150,6 +195,9 @@ namespace WebApi.NewThing
             });
         }
         
+        /// <summary>
+        /// Clear事件
+        /// </summary>
         public void Clear()
         {
             Cast CurrentCast = Cast.CLEAR;
@@ -162,6 +210,10 @@ namespace WebApi.NewThing
             });
         }
 
+        /// <summary>
+        /// ClearError事件
+        /// </summary>
+        /// <returns>ClearError響應</returns>
         public ClearErrorResponse ClearError()
         {
             Cast CurrentCast = Cast.CLEAR_ERROR;
@@ -175,6 +227,10 @@ namespace WebApi.NewThing
           });
         }
 
+        /// <summary>
+        /// 返回事件
+        /// </summary>
+        /// <returns>返回響應</returns>
         public BackSpaceResponse BackSpace()
         {
             Cast CurrentCast = Cast.BACKSPACE;
@@ -187,7 +243,12 @@ namespace WebApi.NewThing
               return successResponse;
           });
         }
-
+        
+        /// <summary>
+        /// 新增一個單元運算子 
+        /// </summary>
+        /// <param name="unary">單元運算子</param>
+        /// <returns>單元運算子響應</returns>
         public UnaryResponse AddUnary(char unary)
         {
             Cast CurrentCast = Cast.UNARY;

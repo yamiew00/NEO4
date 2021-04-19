@@ -5,48 +5,51 @@ using System.Web;
 
 namespace WebApi.NewThing
 {
-    public class Number
+    /// <summary>
+    /// 數字物件
+    /// </summary>
+    public class NumberField
     {
-        public decimal? Value;
+        /// <summary>
+        /// 值
+        /// </summary>
+        public decimal? Number { get; set; }
+
+        /// <summary>
+        /// 有小數點的布林值(可能仍為整數)
+        /// </summary>
         public bool IsNumeric;
+
+        /// <summary>
+        /// 小數點後有幾位
+        /// </summary>
         private int Degree;
 
-        public Number()
+        /// <summary>
+        /// 建構子
+        /// </summary>
+        public NumberField()
         {
-            Value = 0;
+            Number = 0;
             IsNumeric = false;
             Degree = 0;
         }
 
-        public Number(char number)
+        /// <summary>
+        /// 建構子
+        /// </summary>
+        /// <param name="number">數字或小數點的char</param>
+        public NumberField(char number)
         {
-            Value = int.Parse(number.ToString());
+            Number = int.Parse(number.ToString());
             IsNumeric = false;
             Degree = 0;
         }
         
-        //這有用嗎
-        //public Number(char number)
-        //{
-        //    if (number.Equals('p'))
-        //    {
-        //        Value = 0;
-        //        IsNumeric = true;
-        //        return;
-        //    }
-
-        //    if (char.IsNumber(number))
-        //    {
-        //        Value = Convert.ToInt32(number);
-        //        IsNumeric = false;
-        //    }
-        //    else
-        //    {
-        //        throw new Exception("非正規數字");
-        //    }
-        //}
-
-
+        /// <summary>
+        /// 新增一個位數(或小數點)。
+        /// </summary>
+        /// <param name="number">一個位數</param>
         public void AddDigit(char number)
         {
             if (number.Equals('.'))
@@ -58,12 +61,12 @@ namespace WebApi.NewThing
                 int digit = int.Parse(number.ToString());             
                 if (IsNumeric)
                 {
-                    Value = Value + digit * (decimal)Math.Pow(0.1, Degree + 1);
+                    Number = Number + ( digit * (decimal)Math.Pow(0.1, Degree + 1));
                     Degree++;
                 }
                 else
                 {
-                    Value = 10 * Value + digit;
+                    Number = 10 * Number + digit;
                 }
             }
             else
@@ -72,6 +75,9 @@ namespace WebApi.NewThing
             }
         }
 
+        /// <summary>
+        /// 清除一個位數
+        /// </summary>
         public void ClearOneDigit()
         {
             if (IsNumeric)
@@ -82,22 +88,30 @@ namespace WebApi.NewThing
                 }
                 else
                 {
-                    var a = (int)(Value * (decimal)Math.Pow(10, Degree - 1));
-                    Value =  a / (decimal)Math.Pow(10, Degree - 1);
+                    var a = (int)(Number * (decimal)Math.Pow(10, Degree - 1));
+                    Number = a / (decimal)Math.Pow(10, Degree - 1);
                     Degree -= 1;
                 }
             }
             else
             {
-                Value = (int)(Value / 10);
+                Number = (int)(Number / 10);
             }
         }
 
+        /// <summary>
+        /// 判斷是否為整數
+        /// </summary>
+        /// <returns>是整數的布林值</returns>
         private bool IsInteger()
         {
-            return (Value == (int)Value);
+            return (Number == (int)Number);
         }
 
+        /// <summary>
+        /// 是否以小數點為最後一位。
+        /// </summary>
+        /// <returns>是以小數點為最後一位的布林值</returns>
         public bool IsEndWithPoint()
         {
             return IsNumeric && IsInteger();

@@ -33,14 +33,16 @@ namespace WebApi.DataBase
             return Dic[userId];
         }
 
-
         /// <summary>
         /// 用戶id對運算控制的字典
         /// </summary>
         private static Dictionary<int, CommandCaster> Dic2 = new Dictionary<int, CommandCaster>();
 
-
-        //thread-safe?
+        /// <summary>
+        /// 取得用戶的功能執行者
+        /// </summary>
+        /// <param name="userId">用戶id</param>
+        /// <returns>功能執行者</returns>
         public static CommandCaster GetCommandCaster(int userId)
         {
             if (Dic2.Keys.Contains(userId))

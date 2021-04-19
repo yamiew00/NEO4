@@ -87,6 +87,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\RequestController.cs" />
     <Compile Include="DataBase\Users.cs" />
+    <Compile Include="Evaluate\NumberMachine.cs" />
     <Compile Include="Exceptions\OrderException.cs" />
     <Compile Include="Extensions\Jsons.cs" />
     <Compile Include="Global.asax.cs">
@@ -114,7 +115,6 @@
     <Compile Include="Models\Response\Updates.cs" />
     <Compile Include="Models\Request\UnaryRequest.cs" />
     <Compile Include="Evaluate\CommandCaster.cs" />
-    <Compile Include="Evaluate\InputMachine.cs" />
     <Compile Include="Evaluate\Number.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setting\CastRule.cs" />
@@ -131,7 +131,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="NewThing\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

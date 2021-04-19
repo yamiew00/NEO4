@@ -21,11 +21,10 @@ namespace Calculator
         {
             InitializeComponent();
             
-            //新Clear事件
+            //連線初始化
             Task.Run(async () =>
             {
-                //await NewNetworkController.Instance.ClearRequest();
-                await NewNetworkController.Instance.InitRequest();
+                await NetworkController.Instance.InitRequest();
             });
 
             //更新UserId
@@ -37,26 +36,38 @@ namespace Calculator
         /// </summary>
         /// <param name="sender">按鈕</param>
         /// <param name="e">點擊事件</param>
-        private async void All_Button_Click(object sender, EventArgs e)
+        private void All_Button_Click(object sender, EventArgs e)
         {
             //按鈕相關屬性
             var button = (Button)sender;
             var text = button.Text;
             var tag = button.Tag.ToString();
 
+            //畫面更新
+            UpdateFrame(tag, text);
+        }
+
+        /// <summary>
+        /// 畫面更新
+        /// </summary>
+        /// <param name="tag">button的tag</param>
+        /// <param name="text">button的text</param>
+        private async void UpdateFrame(string tag, string text)
+        {
+            //按照tag做事
             if (tag.Equals("Number"))
             {
-                var a = await NewNetworkController.Instance.NumberRequest(Convert.ToChar(text));
-                string updateString = a.UpdateString;
-                int removeLength = (a.RemoveLength >= 0)? a.RemoveLength : TextBoxPanel.Text.Length;
+                var update = await NetworkController.Instance.NumberRequest(Convert.ToChar(text));
+                string updateString = update.UpdateString;
+                int removeLength = (update.RemoveLength >= 0) ? update.RemoveLength : TextBoxPanel.Text.Length;
                 RemoveText(TextBoxPanel, removeLength);
                 AppendText(TextBoxPanel, updateString);
             }
             else if (tag.Equals("Operator"))
             {
-                var a = await NewNetworkController.Instance.BinaryRequest(Convert.ToChar(text));
-                string updateString = a.UpdateString;
-                int removeLength = a.RemoveLength;
+                var update = await NetworkController.Instance.BinaryRequest(Convert.ToChar(text));
+                string updateString = update.UpdateString;
+                int removeLength = update.RemoveLength;
                 RemoveText(TextBoxPanel, removeLength);
                 AppendText(TextBoxPanel, updateString);
             }
@@ -64,14 +75,14 @@ namespace Calculator
             {
                 try
                 {
-                    var a = await NewNetworkController.Instance.EqualRequest();
+                    var update = await NetworkController.Instance.EqualRequest();
 
-                    string updateString = a.Update.UpdateString;
-                    string answer = a.answer.ToString();
+                    string updateString = update.Update.UpdateString;
+                    string answer = update.answer.ToString();
                     AppendText(TextBoxPanel, updateString);
                     TextBoxSubPanel.Text = answer;
                 }
-                catch(Exception exception)
+                catch (Exception exception)
                 {
                     if (exception is Exception400)
                     {
@@ -82,19 +93,31 @@ namespace Calculator
             }
             else if (tag.Equals("LeftBracket"))
             {
-                //幹麻不trycatch
-                var a = await NewNetworkController.Instance.LeftBracketRequest();
-                AppendText(TextBoxPanel, a.UpdateString);
+                var update = await NetworkController.Instance.LeftBracketRequest();
+                AppendText(TextBoxPanel, update.UpdateString);
             }
-            else if (tag.Equals("RightBracket"))
+            else
             {
-                var a = await NewNetworkController.Instance.RightBracketRequest();
-                AppendText(TextBoxPanel, a.UpdateString);
+                UpdateFrame2(tag, text);
+            }
+        }
+
+        /// <summary>
+        /// 畫面更新
+        /// </summary>
+        /// <param name="tag">button的tag</param>
+        /// <param name="text">button的text</param>
+        private async void UpdateFrame2(string tag, string text)
+        {
+            if (tag.Equals("RightBracket"))
+            {
+                var update = await NetworkController.Instance.RightBracketRequest();
+                AppendText(TextBoxPanel, update.UpdateString);
             }
             else if (tag.Equals("Clear"))
             {
-                var a = await NewNetworkController.Instance.ClearRequest();
-                if (a)
+                var isClear = await NetworkController.Instance.ClearRequest();
+                if (isClear)
                 {
                     TextBoxPanel.Text = string.Empty;
                     TextBoxSubPanel.Text = string.Empty;
@@ -102,16 +125,15 @@ namespace Calculator
             }
             else if (tag.Equals("ClearError"))
             {
-                var a = await NewNetworkController.Instance.ClearErrorRequest();
-                RemoveText(TextBoxPanel, a.RemoveLength);
-                //補0這個也要問後端才對?
+                var update = await NetworkController.Instance.ClearErrorRequest();
+                RemoveText(TextBoxPanel, update.RemoveLength);
                 AppendText(TextBoxPanel, "0");
             }
             else if (tag.Equals("BackSpace"))
             {
-                var a = await NewNetworkController.Instance.BackSpaceRequest();
-                int removeLength = a.RemoveLength;
-                string updateString = a.UpdateString;
+                var update = await NetworkController.Instance.BackSpaceRequest();
+                int removeLength = update.RemoveLength;
+                string updateString = update.UpdateString;
                 RemoveText(TextBoxPanel, removeLength);
                 AppendText(TextBoxPanel, updateString);
             }
@@ -119,58 +141,41 @@ namespace Calculator
             {
                 try
                 {
-                    var a = await NewNetworkController.Instance.UnaryRequest(Convert.ToChar(text));
-                    int removeLength = a.RemoveLength;
-                    string updateString = a.UpdateString;
+                    var update = await NetworkController.Instance.UnaryRequest(Convert.ToChar(text));
+                    int removeLength = update.RemoveLength;
+                    string updateString = update.UpdateString;
                     RemoveText(TextBoxPanel, removeLength);
                     AppendText(TextBoxPanel, updateString);
                 }
-                catch(Exception exception)
+                catch (Exception exception)
                 {
                     if (exception is Exception400)
                     {
                         TextBoxSubPanel.Text = exception.Message;
                     }
                 }
-
             }
-
         }
 
+        /// <summary>
+        /// 讓TextBox拓展字串
+        /// </summary>
+        /// <param name="textBox">textBox</param>
+        /// <param name="str">新字串</param>
         private void AppendText(TextBox textBox, string str)
         {
             textBox.Text += str;
         }
 
+        /// <summary>
+        /// 讓TextBox移除字串
+        /// </summary>
+        /// <param name="textBox">textBox</param>
+        /// <param name="length">要移除的長度</param>
         private void RemoveText(TextBox textBox, int length)
         {
             var text = textBox.Text;
             textBox.Text = text.Substring(0, text.Length - length);
         }
-        
-        /// <summary>
-        /// 決定可以使用的按鈕
-        /// </summary>
-        /// <param name="enableList">啟用表</param>
-        private void Enable(List<string> enableList)
-        {
-            foreach (var item in this.Controls)
-            {
-                if (!(item is Button) || ((Button)item).Tag == null)
-                {
-                    continue;
-                }
-                if (enableList.Contains(((Button)item).Tag.ToString()))
-                {
-                    ((Button)item).Enabled = true;
-                }
-                else
-                {
-                    ((Button)item).Enabled = false;
-                }
-            }
-        }
-
-
     }
 }

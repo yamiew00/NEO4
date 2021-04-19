@@ -5,22 +5,21 @@ using System.Web;
 
 namespace WebApi.Setting
 {
+    /// <summary>
+    /// 功能鍵的輸入規則
+    /// </summary>
     public class CastRule
     {
-        //public static readonly string NUMBER = "Number";
-        //public static readonly string BINARY = "Binary";
-        //public static readonly string EQUAL = "Equal";
-        //public static readonly string LEFT_BRACKET = "LeftBracket";
-        //public static readonly string RIGHT_BRACKET = "RightBracket";
-        //public static readonly string CLEAR = "Clear";
-        //public static readonly string CLEAR_ERROR = "ClearError";
-        //public static readonly string BACKSPACE = "BackSpace";
-        //public static readonly string UNARY = "Unary";
-
+        /// <summary>
+        /// 錯誤訊息
+        /// </summary>
         public static readonly string INCORRECT_ORDER_MSG = "輸入順序有誤，因此無響應";
-
-        //需不需要null呢?
-        public enum Cast {
+        
+        /// <summary>
+        /// 功能種類
+        /// </summary>
+        public enum Cast
+        {
             NUMBER,
             BINARY,
             EQUAL,
@@ -31,6 +30,10 @@ namespace WebApi.Setting
             BACKSPACE,
             UNARY
         }
+
+        /// <summary>
+        /// 順序字典。key之後可以接著使用value的種類
+        /// </summary>
         public static readonly Dictionary<Cast, List<Cast>> LegitOrder = new Dictionary<Cast, List<Cast>>()
         {
             { Cast.NUMBER, new List<Cast>(){ Cast.NUMBER, Cast.BINARY, Cast.EQUAL, Cast.RIGHT_BRACKET, Cast.CLEAR, Cast.CLEAR_ERROR, Cast.BACKSPACE, Cast.UNARY } },
@@ -44,6 +47,12 @@ namespace WebApi.Setting
             { Cast.UNARY, new List<Cast>(){ Cast.BINARY, Cast.RIGHT_BRACKET, Cast.EQUAL, Cast.CLEAR, Cast.UNARY } }
         };
 
+        /// <summary>
+        /// 判斷輸入順序的正確性
+        /// </summary>
+        /// <param name="former">前者</param>
+        /// <param name="latter">後者</param>
+        /// <returns>正確性的布林值</returns>
         public static bool IsTheOrderingLegit(Cast former, Cast latter)
         {
             return LegitOrder[former].Contains(latter);
