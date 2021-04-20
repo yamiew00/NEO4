@@ -20,6 +20,7 @@ namespace WebApi.Setting
         /// </summary>
         public enum Cast
         {
+            Null,
             NUMBER,
             BINARY,
             EQUAL,
@@ -36,6 +37,7 @@ namespace WebApi.Setting
         /// </summary>
         public static readonly Dictionary<Cast, List<Cast>> LegitOrder = new Dictionary<Cast, List<Cast>>()
         {
+            { Cast.Null, new List<Cast>(){ Cast.NUMBER, Cast.BINARY, Cast.EQUAL, Cast.LEFT_BRACKET, Cast.UNARY} },
             { Cast.NUMBER, new List<Cast>(){ Cast.NUMBER, Cast.BINARY, Cast.EQUAL, Cast.RIGHT_BRACKET, Cast.CLEAR, Cast.CLEAR_ERROR, Cast.BACKSPACE, Cast.UNARY } },
             { Cast.BINARY, new List<Cast>(){ Cast.NUMBER, Cast.BINARY, Cast.LEFT_BRACKET, Cast.CLEAR } },
             { Cast.EQUAL, new List<Cast>(){ Cast.NUMBER, Cast.LEFT_BRACKET, Cast.CLEAR } }, //暫不支援直接接上BINARY

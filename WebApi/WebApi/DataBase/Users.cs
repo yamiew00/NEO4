@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using WebApi.Models;
+using WebApi.Models.Response;
 using WebApi.NewThing;
 using WebApi.Objects;
 
@@ -15,28 +17,7 @@ namespace WebApi.DataBase
         /// <summary>
         /// 用戶id對運算控制的字典
         /// </summary>
-        private static Dictionary<int, ExpressionController> Dic = new Dictionary<int, ExpressionController>();
-
-        /// <summary>
-        /// 取得用戶的運算控制器
-        /// </summary>
-        /// <param name="userId">用戶id</param>
-        /// <returns>運算控制器</returns>
-        public static ExpressionController GetExpressionController(int userId)
-        {
-            if (Dic.Keys.Contains(userId))
-            {
-                return Dic[userId];
-            }
-
-            Dic.Add(userId, new ExpressionController());
-            return Dic[userId];
-        }
-
-        /// <summary>
-        /// 用戶id對運算控制的字典
-        /// </summary>
-        private static Dictionary<int, CommandCaster> Dic2 = new Dictionary<int, CommandCaster>();
+        private static Dictionary<int, CommandCaster> CasterDic = new Dictionary<int, CommandCaster>();
 
         /// <summary>
         /// 取得用戶的功能執行者
@@ -45,13 +26,35 @@ namespace WebApi.DataBase
         /// <returns>功能執行者</returns>
         public static CommandCaster GetCommandCaster(int userId)
         {
-            if (Dic2.Keys.Contains(userId))
+            if (CasterDic.Keys.Contains(userId))
             {
-                return Dic2[userId];
+                return CasterDic[userId];
             }
 
-            Dic2.Add(userId, new CommandCaster());
-            return Dic2[userId];
+            CasterDic.Add(userId, new CommandCaster());
+            return CasterDic[userId];
+        }
+
+        private static Dictionary<int, FrameAttribute> FrameDic = new Dictionary<int, FrameAttribute>();
+
+        public static FrameAttribute GetFrameAttribute(int userId)
+        {
+            if (FrameDic.Keys.Contains(userId)){
+                return FrameDic[userId];
+            }
+
+            FrameDic.Add(userId, new FrameAttribute());
+            return FrameDic[userId];
+        }
+
+        public static void SetFrameAttribute(int userId, FrameAttribute frameAttribute)
+        {
+            if (!FrameDic.Keys.Contains(userId))
+            {
+                throw new Exception("無此用戶");
+            }
+
+            FrameDic[userId] = frameAttribute;
         }
     }
 }

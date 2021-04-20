@@ -177,7 +177,7 @@
             this.ButtonAdd.Size = new System.Drawing.Size(70, 74);
             this.ButtonAdd.TabIndex = 17;
             this.ButtonAdd.TabStop = false;
-            this.ButtonAdd.Tag = "Operator";
+            this.ButtonAdd.Tag = "Binary";
             this.ButtonAdd.Text = "+";
             this.ButtonAdd.UseVisualStyleBackColor = true;
             this.ButtonAdd.Click += new System.EventHandler(this.All_Button_Click);
@@ -199,7 +199,7 @@
             this.ButtonMinus.Name = "ButtonMinus";
             this.ButtonMinus.Size = new System.Drawing.Size(70, 74);
             this.ButtonMinus.TabIndex = 19;
-            this.ButtonMinus.Tag = "Operator";
+            this.ButtonMinus.Tag = "Binary";
             this.ButtonMinus.Text = "-";
             this.ButtonMinus.UseVisualStyleBackColor = true;
             this.ButtonMinus.Click += new System.EventHandler(this.All_Button_Click);
@@ -211,7 +211,7 @@
             this.ButtonMultiply.Name = "ButtonMultiply";
             this.ButtonMultiply.Size = new System.Drawing.Size(70, 74);
             this.ButtonMultiply.TabIndex = 20;
-            this.ButtonMultiply.Tag = "Operator";
+            this.ButtonMultiply.Tag = "Binary";
             this.ButtonMultiply.Text = "x";
             this.ButtonMultiply.UseVisualStyleBackColor = true;
             this.ButtonMultiply.Click += new System.EventHandler(this.All_Button_Click);
@@ -327,7 +327,7 @@
             this.ButtonDivide.Name = "ButtonDivide";
             this.ButtonDivide.Size = new System.Drawing.Size(70, 74);
             this.ButtonDivide.TabIndex = 29;
-            this.ButtonDivide.Tag = "Operator";
+            this.ButtonDivide.Tag = "Binary";
             this.ButtonDivide.Text = "÷";
             this.ButtonDivide.UseVisualStyleBackColor = true;
             this.ButtonDivide.Click += new System.EventHandler(this.All_Button_Click);

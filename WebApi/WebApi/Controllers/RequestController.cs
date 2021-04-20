@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using WebApi.Extensions;
 using WebApi.Models.Response;
 using WebApi.Exceptions;
+using WebApi.Models.Request;
 
 namespace WebApi.Controllers
 {
@@ -258,6 +259,15 @@ namespace WebApi.Controllers
                 return successResponse;
             });
             return Ok(response.ToJson<UnaryResponse>());
+        }
+
+        public IHttpActionResult PostIntegrate(int userId)
+        {
+            Integrated integrated = Request.Content.ReadAsAsync<Integrated>().Result;
+            var response = Features.ActionDic[integrated.Feature].Invoke(integrated.Content, userId);
+            var json = response.ToJson<FrameResponse>();
+            return Ok(json);
+            
         }
     }
 }

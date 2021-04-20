@@ -11,7 +11,7 @@ namespace WebApi.Models.Response
     public class Status
     {
         /// <summary>
-        /// 狀態碼
+        /// 狀態碼 400...
         /// </summary>
         public int Code { get; private set; }
         

@@ -6,6 +6,7 @@ using Calculator.News;
 using Calculator.Exceptions;
 using System.Configuration;
 using Calculator.Setting;
+using Calculator.Networks.Request;
 
 namespace Calculator
 {
@@ -29,6 +30,12 @@ namespace Calculator
 
             //更新UserId
             Global.UpdateUserId();
+
+            //測試
+            Task.Run(async () =>
+            {
+                await NetworkController.Instance.Request(null);
+            });
         }
 
         /// <summary>
@@ -44,7 +51,15 @@ namespace Calculator
             var tag = button.Tag.ToString();
 
             //畫面更新
-            UpdateFrame(tag, text);
+            //UpdateFrame(tag, text);
+
+            //新
+            Bond bond = new Bond(feature: tag, content: Convert.ToChar(text));
+            Task.Run(async () => 
+            {
+                await NetworkController.Instance.Request(bond);
+            });
+            
         }
 
         /// <summary>
@@ -58,18 +73,18 @@ namespace Calculator
             if (tag.Equals("Number"))
             {
                 var update = await NetworkController.Instance.NumberRequest(Convert.ToChar(text));
+
                 string updateString = update.UpdateString;
                 int removeLength = (update.RemoveLength >= 0) ? update.RemoveLength : TextBoxPanel.Text.Length;
-                RemoveText(TextBoxPanel, removeLength);
-                AppendText(TextBoxPanel, updateString);
+                UpdatePanel(TextBoxPanel, removeLength, updateString);
             }
             else if (tag.Equals("Operator"))
             {
                 var update = await NetworkController.Instance.BinaryRequest(Convert.ToChar(text));
+
                 string updateString = update.UpdateString;
                 int removeLength = update.RemoveLength;
-                RemoveText(TextBoxPanel, removeLength);
-                AppendText(TextBoxPanel, updateString);
+                UpdatePanel(TextBoxPanel, removeLength, updateString);
             }
             else if (tag.Equals("Equal"))
             {
@@ -126,16 +141,15 @@ namespace Calculator
             else if (tag.Equals("ClearError"))
             {
                 var update = await NetworkController.Instance.ClearErrorRequest();
-                RemoveText(TextBoxPanel, update.RemoveLength);
-                AppendText(TextBoxPanel, "0");
+                
+                UpdatePanel(TextBoxPanel, update.RemoveLength, "0");
             }
             else if (tag.Equals("BackSpace"))
             {
                 var update = await NetworkController.Instance.BackSpaceRequest();
                 int removeLength = update.RemoveLength;
                 string updateString = update.UpdateString;
-                RemoveText(TextBoxPanel, removeLength);
-                AppendText(TextBoxPanel, updateString);
+                UpdatePanel(TextBoxPanel, removeLength, updateString);
             }
             else if (tag.Equals("Unary"))
             {
@@ -144,8 +158,7 @@ namespace Calculator
                     var update = await NetworkController.Instance.UnaryRequest(Convert.ToChar(text));
                     int removeLength = update.RemoveLength;
                     string updateString = update.UpdateString;
-                    RemoveText(TextBoxPanel, removeLength);
-                    AppendText(TextBoxPanel, updateString);
+                    UpdatePanel(TextBoxPanel, removeLength, updateString);
                 }
                 catch (Exception exception)
                 {
@@ -155,6 +168,12 @@ namespace Calculator
                     }
                 }
             }
+        }
+
+        private void UpdatePanel(TextBox textBox, int removeLength, string updateString)
+        {
+            RemoveText(textBox, removeLength);
+            AppendText(textBox, updateString);
         }
 
         /// <summary>

@@ -11,6 +11,7 @@ using Calculator.News.JsonRequest;
 using Calculator.News.JsonResponse;
 using System.Windows.Forms;
 using Calculator.Exceptions;
+using Calculator.Networks.Request;
 
 namespace Calculator.News
 {
@@ -350,6 +351,26 @@ namespace Calculator.News
                 }
                 throw;
             }
+        }
+
+
+        //新的
+        public async Task Request(Bond bond)
+        {
+            var uri = Path("/api/integrated/" + Global.USER_ID);
+            string jsonString = bond.ToJson<Bond>();
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(uri),
+                Content = new StringContent(jsonString, Encoding.UTF8, JSON_MEDIA_TYPE)
+            };
+
+            var response = await Client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
         }
     }
 }

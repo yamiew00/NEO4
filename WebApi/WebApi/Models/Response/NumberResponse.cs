@@ -30,7 +30,6 @@ namespace WebApi.Models.Response
         public NumberResponse()
         {
         }
-
-
+        
     }
 }

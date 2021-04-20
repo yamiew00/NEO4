@@ -79,6 +79,13 @@ namespace WebApi
                 routeTemplate: "api/unary/{userIdWithUnary}",
                 defaults: new { controller = "Request", userIdWithUnary = RouteParameter.Optional }
             );
+
+            //新
+            config.Routes.MapHttpRoute(
+                name: "Post, 整合",
+                routeTemplate: "api/integrated/{userId}",
+                defaults: new { controller = "Request", userId = RouteParameter.Optional }
+            );
         }
     }
 }

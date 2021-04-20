@@ -13,6 +13,10 @@
         /// <returns>Json格式的字串</returns>
         public static string ToJson<T>(this T someObject)
         {
+            if (someObject == null)
+            {
+                return string.Empty;
+            }
             return Newtonsoft.Json.JsonConvert.SerializeObject(someObject);
         }
     }
