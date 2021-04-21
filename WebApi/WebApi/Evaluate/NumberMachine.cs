@@ -17,7 +17,7 @@ namespace WebApi.NewThing
         /// <summary>
         /// 表示式控制器
         /// </summary>
-        private ExpressionController ExpController;
+        private ExpressionTreeManager ExpController;
 
         /// <summary>
         /// 數字物件
@@ -45,7 +45,7 @@ namespace WebApi.NewThing
         /// </summary>
         public NumberMachine()
         {
-            ExpController = new ExpressionController();
+            ExpController = new ExpressionTreeManager();
         }
 
         /// <summary>
@@ -458,8 +458,15 @@ namespace WebApi.NewThing
                 ExpController.Add(NumberField.Number.Value);
                 NumberField = null;
             }
-            //return new EqualResponse(new Updates(removeLength: 0, updateString: "="), answer: ExpController.GetResult());
-            return new EqualUpdate(ExpController.GetResult().ToString(), new Updates(removeLength: 0, updateString: "="));
+
+            var result = ExpController.TryGetResult();
+            var updateString = string.Empty;
+            for (int i = 0; i < result.extraRightBracket; i++)
+            {
+                updateString += ")";
+            }
+            var ans = result.answer;
+            return new EqualUpdate(ans.ToString(), new Updates(removeLength: 0, updateString: updateString));
         }
 
         /// <summary>

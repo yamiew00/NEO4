@@ -52,7 +52,8 @@ namespace WebApi.Setting
                 {
                     //content用不到?
                     ContentController contentController = new ContentController(userId);
-                    return contentController.LeftBracket();
+                    var response = contentController.LeftBracket();
+                    return response;
                 }
             },
             {

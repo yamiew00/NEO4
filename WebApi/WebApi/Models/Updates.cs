@@ -10,6 +10,8 @@ namespace WebApi.Models.Response
     /// </summary>
     public class Updates
     {
+        public static readonly int REMOVE_ALL = -1;
+
         /// <summary>
         /// 要往前移除的長度
         /// </summary>
@@ -41,6 +43,12 @@ namespace WebApi.Models.Response
             if (str == null)
             {
                 str = string.Empty;
+            }
+
+            //-1代表
+            if (RemoveLength == REMOVE_ALL)
+            {
+                RemoveLength = str.Length;
             }
 
             //remove

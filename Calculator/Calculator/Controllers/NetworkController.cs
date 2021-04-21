@@ -12,6 +12,7 @@ using Calculator.News.JsonResponse;
 using System.Windows.Forms;
 using Calculator.Exceptions;
 using Calculator.Networks.Request;
+using Calculator.Networks;
 
 namespace Calculator.News
 {
@@ -355,9 +356,12 @@ namespace Calculator.News
 
 
         //新的
-        public async Task Request(Bond bond)
+        public async Task<Response> Request(Bond bond)
         {
             var uri = Path("/api/integrated/" + Global.USER_ID);
+            Console.WriteLine("Feature = " + bond.Feature);
+            Console.WriteLine("Content = " + bond.Content);
+            Console.WriteLine($"uri = {uri}");
             string jsonString = bond.ToJson<Bond>();
 
             var request = new HttpRequestMessage
@@ -370,7 +374,11 @@ namespace Calculator.News
             var response = await Client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
-            Console.WriteLine(await response.Content.ReadAsStringAsync());
+            var a = await response.Content.ReadAsAsync<Response>();
+            Console.WriteLine("panel = " + a.Panel);
+
+            return a;
+            
         }
     }
 }

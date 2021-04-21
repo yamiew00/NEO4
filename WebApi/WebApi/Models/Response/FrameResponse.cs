@@ -15,5 +15,11 @@ namespace WebApi.Models.Response
             SubPanel = string.Empty;
             Panel = string.Empty;
         }
+
+        public FrameResponse(string subPanel, string panel)
+        {
+            SubPanel = subPanel;
+            Panel = panel;
+        }
     }
 }

@@ -71,6 +71,7 @@
     <Compile Include="Networks\JsonResponse\Update.cs" />
     <Compile Include="Controllers\NetworkController.cs" />
     <Compile Include="Networks\Request\Bond.cs" />
+    <Compile Include="Networks\Response.cs" />
     <Compile Include="Setting\Global.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

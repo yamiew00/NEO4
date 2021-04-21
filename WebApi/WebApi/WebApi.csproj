@@ -89,6 +89,7 @@
     <Compile Include="Controllers\RequestController.cs" />
     <Compile Include="DataBase\Users.cs" />
     <Compile Include="Evaluate\NumberMachine.cs" />
+    <Compile Include="Evaluate\Result.cs" />
     <Compile Include="Exceptions\OrderException.cs" />
     <Compile Include="Extensions\Jsons.cs" />
     <Compile Include="Global.asax.cs">
@@ -104,7 +105,7 @@
     <Compile Include="Evaluate\Evaluator.cs" />
     <Compile Include="Evaluate\ExpressionTree.cs" />
     <Compile Include="Evaluate\Node.cs" />
-    <Compile Include="Controllers\ExpressionController.cs" />
+    <Compile Include="Evaluate\ExpressionTreeManager.cs" />
     <Compile Include="Evaluate\Operators\UnaryOperator.cs" />
     <Compile Include="Models\Response\BackSpaceResponse.cs" />
     <Compile Include="Models\Response\BinaryResponse.cs" />
@@ -124,7 +125,7 @@
     <Compile Include="Evaluate\CommandCaster.cs" />
     <Compile Include="Evaluate\Number.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Setting\CastRule.cs" />
+    <Compile Include="Setting\FeatureRule.cs" />
     <Compile Include="Setting\Features.cs" />
     <Compile Include="Setting\Operators.cs" />
   </ItemGroup>

@@ -23,19 +23,14 @@ namespace Calculator
             InitializeComponent();
             
             //連線初始化
-            Task.Run(async () =>
-            {
-                await NetworkController.Instance.InitRequest();
-            });
+            //Task.Run(async () =>
+            //{
+            //    await NetworkController.Instance.InitRequest();
+            //});
 
             //更新UserId
             Global.UpdateUserId();
-
-            //測試
-            Task.Run(async () =>
-            {
-                await NetworkController.Instance.Request(null);
-            });
+            
         }
 
         /// <summary>
@@ -43,7 +38,7 @@ namespace Calculator
         /// </summary>
         /// <param name="sender">按鈕</param>
         /// <param name="e">點擊事件</param>
-        private void All_Button_Click(object sender, EventArgs e)
+        private async void All_Button_Click(object sender, EventArgs e)
         {
             //按鈕相關屬性
             var button = (Button)sender;
@@ -55,10 +50,11 @@ namespace Calculator
 
             //新
             Bond bond = new Bond(feature: tag, content: Convert.ToChar(text));
-            Task.Run(async () => 
-            {
-                await NetworkController.Instance.Request(bond);
-            });
+
+            var response = await NetworkController.Instance.Request(bond);
+            Console.WriteLine("out panel = " + response.Panel);
+            TextBoxPanel.Text = response.Panel;
+            TextBoxSubPanel.Text = response.SubPanel;
             
         }
 
