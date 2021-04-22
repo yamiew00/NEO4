@@ -17,12 +17,29 @@ namespace WebApi.Objects
         /// <returns>運算答案</returns>
         public decimal EvaluateTree(ExpressionTree tree)
         {
+            System.Diagnostics.Debug.WriteLine($"there 11");
             Node top = tree.GetTop();
             if (top.NodeValue.Number.HasValue)
             {
                 return top.NodeValue.Number.Value;
             }
             decimal ans = PackNode(top).NodeValue.Number.Value;
+            return ans;
+        }
+
+        public decimal EvaluateTest(Node topNode)
+        {
+            System.Diagnostics.Debug.WriteLine($"inner, topnode == null is {topNode == null}");
+            System.Diagnostics.Debug.WriteLine($"inner, topnode.IsOperator is {topNode.IsOperator()}");
+            System.Diagnostics.Debug.WriteLine($"inner, topnode.IsNumber is {topNode.NodeValue.Number.HasValue}");
+
+            System.Diagnostics.Debug.WriteLine($"//////////////////////////////////////");
+            if (topNode.NodeValue.Number.HasValue)
+            {
+                return topNode.NodeValue.Number.Value;
+            }
+            decimal ans = PackNode(topNode).NodeValue.Number.Value;
+            System.Diagnostics.Debug.WriteLine($"getAns");
             return ans;
         }
 
@@ -33,6 +50,19 @@ namespace WebApi.Objects
         /// <returns></returns>
         public Node PackNode(Node node)
         {
+            System.Diagnostics.Debug.WriteLine($"inner, node.IsOperator :  {node.IsOperator()}");
+
+            System.Diagnostics.Debug.WriteLine($"inner, node.LeftNode is null :  {node.LeftNode == null}");
+            System.Diagnostics.Debug.WriteLine($"inner, node.LeftNode.IsOperator:  {node.LeftNode.IsOperator()}");
+            System.Diagnostics.Debug.WriteLine($"inner, node.LeftNode.HasValue:  {node.LeftNode.NodeValue.Number.HasValue}");
+
+            System.Diagnostics.Debug.WriteLine($"inner, node.RightNode is null :  {node.RightNode == null}");
+            System.Diagnostics.Debug.WriteLine($"inner, node.RightNode.IsOperator:  {node.RightNode.IsOperator()}");
+            System.Diagnostics.Debug.WriteLine($"inner, node.RightNode.HasValue:  {node.RightNode.NodeValue.Number.HasValue}");
+
+
+
+            System.Diagnostics.Debug.WriteLine($"------------------------------------------------");
             //防呆
             if (!node.IsOperator())
             {

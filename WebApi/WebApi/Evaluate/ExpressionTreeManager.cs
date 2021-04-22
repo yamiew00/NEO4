@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using WebApi.Evaluate;
+using WebApi.Exceptions;
 
 namespace WebApi.Objects
 {
@@ -72,30 +73,15 @@ namespace WebApi.Objects
         /// </summary>
         public void RightBracket()
         {
+            if (TreeStack.Count <= 1)
+            {
+                throw new BracketException("右括號數量過多");
+            }
             var subTree = TreeStack.Pop();
 
             TreeStack.Peek().Add(subTree);
         }
-
-        /// <summary>
-        /// 運算出答案
-        /// </summary>
-        /// <returns></returns>
-        public decimal GetResult()
-        {
-            //如果stack中還存在子樹，則必定有誤。
-            if (TreeStack.Count == 1)
-            {
-                //算完就pop
-                var answer = Evaluator.EvaluateTree(TreeStack.Pop());
-                TreeStack.Push(new ExpressionTree());
-                return answer;
-            }
-            else
-            {
-                throw new Exception("計算無效");
-            }
-        }
+        
 
         public Result TryGetResult()
         {
@@ -106,7 +92,7 @@ namespace WebApi.Objects
                 TreeStack.Push(new ExpressionTree());
                 return new Result(answer, 0);
             }
-            else if (TreeStack.Count >= 1)
+            else if (TreeStack.Count > 1)
             {
                 int extraRightBracket = 0;
                 //這裡不用tmp嗎，再想想
@@ -117,8 +103,32 @@ namespace WebApi.Objects
                     TreeStack.Peek().Add(subTree);
                     extraRightBracket++;
                 }
+                var ans = Evaluator.EvaluateTree(TreeStack.Pop());
+                TreeStack.Push(new ExpressionTree());
+                return new Result(ans, extraRightBracket);
+            }
+            else
+            {
+                throw new Exception("資料有誤");
+            }
+        }
+
+        //多count的狀況應該會錯
+        public decimal TryGetTmpResult()
+        {
+            //暫時計算的結果只需要到第一層
+            if (TreeStack.Count > 0)
+            {
+                //算完就pop
+                var cloneTree = TreeUtils.CloneTree(TreeStack.Peek());
+                var ans = Evaluator.EvaluateTree(cloneTree);
+
                 
-                return new Result(Evaluator.EvaluateTree(TreeStack.Pop()), extraRightBracket);
+                return ans;
+            }
+            else if (TreeStack.Count == 0)
+            {
+                return 0;
             }
             else
             {

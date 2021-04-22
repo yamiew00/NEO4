@@ -90,11 +90,16 @@
     <Compile Include="DataBase\Users.cs" />
     <Compile Include="Evaluate\NumberMachine.cs" />
     <Compile Include="Evaluate\Result.cs" />
+    <Compile Include="Evaluate\TreeUtils.cs" />
+    <Compile Include="Exceptions\BracketException.cs" />
     <Compile Include="Exceptions\OrderException.cs" />
+    <Compile Include="Exceptions\SquareRootException.cs" />
+    <Compile Include="Exceptions\TooLongDigitException.cs" />
     <Compile Include="Extensions\Jsons.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\BinaryUpdate.cs" />
     <Compile Include="Models\EqualUpdate.cs" />
     <Compile Include="Models\FrameAttribute.cs" />
     <Compile Include="Models\NumberUpdate.cs" />
@@ -119,6 +124,7 @@
     <Compile Include="Models\Response\Status.cs" />
     <Compile Include="Models\Response\StatusMessage.cs" />
     <Compile Include="Models\Response\UnaryResponse.cs" />
+    <Compile Include="Models\RightBracketUpdate.cs" />
     <Compile Include="Models\UnaryUpdate.cs" />
     <Compile Include="Models\Updates.cs" />
     <Compile Include="Models\Request\UnaryRequest.cs" />
@@ -127,6 +133,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setting\FeatureRule.cs" />
     <Compile Include="Setting\Features.cs" />
+    <Compile Include="Setting\Global.cs" />
     <Compile Include="Setting\Operators.cs" />
   </ItemGroup>
   <ItemGroup>

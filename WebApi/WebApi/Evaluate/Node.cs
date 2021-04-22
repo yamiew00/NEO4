@@ -140,6 +140,10 @@ namespace WebApi.Objects
             /// <returns>建造者實體</returns>
             public Builder SetOperator(BinaryOperator Operator)
             {
+                if (Operator == null)
+                {
+                    return this;
+                }
                 this.Value = new Value(Operator);
                 return this;
             }
@@ -151,6 +155,10 @@ namespace WebApi.Objects
             /// <returns>建造者實體</returns>
             public Builder SetNumber(decimal? number)
             {
+                if (number == null)
+                {
+                    return this;
+                }
                 this.Value = new Value(number);
                 return this;
             }

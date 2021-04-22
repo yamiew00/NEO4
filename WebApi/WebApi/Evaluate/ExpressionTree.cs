@@ -187,5 +187,45 @@ namespace WebApi.Objects
             }
             return tmp;
         }
+
+        public Node CloneTreeTopNode()
+        {
+            var top = GetTop();
+
+            var tmpTree = new ExpressionTree();
+
+            var recursive = CloneTopNode(top);
+            return recursive;
+        }
+
+        public Node CloneTopNode(Node node)
+        {
+            var duplicateNode = Node.Build()
+                          .SetOperator(node.NodeValue.Operator)
+                          .SetNumber(node.NodeValue.Number)
+                          .Exec();
+
+            if (node.LeftNode != null)
+            {
+                var tmpLeftNode =  Node.Build()
+                                       .SetOperator(node.LeftNode.NodeValue.Operator)
+                                       .SetNumber(node.LeftNode.NodeValue.Number)
+                                       .SetParentNode(duplicateNode)
+                                       .Exec();
+                duplicateNode.LeftNode = CloneTopNode(tmpLeftNode);
+            }
+            
+            if (node.RightNode != null)
+            {
+                var tmpRightNode = Node.Build()
+                                       .SetOperator(node.LeftNode.NodeValue.Operator)
+                                       .SetNumber(node.LeftNode.NodeValue.Number)
+                                       .SetParentNode(duplicateNode)
+                                       .Exec();
+                duplicateNode.RightNode = CloneTopNode(tmpRightNode);
+            }
+
+            return duplicateNode;
+        }
     }
 }

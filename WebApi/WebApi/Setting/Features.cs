@@ -16,77 +16,59 @@ namespace WebApi.Setting
             {
                 "Number", (content, userId) =>
                 {
-                    //拿到該用戶的caster
-                    //CommandCaster commandCaster = Users.GetCommandCaster(userId);
-                    //commandCaster.AddNumber(content);
-                    ContentController contentController = new ContentController(userId);
-                    return contentController.AddNumber(content);
+                    return Users.GetContentController(userId).AddNumber(content);
                 }
             },
             {
                 "Binary", (content, userId) =>
                 {
                     //連續Binary時要計算結果還沒做
-                    ContentController contentController = new ContentController(userId);
-                    return contentController.AddBinary(content);
+                    return Users.GetContentController(userId).AddBinary(content);
                 }
             },
             {
                 "Unary", (content, userId) =>
                 {
                     //對負數做根號的處理還沒做
-                    ContentController contentController = new ContentController(userId);
-                    return contentController.AddUnary(content);
+                    return Users.GetContentController(userId).AddUnary(content);
                 }
             },
             {
                 "Equal", (content, userId) =>
                 {
-                    //content用不到?
-                    ContentController contentController = new ContentController(userId);
-                    return contentController.Equal();
+                    return Users.GetContentController(userId).Equal();
                 }
             },
             {
                 "LeftBracket", (content, userId) =>
                 {
-                    //content用不到?
-                    ContentController contentController = new ContentController(userId);
-                    var response = contentController.LeftBracket();
-                    return response;
+                    return Users.GetContentController(userId).LeftBracket();
                 }
             },
             {
                 "RightBracket", (content, userId) =>
                 {
-                    //content用不到?
-                    ContentController contentController = new ContentController(userId);
-                    return contentController.RightBracket();
+                    //右括號之後要計算當前答案還沒有做
+                    return Users.GetContentController(userId).RightBracket();
                 }
             },
             {
                 //Clear的Cast就是null?
                 "Clear", (content, userId) =>
                 {
-                    //content用不到?
-                    ContentController contentController = new ContentController(userId);
-                    return contentController.Clear();
+                    return Users.GetContentController(userId).Clear();
                 }
             },
             {
                 "ClearError", (content, userId) =>
                 {
-                    //content用不到?
-                    ContentController contentController = new ContentController(userId);
-                    return contentController.ClearError();
+                    return Users.GetContentController(userId).ClearError();
                 }
             },
             {
                 "BackSpace", (content, userId) =>
                 {
-                    //content用不到?
-                    ContentController contentController = new ContentController(userId);
-                    return contentController.BackSpace();
+                    return Users.GetContentController(userId).BackSpace();
                 }
             }
         };

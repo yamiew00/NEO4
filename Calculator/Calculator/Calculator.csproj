@@ -53,22 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Exceptions\Exception400.cs" />
     <Compile Include="Extensions\ToJsons.cs" />
-    <Compile Include="Networks\JsonRequest\RequestBinaryJson.cs" />
-    <Compile Include="Networks\JsonRequest\RequestNumberJson.cs" />
-    <Compile Include="Networks\JsonRequest\RequestUnaryJson.cs" />
-    <Compile Include="Networks\JsonResponse\ResponseBackSpace.cs" />
-    <Compile Include="Networks\JsonResponse\ResponseBinaryJson.cs" />
-    <Compile Include="Networks\JsonResponse\ResponseClearError.cs" />
-    <Compile Include="Networks\JsonResponse\ResponseClear.cs" />
-    <Compile Include="Networks\JsonResponse\ResponseEqual.cs" />
-    <Compile Include="Networks\JsonResponse\ResponseLeftBracket.cs" />
-    <Compile Include="Networks\JsonResponse\ResponseNumber.cs" />
-    <Compile Include="Networks\JsonResponse\ResponseRightBracket.cs" />
-    <Compile Include="Networks\JsonResponse\ResponseUnaryJson.cs" />
-    <Compile Include="Networks\JsonResponse\Status.cs" />
-    <Compile Include="Networks\JsonResponse\Update.cs" />
     <Compile Include="Controllers\NetworkController.cs" />
     <Compile Include="Networks\Request\Bond.cs" />
     <Compile Include="Networks\Response.cs" />

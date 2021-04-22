@@ -12,17 +12,25 @@ namespace WebApi.Controllers
 {
     public class ContentController
     {
-        //這個controller之後要做成用戶專屬
-
+        
         CommandCaster CommandCaster;
 
-        public int UserId;
+        //public int UserId;
 
-        public ContentController(int userId)
+        public ContentController()
         {
-            CommandCaster = Users.GetCommandCaster(userId);
-            UserId = userId;
+            CommandCaster = new CommandCaster();
+            FrameResponse = new FrameResponse();
+            completeExpression = string.Empty;
+            //UserId = userId;
         }
+
+
+        //搬屬性
+        //private FrameAttribute FrameAttribute;
+        private FrameResponse FrameResponse;
+        private string completeExpression;
+
 
         //只要catch到OrderException→直接回傳現有畫面
         private FrameResponse CatchException(Func<FrameResponse> func)
@@ -36,47 +44,65 @@ namespace WebApi.Controllers
                 if (exception is OrderException)
                 {
                     //發生OrderException→畫面維持原狀
-                    return Users.GetFrameAttribute(UserId).FrameResponse;
+                    return FrameResponse;
+                }
+                else if (exception is BracketException)
+                {
+                    //寫在這裡好嗎
+                    //發生BracketException→畫面維持原狀
+                    return FrameResponse;
+                }
+                else if (exception is TooLongDigitException)
+                {
+                    //寫在這裡好嗎
+                    //發生BracketException→畫面維持原狀
+                    return FrameResponse;
                 }
                 else if (exception.Message.Equals("嘗試以零除。"))
                 {
-                    var subpanel = Users.GetFrameAttribute(UserId).FrameResponse.SubPanel;
+                    var subpanel = FrameResponse.SubPanel;
                     //清除
-                    CommandCaster.NewClear();
-                    Users.SetFrameAttribute(UserId, new FrameAttribute());
-                    
+                    CommandCaster.Clear();
+                    FrameResponse = new FrameResponse();
+                    completeExpression = string.Empty;
+
                     return new FrameResponse(panel: "無法除以零。", subPanel: subpanel);
+                }
+                else if (exception is SquareRootException)
+                {
+                    //寫在這裡好嗎
+                    var subpanel = FrameResponse.SubPanel;
+
+                    //清除
+                    CommandCaster.Clear();
+                    FrameResponse = new FrameResponse();
+                    completeExpression = string.Empty;
+
+                    return new FrameResponse(panel: exception.Message, subPanel: subpanel);
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine(exception.Message.Equals("嘗試以零除。"));
                     throw new Exception("未處理狀況:" + exception.Message);
-                    
                 }
             }
         }
 
         public FrameResponse AddNumber(char content)
         {
-            return CatchException(() => 
+            return CatchException(() =>
             {
-                var numberUpdate = CommandCaster.NewAddNumber(content);
+                var numberUpdate = CommandCaster.AddNumber(content);
 
                 var numberString = numberUpdate.NumberString;
 
                 //完整運算式的刷新
-                var completeExpression = Users.GetFrameAttribute(UserId).CompleteExpression;
-                var newExpression = numberUpdate.Refresh(completeExpression);
+                completeExpression = numberUpdate.Refresh(completeExpression);
 
                 //panel, subpanel設定
-                var newFrameResponse = Users.GetFrameAttribute(UserId).FrameResponse;
-                newFrameResponse.Panel = numberString;
-                newFrameResponse.SubPanel = newExpression.Substring(0, newExpression.Length - numberString.Length);
+                FrameResponse.Panel = numberString;
+                FrameResponse.SubPanel = completeExpression.Substring(0, completeExpression.Length - numberString.Length);
 
-                //更新用戶資料
-                Users.SetFrameAttribute(UserId, new FrameAttribute(newFrameResponse, newExpression));
-
-                return Users.GetFrameAttribute(UserId).FrameResponse;
+                return FrameResponse;
             });
         }
 
@@ -85,20 +111,16 @@ namespace WebApi.Controllers
         {
             return CatchException(() =>
             {
-                var update = CommandCaster.NewAddBinary(content);
+                var update = CommandCaster.AddBinary(content);
 
                 //完整運算式的刷新
-                var completeExpression = Users.GetFrameAttribute(UserId).CompleteExpression;
-                var newExpression = update.Refresh(completeExpression);
+                completeExpression = update.Refresh(completeExpression);
 
                 //panel, subpanel設定
-                var newFrameResponse = Users.GetFrameAttribute(UserId).FrameResponse;
-                newFrameResponse.SubPanel = newExpression;
+                FrameResponse.SubPanel = completeExpression;
+                FrameResponse.Panel = ((BinaryUpdate)update).NumberString;
 
-                //更新用戶資料
-                Users.SetFrameAttribute(UserId, new FrameAttribute(newFrameResponse, newExpression));
-
-                return Users.GetFrameAttribute(UserId).FrameResponse;
+                return FrameResponse;
             });
         }
 
@@ -107,21 +129,16 @@ namespace WebApi.Controllers
         {
             return CatchException(() =>
             {
-                var update = CommandCaster.NewAddUnary(content);
+                var update = CommandCaster.AddUnary(content);
 
                 //完整運算式的刷新
-                var completeExpression = Users.GetFrameAttribute(UserId).CompleteExpression;
-                var newExpression = update.Refresh(completeExpression);
+                completeExpression = update.Refresh(completeExpression);
 
                 //panel, subpanel設定
-                var newFrameResponse = Users.GetFrameAttribute(UserId).FrameResponse;
-                newFrameResponse.SubPanel = newExpression;
-                newFrameResponse.Panel = update.NumberString;
-
-                //更新用戶資料
-                Users.SetFrameAttribute(UserId, new FrameAttribute(newFrameResponse, newExpression));
-
-                return Users.GetFrameAttribute(UserId).FrameResponse;
+                FrameResponse.SubPanel = completeExpression;
+                FrameResponse.Panel = update.NumberString;
+                
+                return FrameResponse;
             });
         }
         
@@ -130,21 +147,16 @@ namespace WebApi.Controllers
         {
             return CatchException(() =>
             {
-                var update = CommandCaster.NewEqual();
+                var update = CommandCaster.Equal();
 
                 //完整運算式的刷新
-                var completeExpression = Users.GetFrameAttribute(UserId).CompleteExpression;
-                var newExpression = update.Refresh(completeExpression);
+                completeExpression = update.Refresh(completeExpression);
 
                 //panel, subpanel設定
-                var newFrameResponse = Users.GetFrameAttribute(UserId).FrameResponse;
-                newFrameResponse.SubPanel = newExpression;
-                newFrameResponse.Panel = update.NumberString;
-
-                //更新用戶資料
-                Users.SetFrameAttribute(UserId, new FrameAttribute(newFrameResponse, newExpression));
-
-                return Users.GetFrameAttribute(UserId).FrameResponse;
+                FrameResponse.SubPanel = completeExpression;
+                FrameResponse.Panel = update.NumberString;
+                
+                return FrameResponse;
             });
         }
 
@@ -152,19 +164,16 @@ namespace WebApi.Controllers
         {
             return CatchException(() =>
             {
-                var update = CommandCaster.NewLeftBracket();
+                var update = CommandCaster.LeftBracket();
+
                 //完整運算式的刷新
-                var completeExpression = Users.GetFrameAttribute(UserId).CompleteExpression;
-                var newExpression = update.Refresh(completeExpression);
+                completeExpression = update.Refresh(completeExpression);
 
                 //panel, subpanel設定。subpanel強制給0
-                var newFrameResponse = Users.GetFrameAttribute(UserId).FrameResponse;
-                newFrameResponse.SubPanel = newExpression;
-                newFrameResponse.Panel = "0";
-                //更新用戶資料
-                Users.SetFrameAttribute(UserId, new FrameAttribute(newFrameResponse, newExpression));
+                FrameResponse.SubPanel = completeExpression;
+                FrameResponse.Panel = "0";
                 
-                return Users.GetFrameAttribute(UserId).FrameResponse;
+                return FrameResponse;
             });
         }
 
@@ -173,20 +182,16 @@ namespace WebApi.Controllers
         {
             return CatchException(() =>
             {
-                var update = CommandCaster.NewRightBracket();
+                var update = CommandCaster.RightBracket();
 
                 //完整運算式的刷新
-                var completeExpression = Users.GetFrameAttribute(UserId).CompleteExpression;
-                var newExpression = update.Refresh(completeExpression);
+                completeExpression = update.Refresh(completeExpression);
 
                 //panel, subpanel設定。
-                var newFrameResponse = Users.GetFrameAttribute(UserId).FrameResponse;
-                newFrameResponse.SubPanel = newExpression;
-
-                //更新用戶資料
-                Users.SetFrameAttribute(UserId, new FrameAttribute(newFrameResponse, newExpression));
-
-                return Users.GetFrameAttribute(UserId).FrameResponse;
+                FrameResponse.SubPanel = completeExpression;
+                FrameResponse.Panel = update.NumberString;
+                
+                return FrameResponse;
             });
         }
 
@@ -194,21 +199,16 @@ namespace WebApi.Controllers
         {
             return CatchException(() =>
             {
-                CommandCaster.NewClear();
+                CommandCaster.Clear();
 
                 //完整運算式的刷新
-                var completeExpression = Users.GetFrameAttribute(UserId).CompleteExpression;
-                var newExpression = string.Empty;
+                completeExpression = string.Empty;
 
                 //panel, subpanel設定。
-                var newFrameResponse = Users.GetFrameAttribute(UserId).FrameResponse;
-                newFrameResponse.SubPanel = newExpression;
-                newFrameResponse.Panel = "0";
-
-                //更新用戶資料
-                Users.SetFrameAttribute(UserId, new FrameAttribute(newFrameResponse, newExpression));
-
-                return Users.GetFrameAttribute(UserId).FrameResponse;
+                FrameResponse.SubPanel = completeExpression;
+                FrameResponse.Panel = "0";
+                
+                return FrameResponse;
             });
         }
 
@@ -216,21 +216,16 @@ namespace WebApi.Controllers
         {
             return CatchException(() =>
             {
-                var update = CommandCaster.NewClearError();
+                var update = CommandCaster.ClearError();
 
                 //完整運算式的刷新
-                var completeExpression = Users.GetFrameAttribute(UserId).CompleteExpression;
-                var newExpression = update.Refresh(completeExpression);
+                completeExpression = update.Refresh(completeExpression);
 
                 //panel, subpanel設定。
-                var newFrameResponse = Users.GetFrameAttribute(UserId).FrameResponse;
-                newFrameResponse.SubPanel = newExpression;
-                newFrameResponse.Panel = "0";
-
-                //更新用戶資料
-                Users.SetFrameAttribute(UserId, new FrameAttribute(newFrameResponse, newExpression));
-
-                return Users.GetFrameAttribute(UserId).FrameResponse;
+                FrameResponse.SubPanel = completeExpression;
+                FrameResponse.Panel = "0";
+                
+                return FrameResponse;
             });
         }
 
@@ -238,21 +233,16 @@ namespace WebApi.Controllers
         {
             return CatchException(() =>
             {
-                var update = CommandCaster.NewBackSpace();
+                var update = CommandCaster.BackSpace();
 
                 //完整運算式的刷新
-                var completeExpression = Users.GetFrameAttribute(UserId).CompleteExpression;
-                var newExpression = update.Refresh(completeExpression);
+                completeExpression = update.Refresh(completeExpression);
 
                 //panel, subpanel設定。
-                var newFrameResponse = Users.GetFrameAttribute(UserId).FrameResponse;
-                newFrameResponse.SubPanel = newExpression;
-                newFrameResponse.Panel = update.Refresh(newFrameResponse.Panel);
-
-                //更新用戶資料
-                Users.SetFrameAttribute(UserId, new FrameAttribute(newFrameResponse, newExpression));
-
-                return Users.GetFrameAttribute(UserId).FrameResponse;
+                FrameResponse.SubPanel = completeExpression;
+                FrameResponse.Panel = update.Refresh(FrameResponse.Panel);
+                
+                return FrameResponse;
             });
         }
     }

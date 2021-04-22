@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using WebApi.Exceptions;
+using WebApi.Setting;
 
 namespace WebApi.NewThing
 {
@@ -52,7 +54,11 @@ namespace WebApi.NewThing
         /// <param name="number">一個位數</param>
         public void AddDigit(char number)
         {
-            if (number.Equals('.'))
+            if (Number.HasValue && Number.Value.ToString().Length >= Global.MAX_DIGIT_LENGTH)
+            {
+                throw new TooLongDigitException("輸入位數過長");
+            }
+            else if (number.Equals('.'))
             {
                 IsNumeric = true;
             }

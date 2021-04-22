@@ -31,18 +31,9 @@ namespace WebApi.NewThing
         public CommandCaster()
         {
             NumberMachine = new NumberMachine();
-            
+            PreviousCast = Feature.Null;
         }
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        public void Init()
-        {
-            PreviousCast = Feature.NUMBER;
-            NumberMachine.Clear();
-            NumberMachine.AddNumber('0');
-        }
+        
 
         /// <summary>
         /// 檢查previousCast→currentCast的順序是否符合規範，否則拋出例外
@@ -62,212 +53,9 @@ namespace WebApi.NewThing
                 throw new OrderException(FeatureRule.INCORRECT_ORDER_MSG);
             }
         }
-
-        /// <summary>
-        /// 檢查previousCast→currentCast的順序是否符合規範，否則拋出例外
-        /// </summary>
-        /// <param name="currentCast">當前的功能</param>
-        /// <param name="action">若順序正確，則要執行的action</param>
-        private void CheckOrder(Feature currentCast, Action action)
-        {
-            if (FeatureRule.IsTheOrderingLegit(PreviousCast, currentCast))
-            {
-                action.Invoke();
-            }
-            else
-            {
-                throw new OrderException(FeatureRule.INCORRECT_ORDER_MSG);
-            }
-        }
-
-        /// <summary>
-        /// 新增數字
-        /// </summary>
-        /// <param name="number">數字</param>
-        /// <returns>數字響應</returns>
-        public NumberResponse AddNumber(char number) 
-        {
-            Feature CurrentCast = Feature.NUMBER;
-
-            return CheckOrder<NumberResponse>(CurrentCast, () =>
-            {
-                NumberResponse successResponse;
-
-
-
-                //等號後輸入數字
-                if (PreviousCast == Feature.EQUAL)
-                {
-                    successResponse = NumberMachine.AddNumber(number);
-                    successResponse.SetStatus(999);
-                    PreviousCast = CurrentCast;
-                    return successResponse;
-                }
-                
-                //backspace或clearerror之後的數字處理
-                if ((PreviousCast == Feature.BACKSPACE || PreviousCast == Feature.CLEAR_ERROR) && NumberMachine.NumberField.Number == 0)
-                {
-                    successResponse = NumberMachine.AddNumber(number);
-                    successResponse.Update.RemoveLength += 1;
-                    //執行成功時記錄下這次的Cast
-                    PreviousCast = CurrentCast;
-                    return successResponse;
-                }
-
-                 successResponse = NumberMachine.AddNumber(number);
-                //執行成功時記錄下這次的Cast
-                PreviousCast = CurrentCast;
-                
-                return successResponse;
-            });
-        }
-
-        /// <summary>
-        /// 新增雙元運算子
-        /// </summary>
-        /// <param name="binaryName">雙元運算子</param>
-        /// <returns>雙元運算子響應</returns>
-        public BinaryResponse AddBinary(char binaryName)
-        {
-            Feature CurrentCast = Feature.BINARY;
-
-            return CheckOrder<BinaryResponse>(CurrentCast, () =>
-          {
-              BinaryResponse successResponse;
-
-              if (PreviousCast == Feature.BINARY)
-              {
-                  successResponse = NumberMachine.ModifyBinary(binaryName);
-              }
-              else
-              {
-                  successResponse = NumberMachine.AddBinary(binaryName);
-              }
-
-                //執行成功時記錄下這次的Cast
-                PreviousCast = Feature.BINARY;
-              return successResponse;
-          });
-        }
-
-        /// <summary>
-        /// 等號事件
-        /// </summary>
-        /// <returns>等號響應</returns>
-        public EqualResponse Equal()
-        {
-            Feature CurrentCast = Feature.EQUAL;
-
-            return CheckOrder<EqualResponse>(CurrentCast, () =>
-          {
-              var successResponse = NumberMachine.Equal();
-
-              //執行成功時記錄下這次的Cast
-              PreviousCast = Feature.EQUAL;
-              return successResponse;
-          });
-        }
-
-        /// <summary>
-        /// 左括號事件
-        /// </summary>
-        public void LeftBracket()
-        {
-            Feature CurrentCast = Feature.LEFT_BRACKET;
-
-            CheckOrder(CurrentCast, () =>
-            {
-                NumberMachine.LeftBracket();
-                //執行成功時記錄下這次的Cast
-                PreviousCast = Feature.LEFT_BRACKET;
-            });
-        }
-
-        /// <summary>
-        /// 右括號事件
-        /// </summary>
-        public void RightBracket()
-        {
-            Feature CurrentCast = Feature.RIGHT_BRACKET;
-
-            CheckOrder(CurrentCast, () =>
-            {
-                NumberMachine.RightBracket();
-                //執行成功時記錄下這次的Cast
-                PreviousCast = Feature.RIGHT_BRACKET;
-            });
-        }
         
-        /// <summary>
-        /// Clear事件
-        /// </summary>
-        public void Clear()
-        {
-            Feature CurrentCast = Feature.CLEAR;
-
-            CheckOrder(CurrentCast, () =>
-            {
-                NumberMachine.Clear();
-                //執行成功時記錄下這次的Cast
-                PreviousCast = Feature.CLEAR;
-            });
-        }
-
-        /// <summary>
-        /// ClearError事件
-        /// </summary>
-        /// <returns>ClearError響應</returns>
-        public ClearErrorResponse ClearError()
-        {
-            Feature CurrentCast = Feature.CLEAR_ERROR;
-
-            return CheckOrder<ClearErrorResponse>(CurrentCast, () =>
-          {
-              var successResponse = NumberMachine.ClearError();
-                //執行成功時記錄下這次的Cast
-                PreviousCast = Feature.CLEAR_ERROR;
-              return successResponse;
-          });
-        }
-
-        /// <summary>
-        /// 返回事件
-        /// </summary>
-        /// <returns>返回響應</returns>
-        public BackSpaceResponse BackSpace()
-        {
-            Feature CurrentCast = Feature.BACKSPACE;
-
-            return CheckOrder<BackSpaceResponse>(CurrentCast, () =>
-          {
-              var successResponse = NumberMachine.BackSpace();
-                //執行成功時記錄下這次的Cast
-                PreviousCast = Feature.BACKSPACE;
-              return successResponse;
-          });
-        }
-        
-        /// <summary>
-        /// 新增一個單元運算子 
-        /// </summary>
-        /// <param name="unary">單元運算子</param>
-        /// <returns>單元運算子響應</returns>
-        public UnaryResponse AddUnary(char unary)
-        {
-            Feature CurrentCast = Feature.UNARY;
-
-            return CheckOrder<UnaryResponse>(CurrentCast, () =>
-          {
-              var successResponse = NumberMachine.AddUnary(unary);
-              //執行成功時記錄下這次的Cast
-              PreviousCast = Feature.UNARY;
-              return successResponse;
-          });
-        }
-
-
         //以下新的
-        public NumberUpdate NewAddNumber(char number)
+        public NumberUpdate AddNumber(char number)
         {
             Feature CurrentCast = Feature.NUMBER;
 
@@ -278,7 +66,7 @@ namespace WebApi.NewThing
                 //等號後輸入數字
                 if (PreviousCast == Feature.EQUAL)
                 {
-                    successResponse = NumberMachine.NewAddNumber(number);
+                    successResponse = NumberMachine.AddNumber(number);
                     successResponse.RemoveLength = Updates.REMOVE_ALL;
                     PreviousCast = CurrentCast;
                     return successResponse;
@@ -287,14 +75,14 @@ namespace WebApi.NewThing
                 //backspace或clearerror之後的數字處理
                 if ((PreviousCast == Feature.BACKSPACE || PreviousCast == Feature.CLEAR_ERROR) && NumberMachine.NumberField.Number == 0)
                 {
-                    successResponse = NumberMachine.NewAddNumber(number);
+                    successResponse = NumberMachine.AddNumber(number);
                     successResponse.RemoveLength += 1;
                     //執行成功時記錄下這次的Cast
                     PreviousCast = CurrentCast;
                     return successResponse;
                 }
 
-                successResponse = NumberMachine.NewAddNumber(number);
+                successResponse = NumberMachine.AddNumber(number);
                 //執行成功時記錄下這次的Cast
                 PreviousCast = CurrentCast;
 
@@ -307,28 +95,28 @@ namespace WebApi.NewThing
         /// </summary>
         /// <param name="binaryName">雙元運算子</param>
         /// <returns>雙元運算子響應</returns>
-        public Updates NewAddBinary(char binaryName)
+        public BinaryUpdate AddBinary(char binaryName)
         {
             Feature CurrentCast = Feature.BINARY;
 
-            return CheckOrder<Updates>(CurrentCast, () =>
+            return CheckOrder<BinaryUpdate>(CurrentCast, () =>
             {
-                Updates successResponse;
+                BinaryUpdate successResponse;
 
                 if (PreviousCast == Feature.Null)
                 {
                     NumberMachine.AddNumber('0');
-                    successResponse = NumberMachine.NewAddBinary(binaryName);
+                    successResponse = NumberMachine.AddBinary(binaryName);
                     //要補0
                     successResponse.UpdateString = $"0{successResponse.UpdateString}";
                 }
                 else if (PreviousCast == Feature.BINARY)
                 {
-                    successResponse = NumberMachine.NewModifyBinary(binaryName);
+                    successResponse = NumberMachine.ModifyBinary(binaryName);
                 }
                 else
                 {
-                    successResponse = NumberMachine.NewAddBinary(binaryName);
+                    successResponse = NumberMachine.AddBinary(binaryName);
                 }
 
                 //執行成功時記錄下這次的Cast
@@ -344,7 +132,7 @@ namespace WebApi.NewThing
         /// </summary>
         /// <param name="unary">單元運算子</param>
         /// <returns>單元運算子響應</returns>
-        public UnaryUpdate NewAddUnary(char unary)
+        public UnaryUpdate AddUnary(char unary)
         {
             Feature CurrentCast = Feature.UNARY;
 
@@ -355,13 +143,12 @@ namespace WebApi.NewThing
                 //如果單元連按會有迭代的表現方式
                 if (PreviousCast == Feature.UNARY)
                 {
-                    successResponse = NumberMachine.NewAddUnaryCombo(unary);
+                    successResponse = NumberMachine.AddUnaryCombo(unary);
                 }
                 else
                 {
-
                     //非迭代的case
-                    successResponse = NumberMachine.NewAddUnary(unary);
+                    successResponse = NumberMachine.AddUnary(unary);
                 }
 
                 //執行成功時記錄下這次的Cast
@@ -375,17 +162,30 @@ namespace WebApi.NewThing
         /// 等號事件
         /// </summary>
         /// <returns>等號響應</returns>
-        public EqualUpdate NewEqual()
+        public EqualUpdate Equal()
         {
             Feature CurrentCast = Feature.EQUAL;
 
             return CheckOrder<EqualUpdate>(CurrentCast, () =>
             {
+                EqualUpdate successResponse;
                 if (PreviousCast == Feature.Null)
                 {
                     return new EqualUpdate("0", new Updates(removeLength: 0, updateString: "0="));
                 }
-                var successResponse = NumberMachine.NewEqual();
+                else if (PreviousCast == Feature.EQUAL)
+                {
+                    //這個怎麼辦
+                }
+                else if (PreviousCast == Feature.BINARY)
+                {
+                    System.Diagnostics.Debug.WriteLine("there1");
+                    successResponse = NumberMachine.BinaryAndEqualCombo();
+                    //執行成功時記錄下這次的Cast
+                    PreviousCast = Feature.EQUAL;
+                    return successResponse;
+                }
+                successResponse = NumberMachine.Equal();
 
                 //執行成功時記錄下這次的Cast
                 PreviousCast = Feature.EQUAL;
@@ -396,13 +196,19 @@ namespace WebApi.NewThing
         /// <summary>
         /// 左括號事件
         /// </summary>
-        public Updates NewLeftBracket()
+        public Updates LeftBracket()
         {
             Feature CurrentCast = Feature.LEFT_BRACKET;
             
             return CheckOrder<Updates>(CurrentCast, () =>
             {
-                var response = NumberMachine.NewLeftBracket();
+                var response = NumberMachine.LeftBracket();
+
+                if (PreviousCast == Feature.EQUAL)
+                {
+                    response.RemoveLength = Updates.REMOVE_ALL;
+                }
+                
                 //執行成功時記錄下這次的Cast
                 PreviousCast = Feature.LEFT_BRACKET;
                 return response;
@@ -412,13 +218,13 @@ namespace WebApi.NewThing
         /// <summary>
         /// 右括號事件
         /// </summary>
-        public Updates NewRightBracket()
+        public RightBracketUpdate RightBracket()
         {
             Feature CurrentCast = Feature.RIGHT_BRACKET;
 
-            return CheckOrder<Updates>(CurrentCast, () =>
+            return CheckOrder<RightBracketUpdate>(CurrentCast, () =>
             {
-                var response = NumberMachine.NewRightBracket();
+                var response = NumberMachine.RightBracket();
                 //執行成功時記錄下這次的Cast
                 PreviousCast = Feature.RIGHT_BRACKET;
                 return response;
@@ -428,30 +234,34 @@ namespace WebApi.NewThing
         /// <summary>
         /// Clear事件
         /// </summary>
-        public void NewClear()
+        public void Clear()
         {
             Feature CurrentCast = Feature.CLEAR;
 
-            CheckOrder(CurrentCast, () =>
+            if (FeatureRule.IsTheOrderingLegit(PreviousCast, CurrentCast))
             {
-                NumberMachine.NewClear();
+                NumberMachine.Clear();
                 //執行成功時記錄下這次的Cast
                 //PreviousCast = Cast.CLEAR;
                 PreviousCast = Feature.Null;
-            });
+            }
+            else
+            {
+                throw new OrderException(FeatureRule.INCORRECT_ORDER_MSG);
+            }
         }
 
         /// <summary>
         /// ClearError事件
         /// </summary>
         /// <returns>ClearError響應</returns>
-        public Updates NewClearError()
+        public Updates ClearError()
         {
             Feature CurrentCast = Feature.CLEAR_ERROR;
 
             return CheckOrder<Updates>(CurrentCast, () =>
             {
-                var successResponse = NumberMachine.NewClearError();
+                var successResponse = NumberMachine.ClearError();
                 //執行成功時記錄下這次的Cast
                 PreviousCast = Feature.CLEAR_ERROR;
                 return successResponse;
@@ -463,13 +273,13 @@ namespace WebApi.NewThing
         /// 返回事件
         /// </summary>
         /// <returns>返回響應</returns>
-        public Updates NewBackSpace()
+        public Updates BackSpace()
         {
             Feature CurrentCast = Feature.BACKSPACE;
 
             return CheckOrder<Updates>(CurrentCast, () =>
             {
-                var successResponse = NumberMachine.NewBackSpace();
+                var successResponse = NumberMachine.BackSpace();
                 //執行成功時記錄下這次的Cast
                 PreviousCast = Feature.BACKSPACE;
                 return successResponse;
