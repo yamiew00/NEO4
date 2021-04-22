@@ -259,7 +259,7 @@ namespace WebApi.Evaluate
 
             return new FrameUpdate(NumberField.Number.ToString(), new ExpUpdate(removeLength, TmpUnaryString));
         }
-
+        
         /// <summary>
         /// 等號事件
         /// </summary>
@@ -270,7 +270,6 @@ namespace WebApi.Evaluate
             if (NumberField != null)
             {
                 ExpTreeManager.Add(NumberField.Number.Value);
-                LastKeyInNumber = NumberField.Number.Value;
                 NumberField = null;
             }
 
@@ -285,8 +284,29 @@ namespace WebApi.Evaluate
             //送出結果
             updateString += "=";
             var ans = result.Answer;
-            LastKeyInNumber = ans;
+            CurrentAnswer = ans;
             return new FrameUpdate(ans.ToString(), new ExpUpdate(removeLength: 0, updateString: updateString));
+        }
+
+        /// <summary>
+        /// 連續等號的事件
+        /// </summary>
+        /// <returns>FrameUpdate</returns>
+        public FrameUpdate EqualCombo()
+        {
+            string updateString = CurrentAnswer.ToString();
+
+            //更新計算答案
+            CurrentAnswer = ExpTreeManager.GetLastTreeReplaceLeftResult(CurrentAnswer);
+            var op = ExpTreeManager.GetLastTreeTopOperator();
+            updateString += op;
+
+            var rightNumber = ExpTreeManager.GetLastTreeRightResult();
+            updateString += rightNumber.ToString();
+
+            updateString += "=";
+
+            return new FrameUpdate(CurrentAnswer.ToString(), new ExpUpdate(removeLength: ExpUpdate.REMOVE_ALL, updateString: updateString));
         }
 
         /// <summary>

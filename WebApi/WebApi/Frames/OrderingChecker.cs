@@ -173,10 +173,13 @@ namespace WebApi.Frames
                 else if (PreviousFeature == Feature.EQUAL)
                 {
                     //這個怎麼辦
+                    frameUpdate = NumberMachine.EqualCombo();
+                    //執行成功時記錄下這次的Cast
+                    PreviousFeature = Feature.EQUAL;
+                    return frameUpdate;
                 }
                 else if (PreviousFeature == Feature.BINARY)
                 {
-                    System.Diagnostics.Debug.WriteLine("there1");
                     frameUpdate = NumberMachine.BinaryAndEqualCombo();
                     //執行成功時記錄下這次的Cast
                     PreviousFeature = Feature.EQUAL;

@@ -14,10 +14,10 @@ namespace WebApi.Setting
         /// </summary>
         private static Dictionary<char, BinaryOperator> BinaryDic = new Dictionary<char, BinaryOperator>()
         {
-            { '+', new BinaryOperator(1, (num1, num2) => num1 + num2)},
-            { '-', new BinaryOperator(1, (num1, num2) => num1 - num2)},
-            { 'x', new BinaryOperator(2, (num1, num2) => num1 * num2)},
-            { '÷', new BinaryOperator(2, (num1, num2) => num1 / num2)},
+            { '+', new BinaryOperator(1, (num1, num2) => num1 + num2, '+')},
+            { '-', new BinaryOperator(1, (num1, num2) => num1 - num2, '-')},
+            { 'x', new BinaryOperator(2, (num1, num2) => num1 * num2, 'x')},
+            { '÷', new BinaryOperator(2, (num1, num2) => num1 / num2, '÷')},
         };
 
         /// <summary>
@@ -25,8 +25,8 @@ namespace WebApi.Setting
         /// </summary>
         private static Dictionary<char, UnaryOperator> UnaryDic = new Dictionary<char, UnaryOperator>()
         {
-            {'±', new UnaryOperator((num) => -1 * num) },
-            {'√', new UnaryOperator((num) => (decimal)Math.Pow((double) num, 0.5))}
+            {'±', new UnaryOperator((num) => -1 * num, '±') },
+            {'√', new UnaryOperator((num) => (decimal)Math.Pow((double) num, 0.5), '√')}
         };
 
         /// <summary>

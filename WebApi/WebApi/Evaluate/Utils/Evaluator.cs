@@ -19,7 +19,6 @@ namespace WebApi.Evaluate.Utils
         /// <returns>運算答案</returns>
         public decimal EvaluateTree(ExpressionTree tree)
         {
-            System.Diagnostics.Debug.WriteLine($"there 11");
             Node top = tree.GetTop();
             if (top.NodeValue.Number.HasValue)
             {
@@ -27,6 +26,15 @@ namespace WebApi.Evaluate.Utils
             }
             decimal ans = PackNode(top).NodeValue.Number.Value;
             return ans;
+        }
+
+        public decimal EvaluateNode(Node topNode)
+        {
+            if (topNode.NodeValue.Number.HasValue || !topNode.IsOperator())
+            {
+                throw new Exception("節點必須是運算符");
+            }
+            return PackNode(topNode).NodeValue.Number.Value;
         }
 
         /// <summary>

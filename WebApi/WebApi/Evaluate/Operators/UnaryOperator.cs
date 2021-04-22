@@ -15,13 +15,21 @@ namespace WebApi.Evaluate.Operators
         /// </summary>
         public Func<decimal, decimal> Formula { get; private set; }
 
-        /// <summary>
-        /// 建構子
-        /// </summary>
-        /// <param name="formula">運算規則</param>
-        public UnaryOperator(Func<decimal, decimal> formula)
+        public char Name;
+
+        public UnaryOperator(Func<decimal, decimal> formula, char name)
         {
             Formula = formula;
+            Name = name;
         }
+
+        ///// <summary>
+        ///// 建構子
+        ///// </summary>
+        ///// <param name="formula">運算規則</param>
+        //public UnaryOperator(Func<decimal, decimal> formula)
+        //{
+        //    Formula = formula;
+        //}
     }
 }

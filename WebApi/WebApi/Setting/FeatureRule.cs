@@ -40,7 +40,7 @@ namespace WebApi.Setting
             { Feature.Null, new List<Feature>(){ Feature.NUMBER, Feature.BINARY, Feature.EQUAL, Feature.LEFT_BRACKET, Feature.UNARY} },
             { Feature.NUMBER, new List<Feature>(){ Feature.NUMBER, Feature.BINARY, Feature.EQUAL, Feature.RIGHT_BRACKET, Feature.CLEAR, Feature.CLEAR_ERROR, Feature.BACKSPACE, Feature.UNARY } },
             { Feature.BINARY, new List<Feature>(){ Feature.NUMBER, Feature.BINARY, Feature.LEFT_BRACKET, Feature.CLEAR, Feature.RIGHT_BRACKET, Feature.EQUAL}},
-            { Feature.EQUAL, new List<Feature>(){ Feature.NUMBER, Feature.LEFT_BRACKET, Feature.CLEAR } }, //暫不支援直接接上BINARY
+            { Feature.EQUAL, new List<Feature>(){ Feature.NUMBER, Feature.LEFT_BRACKET, Feature.CLEAR, Feature.EQUAL } }, //暫不支援直接接上BINARY
             { Feature.LEFT_BRACKET, new List<Feature>(){ Feature.NUMBER, Feature.RIGHT_BRACKET, Feature.CLEAR, Feature.LEFT_BRACKET } },
             { Feature.RIGHT_BRACKET, new List<Feature>(){ Feature.BINARY, Feature.EQUAL, Feature.CLEAR, Feature.RIGHT_BRACKET } },
             { Feature.CLEAR, new List<Feature>(){ Feature.NUMBER, Feature.LEFT_BRACKET } },
