@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace WebApi.Objects
+namespace WebApi.Evaluate.Operators
 {
     /// <summary>
     /// 雙元運算子

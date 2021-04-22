@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using WebApi.Evaluate;
+using WebApi.Evaluate.Operators;
+using WebApi.Evaluate.Tree;
+using WebApi.Evaluate.Utils;
 using WebApi.Exceptions;
 
-namespace WebApi.Objects
+namespace WebApi.Evaluate
 {
     /// <summary>
     /// 運算控制
@@ -13,12 +13,12 @@ namespace WebApi.Objects
     public class ExpressionTreeManager
     {
         /// <summary>
-        /// 樹的stack
+        /// 樹的stack。為了括號而存在
         /// </summary>
         private Stack<ExpressionTree> TreeStack = new Stack<ExpressionTree>();
 
         /// <summary>
-        /// 運算方法的類別
+        /// 運算方法的類別。
         /// </summary>
         private Evaluator Evaluator;
 
@@ -29,6 +29,15 @@ namespace WebApi.Objects
         {
             TreeStack.Push(new ExpressionTree());
             Evaluator = new Evaluator();
+        }
+
+        /// <summary>
+        /// 新增一個新數字
+        /// </summary>
+        /// <param name="number">新數字</param>
+        public void Add(decimal number)
+        {
+            TreeStack.Peek().Add(number);
         }
 
         /// <summary>
@@ -47,17 +56,6 @@ namespace WebApi.Objects
         public void Modify(BinaryOperator Operator)
         {
             TreeStack.Peek().ModifyOperator(Operator);
-        }
-        
-        /// <summary>
-        /// 為最外層的數新增樹，並同時做單元運算
-        /// </summary>
-        /// <param name="number">數字</param>
-        /// <param name="unaryList">單元運算列</param>
-        public void Add(decimal number, List<UnaryOperator> unaryList)
-        {
-            TreeStack.Peek().Add(number);
-            unaryList.ForEach(x => ExecuteUnary(x));
         }
 
         /// <summary>
@@ -82,7 +80,10 @@ namespace WebApi.Objects
             TreeStack.Peek().Add(subTree);
         }
         
-
+        /// <summary>
+        /// 取得答案以及需要補足的右括號數量
+        /// </summary>
+        /// <returns>答案以及右括號的數量</returns>
         public Result TryGetResult()
         {
             if (TreeStack.Count == 1)
@@ -113,18 +114,18 @@ namespace WebApi.Objects
             }
         }
 
-        //多count的狀況應該會錯
+        /// <summary>
+        /// 取得最外層的計算結果
+        /// </summary>
+        /// <returns>計算結果</returns>
         public decimal TryGetTmpResult()
         {
             //暫時計算的結果只需要到第一層
             if (TreeStack.Count > 0)
             {
-                //算完就pop
                 var cloneTree = TreeUtils.CloneTree(TreeStack.Peek());
-                var ans = Evaluator.EvaluateTree(cloneTree);
 
-                
-                return ans;
+                return Evaluator.EvaluateTree(cloneTree);
             }
             else if (TreeStack.Count == 0)
             {
@@ -136,9 +137,6 @@ namespace WebApi.Objects
             }
         }
 
-
-
-
         /// <summary>
         /// Clear事件
         /// </summary>
@@ -146,32 +144,6 @@ namespace WebApi.Objects
         {
             TreeStack = new Stack<ExpressionTree>();
             TreeStack.Push(new ExpressionTree());
-        }
-
-        /// <summary>
-        /// 執行單元運算
-        /// </summary>
-        /// <param name="unaryOperator">單元運算</param>
-        public void ExecuteUnary(UnaryOperator unaryOperator)
-        {
-            var tree = TreeStack.Peek();
-            var formula = unaryOperator.Formula;
-
-            var number = tree.CurrentNode.NodeValue.Number;
-            if (!number.HasValue)
-            {
-                throw new Exception("單元運算子輸入錯誤");
-            }
-            tree.CurrentNode.NodeValue.Number = formula(number.Value);
-        }
-
-        /// <summary>
-        /// 新增一個新數字
-        /// </summary>
-        /// <param name="number">新數字</param>
-        public void Add(decimal number)
-        {
-            TreeStack.Peek().Add(number);
         }
     }
 }

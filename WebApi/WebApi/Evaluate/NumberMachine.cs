@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using WebApi.Evaluate.Operators;
+using WebApi.Evaluate.Tree;
 using WebApi.Exceptions;
 using WebApi.Models;
 using WebApi.Models.Response;
-using WebApi.Objects;
-using WebApi.Setting;
 
-namespace WebApi.NewThing
+namespace WebApi.Evaluate
 {
     /// <summary>
     /// 數字處理器
@@ -16,7 +13,7 @@ namespace WebApi.NewThing
     public class NumberMachine
     {
         /// <summary>
-        /// 表示式控制器
+        /// 表示式控制器，此類別的回傳值仰賴此物件的回傳值。
         /// </summary>
         private ExpressionTreeManager ExpTreeManager;
 
@@ -41,10 +38,19 @@ namespace WebApi.NewThing
             }
         }
 
+        /// <summary>
+        /// 目前的計算答案
+        /// </summary>
         private decimal CurrentAnswer;
 
+        /// <summary>
+        /// 最後一次輸入的數字
+        /// </summary>
         private decimal? LastKeyInNumber;
 
+        /// <summary>
+        /// 第一個按下的雙元運算
+        /// </summary>
         private BinaryOperator FirstBinaryOperator;
 
         /// <summary>
@@ -60,7 +66,7 @@ namespace WebApi.NewThing
         /// </summary>
         /// <param name="number">一個位數</param>
         /// <returns>數字更新</returns>
-        public NumberUpdate AddNumber(char number)
+        public FrameUpdate AddNumber(char number)
         {
             //小數點case
             if (number.Equals('.'))
@@ -70,19 +76,19 @@ namespace WebApi.NewThing
                 {
                     NumberField = new NumberField();
                     NumberField.AddDigit(number);
-                    return new NumberUpdate("0.", new Updates(removeLength: 0, updateString: "0."));
+                    return new FrameUpdate("0.", new ExpUpdate(removeLength: 0, updateString: "0."));
                 }
                 //若有值→判斷是否已為小數
                 if (NumberField.IsNumeric)
                 {
                     //已經是小數→不回傳值
-                    return new NumberUpdate(NumberField.Number.ToString() + ".", new Updates(removeLength: 0, updateString: string.Empty));
+                    return new FrameUpdate(NumberField.Number.ToString() + ".", new ExpUpdate(removeLength: 0, updateString: string.Empty));
                 }
                 else
                 {
                     //不是小數→更新小數點
                     NumberField.AddDigit(number);
-                    return new NumberUpdate(NumberField.Number.ToString() + ".", new Updates(removeLength: 0, updateString: "."));
+                    return new FrameUpdate(NumberField.Number.ToString() + ".", new ExpUpdate(removeLength: 0, updateString: "."));
                 }
             }
 
@@ -101,7 +107,7 @@ namespace WebApi.NewThing
             {
                 NumberField.AddDigit(number);
             }
-            return new NumberUpdate(NumberField.Number.ToString(), new Updates(removeLength: 0, updateString: number.ToString()));
+            return new FrameUpdate(NumberField.Number.ToString(), new ExpUpdate(removeLength: 0, updateString: number.ToString()));
         }
 
         /// <summary>
@@ -109,16 +115,15 @@ namespace WebApi.NewThing
         /// </summary>
         /// <param name="binary">更換的雙元運算子</param>
         /// <returns>雙元運算子響應</returns>
-        public BinaryUpdate ModifyBinary(char binary)
+        public FrameUpdate ModifyBinary(char binary)
         {
-            BinaryOperator binaryOperator = Operators.GetBinary(binary);
+            BinaryOperator binaryOperator = Setting.Operators.GetBinary(binary);
             if (NumberField != null)
             {
                 throw new Exception("ModifyBinary時Number不能有值");
             }
             ExpTreeManager.Modify(binaryOperator);
-            //return new Updates(removeLength: 1, updateString: binary.ToString());
-            return new BinaryUpdate(CurrentAnswer.ToString(), new Updates(removeLength: 1, updateString: binary.ToString()));
+            return new FrameUpdate(CurrentAnswer.ToString(), new ExpUpdate(removeLength: 1, updateString: binary.ToString()));
         }
 
         /// <summary>
@@ -126,9 +131,9 @@ namespace WebApi.NewThing
         /// </summary>
         /// <param name="binary">雙元運算子</param>
         /// <returns>雙元運算子的響應</returns>
-        public BinaryUpdate AddBinary(char binary)
+        public FrameUpdate AddBinary(char binary)
         {
-            BinaryOperator binaryOperator = Operators.GetBinary(binary);
+            BinaryOperator binaryOperator = Setting.Operators.GetBinary(binary);
 
             if (NumberField == null)
             {
@@ -149,22 +154,24 @@ namespace WebApi.NewThing
                 ExpTreeManager.Add(NumberField.Number.Value);
                 NumberField = null;
                 //算出一個暫時的結果並存下
-                System.Diagnostics.Debug.WriteLine($"是空的是空的");
                 CurrentAnswer = ExpTreeManager.TryGetTmpResult();
-                System.Diagnostics.Debug.WriteLine($"TmpAnswer = {CurrentAnswer}");
-
+                
                 ExpTreeManager.Add(binaryOperator);
             }
-            //return new Updates(removeLength: 0, updateString: binary.ToString());
-            return new BinaryUpdate(CurrentAnswer.ToString(), new Updates(removeLength: 0, updateString: binary.ToString()));
+            return new FrameUpdate(CurrentAnswer.ToString(), new ExpUpdate(removeLength: 0, updateString: binary.ToString()));
         }
 
+        /// <summary>
+        /// 首次輸入的運算符初始化
+        /// </summary>
         private void InitFirstBinaryOperator()
         {
             FirstBinaryOperator = null;
         }
 
-
+        /// <summary>
+        /// 暫存的單元運算字串
+        /// </summary>
         private string TmpUnaryString;
 
         /// <summary>
@@ -172,19 +179,16 @@ namespace WebApi.NewThing
         /// </summary>
         /// <param name="unary">單元運算子</param>
         /// <returns>單元運算子響應</returns>
-        public UnaryUpdate AddUnary(char unary)
-        {
-            //tmp的處理
-            TmpUnaryString = string.Empty;
-            
+        public FrameUpdate AddUnary(char unary)
+        {   
             //拿到單元運算的公式
-            UnaryOperator unaryOperator = Operators.GetUnary(unary);
+            UnaryOperator unaryOperator = Setting.Operators.GetUnary(unary);
             var formula = unaryOperator.Formula;
 
             int removeLength = 0;
             if (NumberField == null)
             {
-                return new UnaryUpdate("0", new Updates(removeLength: removeLength, updateString: string.Empty));
+                return new FrameUpdate("0", new ExpUpdate(removeLength: removeLength, updateString: string.Empty));
             }
 
             removeLength = NumberField.Number.Value.ToString().Length;
@@ -195,9 +199,8 @@ namespace WebApi.NewThing
 
             //暫存
             var OriginNumberString = NumberField.Number.ToString();
-
-
             string updateString = string.Empty;
+
             //必須case by case處理
             if (unary == '√')
             {
@@ -215,29 +218,24 @@ namespace WebApi.NewThing
             //計算後將結果存起來
             NumberField.Number = formula(NumberField.Number.Value);
 
-
             //記住這次的結果
             TmpUnaryString = updateString;
-            return new UnaryUpdate(NumberField.Number.ToString(), new Updates(removeLength, updateString));
+            return new FrameUpdate(NumberField.Number.ToString(), new ExpUpdate(removeLength, updateString));
         }
-
-
-
+        
         /// <summary>
         /// 新增一個單元運算子
         /// </summary>
         /// <param name="unary">單元運算子</param>
         /// <returns>單元運算子響應</returns>
-        public UnaryUpdate AddUnaryCombo(char unary)
+        public FrameUpdate AddUnaryCombo(char unary)
         {
-            //必須case by case了
-            UnaryOperator unaryOperator = Operators.GetUnary(unary);
+            //取得單元運算子
+            UnaryOperator unaryOperator = Setting.Operators.GetUnary(unary);
             var formula = unaryOperator.Formula;
 
             int removeLength = TmpUnaryString.Length;
-
-
-
+            
             //必須case by case處理
             if (unary == '√')
             {
@@ -259,14 +257,14 @@ namespace WebApi.NewThing
             //計算後將結果存起來
             NumberField.Number = formula(NumberField.Number.Value);
 
-            return new UnaryUpdate(NumberField.Number.ToString(), new Updates(removeLength, TmpUnaryString));
+            return new FrameUpdate(NumberField.Number.ToString(), new ExpUpdate(removeLength, TmpUnaryString));
         }
 
         /// <summary>
         /// 等號事件
         /// </summary>
         /// <returns>等號響應</returns>
-        public EqualUpdate Equal()
+        public FrameUpdate Equal()
         {
             //這裡的case應該還有更多
             if (NumberField != null)
@@ -276,35 +274,37 @@ namespace WebApi.NewThing
                 NumberField = null;
             }
 
-
             //result處理
             var result = ExpTreeManager.TryGetResult();
             var updateString = string.Empty;
-            for (int i = 0; i < result.extraRightBracket; i++)
+            for (int i = 0; i < result.ExtraRightBracketCount; i++)
             {
                 updateString += ")";
             }
 
             //送出結果
             updateString += "=";
-            var ans = result.answer;
+            var ans = result.Answer;
             LastKeyInNumber = ans;
-            return new EqualUpdate(ans.ToString(), new Updates(removeLength: 0, updateString: updateString));
+            return new FrameUpdate(ans.ToString(), new ExpUpdate(removeLength: 0, updateString: updateString));
         }
 
-        public EqualUpdate BinaryAndEqualCombo()
+        /// <summary>
+        /// 雙元運算後直接按等號的處理方法
+        /// </summary>
+        /// <returns>FrameUpdate</returns>
+        public FrameUpdate BinaryAndEqualCombo()
         {
-            //CurrentAnswer已經被Binary算走了
+            //CurrentAnswer已經被Binary算g好了
             ExpTreeManager.Add(CurrentAnswer);
             
-
             //result處理
             var result = ExpTreeManager.TryGetResult();
-            var ans = result.answer;
+            var ans = result.Answer;
 
             //做更新字串
             var updateString = CurrentAnswer.ToString();
-            for (int i = 0; i < result.extraRightBracket; i++)
+            for (int i = 0; i < result.ExtraRightBracketCount; i++)
             {
                 updateString += ")";
             }
@@ -313,23 +313,24 @@ namespace WebApi.NewThing
             updateString += "=";
             
             LastKeyInNumber = ans;
-            return new EqualUpdate(ans.ToString(), new Updates(removeLength: 0, updateString: updateString));
+            return new FrameUpdate(ans.ToString(), new ExpUpdate(removeLength: 0, updateString: updateString));
         }
-
 
         /// <summary>
         /// 左括號事件
         /// </summary>
-        public Updates LeftBracket()
+        /// <returns>ExpUpdate</returns>
+        public ExpUpdate LeftBracket()
         {
             ExpTreeManager.LeftBracket();
-            return new Updates(removeLength: 0, updateString: "(");
+            return new ExpUpdate(removeLength: 0, updateString: "(");
         }
 
         /// <summary>
         /// 右括號事件
         /// </summary>
-        public RightBracketUpdate RightBracket()
+        /// <returns>FrameObject</returns>
+        public FrameUpdate RightBracket()
         {
             string updateString = string.Empty;
 
@@ -337,7 +338,6 @@ namespace WebApi.NewThing
             {
                 ExpTreeManager.Add(NumberField.Number.Value);
             }
-
             else if (NumberField == null)
             {
                 ExpTreeManager.Add(CurrentAnswer);
@@ -350,11 +350,9 @@ namespace WebApi.NewThing
             NumberField = null;
 
             CurrentAnswer = ExpTreeManager.TryGetTmpResult();
-
-            //return new Updates(removeLength: 0, updateString: updateString);
-            return new RightBracketUpdate(CurrentAnswer.ToString(), new Updates(removeLength: 0, updateString: updateString));
+            
+            return new FrameUpdate(CurrentAnswer.ToString(), new ExpUpdate(removeLength: 0, updateString: updateString));
         }
-
 
         /// <summary>
         /// Clear事件
@@ -368,29 +366,29 @@ namespace WebApi.NewThing
         /// <summary>
         /// ClearError事件
         /// </summary>
-        /// <returns>ClearError響應</returns>
-        public Updates ClearError()
+        /// <returns>ExpUpdate</returns>
+        public ExpUpdate ClearError()
         {
             if (NumberField == null)
             {
-                return new Updates(removeLength: 0, updateString: string.Empty);
+                return new ExpUpdate(removeLength: 0, updateString: string.Empty);
             }
             int length = NumberField.Number.Value.ToString().Length;
             NumberField = new NumberField();
 
-            return new Updates(removeLength: length, updateString: "0");
+            return new ExpUpdate(removeLength: length, updateString: "0");
         }
 
         /// <summary>
         /// 返回事件
         /// </summary>
-        /// <returns>返回事件響應</returns>
-        public Updates BackSpace()
+        /// <returns>ExpUpdate</returns>
+        public ExpUpdate BackSpace()
         {
             int RemoveLength = 0;
             if (NumberField == null)
             {
-                return new Updates(removeLength: RemoveLength, updateString: string.Empty);
+                return new ExpUpdate(removeLength: RemoveLength, updateString: string.Empty);
             }
 
             RemoveLength = NumberField.Number.Value.ToString().Length;
@@ -404,8 +402,7 @@ namespace WebApi.NewThing
             {
                 updateString += ".";
             }
-            return new Updates(RemoveLength, updateString);
+            return new ExpUpdate(RemoveLength, updateString);
         }
-        
     }
 }

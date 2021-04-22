@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Calculator.Extensions;
 using Calculator.Networks.Request;
 using Calculator.Networks;
+using Calculator.Networks.Response;
 
 namespace Calculator.News
 {
@@ -63,7 +64,12 @@ namespace Calculator.News
         {
             return BASE_URI_PATH + str;
         }
-        //新的
+
+        /// <summary>
+        /// 網路請求
+        /// </summary>
+        /// <param name="bond">功能組合(Feature, Content)</param>
+        /// <returns>Response</returns>
         public async Task<Response> Request(Bond bond)
         {
             var uri = Path("/api/integrated/" + Global.USER_ID);
@@ -82,7 +88,6 @@ namespace Calculator.News
             var response = await result.Content.ReadAsAsync<Response>();
 
             return response;
-            
         }
     }
 }

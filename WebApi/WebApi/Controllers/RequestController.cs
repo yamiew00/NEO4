@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Web.Http;
-using WebApi.Objects;
-using WebApi.Models;
-using WebApi.DataBase;
 using WebApi.Setting;
-using WebApi.NewThing;
 using Newtonsoft.Json.Linq;
 using WebApi.Extensions;
 using WebApi.Models.Response;
-using WebApi.Exceptions;
 using WebApi.Models.Request;
 
 namespace WebApi.Controllers
@@ -22,11 +13,21 @@ namespace WebApi.Controllers
     /// </summary>
     public class RequestController : ApiController
     {
+        /// <summary>
+        /// 拿取(Feature, Content)的api接口。回傳Panel與SubPanel的物件
+        /// </summary>
+        /// <param name="userId">用戶ID</param>
+        /// <returns>FrameResponse物件的JSON: 帶有Panel和SubPanel的字串</returns>
         public IHttpActionResult PostIntegrate(int userId)
         {
-            Integrated integrated = Request.Content.ReadAsAsync<Integrated>().Result;
-            var response = Features.ActionDic[integrated.Feature].Invoke(integrated.Content, userId);
-            var json = response.ToJson<FrameResponse>();
+            //拿body中的Feature與Content。並存為Instruct物件
+            Instruct instruct = Request.Content.ReadAsAsync<Instruct>().Result;
+
+            //向Feature類別索取FrameObject
+            FrameObject frameObject = Features.GetFrameObject(userId, instruct);
+
+            //將response包成Json格式
+            JObject json = frameObject.ToJson<FrameObject>();
             return Ok(json);
         }
     }

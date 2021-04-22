@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using WebApi.Controllers;
-using WebApi.Models;
-using WebApi.Models.Response;
-using WebApi.NewThing;
-using WebApi.Objects;
+using WebApi.Frames;
 
 namespace WebApi.DataBase
 {
@@ -16,16 +10,16 @@ namespace WebApi.DataBase
     public static class Users
     {
         //以下新
-        private static Dictionary<int, ContentController> ContentControllerDic = new Dictionary<int, ContentController>();
+        private static Dictionary<int, FrameObjectFactory> FrameResponseFactoryDic = new Dictionary<int, FrameObjectFactory>();
 
-        public static ContentController GetContentController(int userId)
+        public static FrameObjectFactory GetFreamObjectFactory(int userId)
         {
-            if (ContentControllerDic.Keys.Contains(userId))
+            if (FrameResponseFactoryDic.Keys.Contains(userId))
             {
-                return ContentControllerDic[userId];
+                return FrameResponseFactoryDic[userId];
             }
-            ContentControllerDic.Add(userId, new ContentController());
-            return ContentControllerDic[userId];
+            FrameResponseFactoryDic.Add(userId, new FrameObjectFactory());
+            return FrameResponseFactoryDic[userId];
         }
     }
 }

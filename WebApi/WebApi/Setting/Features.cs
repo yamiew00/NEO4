@@ -4,73 +4,91 @@ using System.Linq;
 using System.Web;
 using WebApi.Controllers;
 using WebApi.DataBase;
+using WebApi.Models.Request;
 using WebApi.Models.Response;
-using WebApi.NewThing;
 
 namespace WebApi.Setting
 {
+    /// <summary>
+    /// 功能(Feature)的對應動作。
+    /// </summary>
     public class Features
     {
-        public static Dictionary<string, Func<char, int, FrameResponse>> ActionDic =new Dictionary<string, Func<char, int, FrameResponse>>()
+        /// <summary>
+        /// 執行特定Feature所對應的方法，並回傳FrameResponse物件
+        /// </summary>
+        private readonly static Dictionary<string, Func<char, int, FrameObject>> ActionDic = new Dictionary<string, Func<char, int, FrameObject>>()
         {
             {
                 "Number", (content, userId) =>
                 {
-                    return Users.GetContentController(userId).AddNumber(content);
+                    return Users.GetFreamObjectFactory(userId).AddNumber(content);
                 }
             },
             {
                 "Binary", (content, userId) =>
                 {
-                    //連續Binary時要計算結果還沒做
-                    return Users.GetContentController(userId).AddBinary(content);
+                    return Users.GetFreamObjectFactory(userId).AddBinary(content);
                 }
             },
             {
                 "Unary", (content, userId) =>
                 {
-                    //對負數做根號的處理還沒做
-                    return Users.GetContentController(userId).AddUnary(content);
+                    return Users.GetFreamObjectFactory(userId).AddUnary(content);
                 }
             },
             {
                 "Equal", (content, userId) =>
                 {
-                    return Users.GetContentController(userId).Equal();
+                    return Users.GetFreamObjectFactory(userId).Equal();
                 }
             },
             {
                 "LeftBracket", (content, userId) =>
                 {
-                    return Users.GetContentController(userId).LeftBracket();
+                    return Users.GetFreamObjectFactory(userId).LeftBracket();
                 }
             },
             {
                 "RightBracket", (content, userId) =>
                 {
-                    //右括號之後要計算當前答案還沒有做
-                    return Users.GetContentController(userId).RightBracket();
+                    return Users.GetFreamObjectFactory(userId).RightBracket();
                 }
             },
             {
                 //Clear的Cast就是null?
                 "Clear", (content, userId) =>
                 {
-                    return Users.GetContentController(userId).Clear();
+                    return Users.GetFreamObjectFactory(userId).Clear();
                 }
             },
             {
                 "ClearError", (content, userId) =>
                 {
-                    return Users.GetContentController(userId).ClearError();
+                    return Users.GetFreamObjectFactory(userId).ClearError();
                 }
             },
             {
                 "BackSpace", (content, userId) =>
                 {
-                    return Users.GetContentController(userId).BackSpace();
+                    return Users.GetFreamObjectFactory(userId).BackSpace();
                 }
             }
         };
+
+        /// <summary>
+        /// 呼叫字典中的方法以取得FrameObject
+        /// </summary>
+        /// <param name="userId">用戶id</param>
+        /// <param name="instruct">按鈕功能組合</param>
+        /// <returns>FrameObject</returns>
+        public static FrameObject GetFrameObject(int userId, Instruct instruct)
+        {
+            if (!ActionDic.Keys.Contains(instruct.Feature))
+            {
+                throw new Exception("無此Feature");
+            }
+            return ActionDic[instruct.Feature].Invoke(instruct.Content, userId);
+        }
     }
 }

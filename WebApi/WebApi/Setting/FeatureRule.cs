@@ -13,7 +13,7 @@ namespace WebApi.Setting
         /// <summary>
         /// 錯誤訊息
         /// </summary>
-        public static readonly string INCORRECT_ORDER_MSG = "輸入順序有誤，因此無響應";
+        public static readonly string ORDER_EXCEPTION_MSG = "輸入順序有誤，因此無響應";
         
         /// <summary>
         /// 功能種類
@@ -39,7 +39,7 @@ namespace WebApi.Setting
         {
             { Feature.Null, new List<Feature>(){ Feature.NUMBER, Feature.BINARY, Feature.EQUAL, Feature.LEFT_BRACKET, Feature.UNARY} },
             { Feature.NUMBER, new List<Feature>(){ Feature.NUMBER, Feature.BINARY, Feature.EQUAL, Feature.RIGHT_BRACKET, Feature.CLEAR, Feature.CLEAR_ERROR, Feature.BACKSPACE, Feature.UNARY } },
-            { Feature.BINARY, new List<Feature>(){ Feature.NUMBER, Feature.BINARY, Feature.LEFT_BRACKET, Feature.CLEAR , Feature.RIGHT_BRACKET, Feature.EQUAL} },
+            { Feature.BINARY, new List<Feature>(){ Feature.NUMBER, Feature.BINARY, Feature.LEFT_BRACKET, Feature.CLEAR, Feature.RIGHT_BRACKET, Feature.EQUAL}},
             { Feature.EQUAL, new List<Feature>(){ Feature.NUMBER, Feature.LEFT_BRACKET, Feature.CLEAR } }, //暫不支援直接接上BINARY
             { Feature.LEFT_BRACKET, new List<Feature>(){ Feature.NUMBER, Feature.RIGHT_BRACKET, Feature.CLEAR, Feature.LEFT_BRACKET } },
             { Feature.RIGHT_BRACKET, new List<Feature>(){ Feature.BINARY, Feature.EQUAL, Feature.CLEAR, Feature.RIGHT_BRACKET } },

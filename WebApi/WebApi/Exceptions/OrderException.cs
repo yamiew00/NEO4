@@ -14,7 +14,7 @@ namespace WebApi.Exceptions
         /// 建構子
         /// </summary>
         /// <param name="message">錯誤訊息</param>
-        public OrderException(string message):base(message)
+        public OrderException(string message) : base(message)
         {
         }
     }

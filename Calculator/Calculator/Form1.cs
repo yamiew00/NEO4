@@ -4,6 +4,7 @@ using Calculator.News;
 using Calculator.Setting;
 using Calculator.Networks.Request;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace Calculator
 {
@@ -18,9 +19,7 @@ namespace Calculator
         public Form1()
         {
             InitializeComponent();
-            
             Global.UpdateUserId();
-
         }
 
         /// <summary>
@@ -36,10 +35,21 @@ namespace Calculator
             var tag = button.Tag.ToString();
             
             Bond bond = new Bond(feature: tag, content: Convert.ToChar(text));
+            try
+            {
+                var response = await NetworkController.Instance.Request(bond);
 
-            var response = await NetworkController.Instance.Request(bond);
-            TextBoxPanel.Text = response.Panel;
-            TextBoxSubPanel.Text = response.SubPanel;
+                TextBoxPanel.Text = response.Panel;
+                TextBoxSubPanel.Text = response.SubPanel;
+            }
+            catch (Exception exception)
+            {
+                if (exception is HttpRequestException)
+                {
+                    MessageBox.Show("無網路連線");
+                    System.Environment.Exit(0);
+                }
+            }
         }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using WebApi.Objects;
+using WebApi.Evaluate.Operators;
 
 namespace WebApi.Setting
 {
@@ -28,7 +26,7 @@ namespace WebApi.Setting
         private static Dictionary<char, UnaryOperator> UnaryDic = new Dictionary<char, UnaryOperator>()
         {
             {'±', new UnaryOperator((num) => -1 * num) },
-            {'√', new UnaryOperator((num) => (decimal)Math.Pow((double) num, 0.5)) }
+            {'√', new UnaryOperator((num) => (decimal)Math.Pow((double) num, 0.5))}
         };
 
         /// <summary>

@@ -85,12 +85,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\ContentController.cs" />
+    <Compile Include="Frames\FrameObjectFactory.cs" />
     <Compile Include="Controllers\RequestController.cs" />
     <Compile Include="DataBase\Users.cs" />
     <Compile Include="Evaluate\NumberMachine.cs" />
-    <Compile Include="Evaluate\Result.cs" />
-    <Compile Include="Evaluate\TreeUtils.cs" />
+    <Compile Include="Evaluate\Tree\Result.cs" />
+    <Compile Include="Evaluate\Utils\TreeUtils.cs" />
     <Compile Include="Exceptions\BracketException.cs" />
     <Compile Include="Exceptions\OrderException.cs" />
     <Compile Include="Exceptions\SquareRootException.cs" />
@@ -99,37 +99,18 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\BinaryUpdate.cs" />
-    <Compile Include="Models\EqualUpdate.cs" />
-    <Compile Include="Models\FrameAttribute.cs" />
-    <Compile Include="Models\NumberUpdate.cs" />
-    <Compile Include="Models\Request\BinaryRequest.cs" />
-    <Compile Include="Models\Request\Integrated.cs" />
-    <Compile Include="Models\Request\NumberRequest.cs" />
+    <Compile Include="Models\FrameUpdate.cs" />
+    <Compile Include="Models\Request\Instruct.cs" />
     <Compile Include="Evaluate\Operators\BinaryOperator.cs" />
-    <Compile Include="Evaluate\Evaluator.cs" />
-    <Compile Include="Evaluate\ExpressionTree.cs" />
-    <Compile Include="Evaluate\Node.cs" />
+    <Compile Include="Evaluate\Utils\Evaluator.cs" />
+    <Compile Include="Evaluate\Tree\ExpressionTree.cs" />
+    <Compile Include="Evaluate\Tree\Node.cs" />
     <Compile Include="Evaluate\ExpressionTreeManager.cs" />
     <Compile Include="Evaluate\Operators\UnaryOperator.cs" />
-    <Compile Include="Models\Response\BackSpaceResponse.cs" />
-    <Compile Include="Models\Response\BinaryResponse.cs" />
-    <Compile Include="Models\Response\ClearErrorResponse.cs" />
-    <Compile Include="Models\Response\ClearResponse.cs" />
-    <Compile Include="Models\Response\EqualResponse.cs" />
-    <Compile Include="Models\Response\FrameResponse.cs" />
-    <Compile Include="Models\Response\LeftBracketResponse.cs" />
-    <Compile Include="Models\Response\NumberResponse.cs" />
-    <Compile Include="Models\Response\RightBracketResponse.cs" />
-    <Compile Include="Models\Response\Status.cs" />
-    <Compile Include="Models\Response\StatusMessage.cs" />
-    <Compile Include="Models\Response\UnaryResponse.cs" />
-    <Compile Include="Models\RightBracketUpdate.cs" />
-    <Compile Include="Models\UnaryUpdate.cs" />
-    <Compile Include="Models\Updates.cs" />
-    <Compile Include="Models\Request\UnaryRequest.cs" />
-    <Compile Include="Evaluate\CommandCaster.cs" />
-    <Compile Include="Evaluate\Number.cs" />
+    <Compile Include="Models\Response\FrameObject.cs" />
+    <Compile Include="Models\ExpUpdate.cs" />
+    <Compile Include="Frames\OrderingChecker.cs" />
+    <Compile Include="Evaluate\Tree\NumberField.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setting\FeatureRule.cs" />
     <Compile Include="Setting\Features.cs" />

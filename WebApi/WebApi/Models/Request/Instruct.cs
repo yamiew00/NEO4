@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web;
 
-namespace Calculator.Networks.Request
+namespace WebApi.Models.Request
 {
     /// <summary>
-    /// 功能組合
+    /// 前端的按鈕功能組合
     /// </summary>
-    public class Bond
-    {   
+    public class Instruct
+    {
         /// <summary>
         /// 功能種類
         /// </summary>
-        private static string _Feature;
+        private string _Feature;
 
         /// <summary>
         /// 功能種類
@@ -33,12 +32,12 @@ namespace Calculator.Networks.Request
         }
 
         /// <summary>
-        /// 功能內容
+        /// 命令內容
         /// </summary>
         private char _Content;
 
         /// <summary>
-        /// 功能內容
+        /// 命令內容
         /// </summary>
         public char Content
         {
@@ -51,17 +50,6 @@ namespace Calculator.Networks.Request
             {
                 _Content = value;
             }
-        }
-
-        /// <summary>
-        /// 建構子
-        /// </summary>
-        /// <param name="feature">功能種類</param>
-        /// <param name="content">功能內容</param>
-        public Bond(string feature, char content)
-        {
-            Feature = feature;
-            Content = content;
         }
     }
 }
