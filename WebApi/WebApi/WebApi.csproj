@@ -85,10 +85,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Frames\FrameObjectFactory.cs" />
     <Compile Include="Controllers\RequestController.cs" />
     <Compile Include="DataBase\Users.cs" />
-    <Compile Include="Evaluate\NumberMachine.cs" />
     <Compile Include="Evaluate\Tree\Result.cs" />
     <Compile Include="Evaluate\Utils\TreeUtils.cs" />
     <Compile Include="Exceptions\BracketException.cs" />
@@ -108,16 +106,21 @@
     <Compile Include="Evaluate\ExpressionTreeManager.cs" />
     <Compile Include="Evaluate\Operators\UnaryOperator.cs" />
     <Compile Include="Models\Response\FrameObject.cs" />
-    <Compile Include="Models\ExpUpdate.cs" />
-    <Compile Include="Frames\OrderingChecker.cs" />
     <Compile Include="Evaluate\Tree\NumberField.cs" />
-    <Compile Include="NewThings\BinaryObject.cs" />
-    <Compile Include="NewThings\EqualObject.cs" />
-    <Compile Include="NewThings\IFrame.cs" />
-    <Compile Include="NewThings\NumberObject.cs" />
+    <Compile Include="FeatureStructure\Features\BackSpace.cs" />
+    <Compile Include="FeatureStructure\Features\Binary.cs" />
+    <Compile Include="FeatureStructure\Features\ClearError.cs" />
+    <Compile Include="FeatureStructure\Features\Clear.cs" />
+    <Compile Include="FeatureStructure\Features\Equal.cs" />
+    <Compile Include="FeatureStructure\FeatureObject.cs" />
+    <Compile Include="FeatureStructure\IFeature.cs" />
+    <Compile Include="FeatureStructure\Features\LeftBracket.cs" />
+    <Compile Include="FeatureStructure\Features\Number.cs" />
+    <Compile Include="FeatureStructure\Features\RightBracket.cs" />
+    <Compile Include="FeatureStructure\Features\Unary.cs" />
+    <Compile Include="DataBase\UserInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Setting\FeatureRule.cs" />
-    <Compile Include="Setting\Features.cs" />
+    <Compile Include="Setting\FeatureReactor.cs" />
     <Compile Include="Setting\Global.cs" />
     <Compile Include="Setting\Operators.cs" />
   </ItemGroup>

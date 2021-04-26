@@ -24,7 +24,7 @@ namespace WebApi.Controllers
             Instruct instruct = Request.Content.ReadAsAsync<Instruct>().Result;
 
             //向Feature類別索取FrameObject
-            FrameObject frameObject = Features.GetFrameObject(userId, instruct);
+            FrameObject frameObject = FeatureReactor.GetFrameObject(userId, instruct);
 
             //將response包成Json格式
             JObject json = frameObject.ToJson<FrameObject>();
