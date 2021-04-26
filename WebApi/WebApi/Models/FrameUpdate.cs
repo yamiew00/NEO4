@@ -19,18 +19,7 @@ namespace WebApi.Models
         /// <summary>
         /// 答案
         /// </summary>
-        public string Answer
-        {
-            get
-            {
-                return _Answer;
-            }
-
-            set
-            {
-                _Answer = value;
-            }
-        }
+        public string Answer { get; set; }
 
         /// <summary>
         /// 建構子

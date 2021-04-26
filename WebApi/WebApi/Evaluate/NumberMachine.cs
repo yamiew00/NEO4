@@ -44,16 +44,6 @@ namespace WebApi.Evaluate
         private decimal CurrentAnswer;
 
         /// <summary>
-        /// 最後一次輸入的數字
-        /// </summary>
-        private decimal? LastKeyInNumber;
-
-        /// <summary>
-        /// 第一個按下的雙元運算
-        /// </summary>
-        private BinaryOperator FirstBinaryOperator;
-
-        /// <summary>
         /// 建構子
         /// </summary>
         public NumberMachine()
@@ -142,15 +132,6 @@ namespace WebApi.Evaluate
             }
             else
             {
-                //記下最後一次輸入完畢後的數字
-                LastKeyInNumber = NumberField.Number.Value;
-
-                //記下「第一個」運算元
-                if (FirstBinaryOperator == null)
-                {
-                    FirstBinaryOperator = binaryOperator;
-                }
-
                 ExpTreeManager.Add(NumberField.Number.Value);
                 NumberField = null;
                 //算出一個暫時的結果並存下
@@ -159,14 +140,6 @@ namespace WebApi.Evaluate
                 ExpTreeManager.Add(binaryOperator);
             }
             return new FrameUpdate(CurrentAnswer.ToString(), new ExpUpdate(removeLength: 0, updateString: binary.ToString()));
-        }
-
-        /// <summary>
-        /// 首次輸入的運算符初始化
-        /// </summary>
-        private void InitFirstBinaryOperator()
-        {
-            FirstBinaryOperator = null;
         }
 
         /// <summary>
@@ -332,7 +305,6 @@ namespace WebApi.Evaluate
             //送出結果
             updateString += "=";
             
-            LastKeyInNumber = ans;
             return new FrameUpdate(ans.ToString(), new ExpUpdate(removeLength: 0, updateString: updateString));
         }
 

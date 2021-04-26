@@ -4,6 +4,7 @@ using System.Linq;
 using WebApi.Exceptions;
 using WebApi.Models;
 using WebApi.Models.Response;
+using WebApi.Setting;
 
 namespace WebApi.Frames
 {
@@ -15,17 +16,17 @@ namespace WebApi.Frames
         /// <summary>
         /// 記錄當下的Frame內容
         /// </summary>
-        private static FrameObject FrameObject;
+        private FrameObject FrameObject;
 
         /// <summary>
         /// 記錄當下的完整運算式
         /// </summary>
-        private static string CompleteExpression;
+        private string CompleteExpression;
 
         /// <summary>
         /// 執行順序判斷器。製作過程完全仰賴此物件回傳的結果。
         /// </summary>
-        private static OrderingChecker OrderingChecker;
+        private OrderingChecker OrderingChecker;
         
         /// <summary>
         /// 建構子
@@ -40,53 +41,53 @@ namespace WebApi.Frames
         /// <summary>
         /// 例外狀況處理的字典
         /// </summary>
-        private static Dictionary<Type, Func<FrameObject>> ExceptionDic = new Dictionary<Type, Func<FrameObject>>()
+        private static Dictionary<Type, Func<FrameObject, OrderingChecker, string, FrameObject>> ExceptionDic = new Dictionary<Type, Func<FrameObject, OrderingChecker, string, FrameObject>>()
         {
             {
-                typeof(OrderException), () =>
+                typeof(OrderException), (frameObject, orderingChecker, completeExpression) =>
                 {
                     //OrderException:命令順序有誤→畫面維持原狀
-                    return FrameObject;
+                    return frameObject;
                 }
             },
             {
-                typeof(BracketException), () =>
+                typeof(BracketException), (frameObject, orderingChecker, completeExpression) =>
                 {
                     //BracketException:括號數量不正確→畫面維持原狀
-                    return FrameObject;
+                    return frameObject;
                 }
             },
             {
-                typeof(TooLongDigitException), () =>
+                typeof(TooLongDigitException), (frameObject, orderingChecker, completeExpression) =>
                 {
                     //TooLongDigitException:輸入位數限制→畫面維持原狀
-                    return FrameObject;
+                    return frameObject;
                 }
             },
             {
-                typeof(SquareRootException), () =>
+                typeof(SquareRootException), (frameObject, orderingChecker, completeExpression) =>
                 {
                     //對負號做根號運算→回傳錯訊
-                    var subpanel = FrameObject.SubPanel;
+                    var subpanel = frameObject.SubPanel;
 
                     //清除
-                    OrderingChecker.Clear();
-                    FrameObject = new FrameObject();
-                    CompleteExpression = string.Empty;
+                    orderingChecker.Clear();
+                    frameObject = new FrameObject();
+                    completeExpression = string.Empty;
 
                     return new FrameObject(panel: "無效的輸入", subPanel: subpanel);
                 }
             },
             {
-                typeof(DivideByZeroException), () =>
+                typeof(DivideByZeroException), (frameObject, orderingChecker, completeExpression) =>
                 {
                     //零在分母→回傳錯訊
-                    var subpanel = FrameObject.SubPanel;
+                    var subpanel = frameObject.SubPanel;
 
                     //清除
-                    OrderingChecker.Clear();
-                    FrameObject = new FrameObject();
-                    CompleteExpression = string.Empty;
+                    orderingChecker.Clear();
+                    frameObject = new FrameObject();
+                    completeExpression = string.Empty;
 
                     return new FrameObject(panel: "無法除以零。", subPanel: subpanel);
                 }
@@ -109,7 +110,7 @@ namespace WebApi.Frames
                 Type type = exception.GetType();
                 if (ExceptionDic.Keys.Contains(type))
                 {
-                    return ExceptionDic[type]();
+                    return ExceptionDic[type](FrameObject, OrderingChecker, CompleteExpression);
                 }
                 else
                 {
@@ -131,14 +132,14 @@ namespace WebApi.Frames
                 //OrderingChecker會回傳FrameUpdate
                 FrameUpdate frameUpdate = OrderingChecker.AddNumber(content);
                 string answer = frameUpdate.Answer;
-
+                
                 //完整運算式的刷新
                 CompleteExpression = frameUpdate.Refresh(CompleteExpression);
 
                 //panel, subpanel設定
                 FrameObject.SubPanel = CompleteExpression.Substring(0, CompleteExpression.Length - answer.Length);
                 FrameObject.Panel = answer;
-
+                System.Diagnostics.Debug.WriteLine(FrameObject.Panel);
                 return FrameObject;
             });
         }
@@ -165,7 +166,13 @@ namespace WebApi.Frames
                 return FrameObject;
             });
         }
+        public class Binary :IExe ,IOrdered {
 
+            public void input(IOperator @operator) { }
+        }
+        public interface IOperator { }
+        public interface IExe: IOperator { }
+        public interface IOrdered : IOperator { }
         /// <summary>
         /// Feature:Unary。輸入為Setting中的單元運算子。
         /// </summary>

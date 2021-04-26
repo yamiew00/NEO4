@@ -6,6 +6,7 @@ using WebApi.Controllers;
 using WebApi.DataBase;
 using WebApi.Models.Request;
 using WebApi.Models.Response;
+using WebApi.NewThings;
 
 namespace WebApi.Setting
 {
@@ -22,13 +23,17 @@ namespace WebApi.Setting
             {
                 "Number", (content, userId) =>
                 {
-                    return Users.GetFreamObjectFactory(userId).AddNumber(content);
+                    NumberObject numberObject = new NumberObject(userId, content);
+                    return numberObject.Layer1();
+                    //return Users.GetFreamObjectFactory(userId).AddNumber(content);
                 }
             },
             {
                 "Binary", (content, userId) =>
                 {
-                    return Users.GetFreamObjectFactory(userId).AddBinary(content);
+                    BinaryObject binaryObject = new BinaryObject(userId, content);
+                    return binaryObject.Layer1();
+                    //return Users.GetFreamObjectFactory(userId).AddBinary(content);
                 }
             },
             {
@@ -40,7 +45,9 @@ namespace WebApi.Setting
             {
                 "Equal", (content, userId) =>
                 {
-                    return Users.GetFreamObjectFactory(userId).Equal();
+                    EqualObject equalObject = new EqualObject(userId, content);
+                    return equalObject.Layer1();
+                    //return Users.GetFreamObjectFactory(userId).Equal();
                 }
             },
             {

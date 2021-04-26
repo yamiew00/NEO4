@@ -27,6 +27,7 @@ namespace WebApi.Evaluate.Tree
         /// </summary>
         public Value NodeValue { get; set; }
 
+
         /// <summary>
         /// 值。如果有值，則其中一者必為空值
         /// </summary>

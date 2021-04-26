@@ -111,6 +111,10 @@
     <Compile Include="Models\ExpUpdate.cs" />
     <Compile Include="Frames\OrderingChecker.cs" />
     <Compile Include="Evaluate\Tree\NumberField.cs" />
+    <Compile Include="NewThings\BinaryObject.cs" />
+    <Compile Include="NewThings\EqualObject.cs" />
+    <Compile Include="NewThings\IFrame.cs" />
+    <Compile Include="NewThings\NumberObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setting\FeatureRule.cs" />
     <Compile Include="Setting\Features.cs" />
