@@ -22,7 +22,7 @@ namespace WebApi.Evaluate
         /// </summary>
         private Evaluator Evaluator;
 
-        private ExpressionTree LastTreeSingle;
+        private ExpressionTree LastSingleTree;
 
         /// <summary>
         /// 建構子
@@ -31,7 +31,7 @@ namespace WebApi.Evaluate
         {
             TreeStack.Push(new ExpressionTree());
             Evaluator = new Evaluator();
-            LastTreeSingle = new ExpressionTree();
+            LastSingleTree = new ExpressionTree();
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace WebApi.Evaluate
             if (TreeStack.Count == 1)
             {
                 //新功能
-                LastTreeSingle = TreeUtils.CloneTree(TreeStack.Peek());
+                LastSingleTree = TreeUtils.CloneTree(TreeStack.Peek());
 
                 //算完就pop
                 var answer = Evaluator.EvaluateTree(TreeStack.Pop());
@@ -112,7 +112,7 @@ namespace WebApi.Evaluate
                 }
 
                 //新功能
-                LastTreeSingle = TreeUtils.CloneTree(TreeStack.Peek());
+                LastSingleTree = TreeUtils.CloneTree(TreeStack.Peek());
 
                 var ans = Evaluator.EvaluateTree(TreeStack.Pop());
                 TreeStack.Push(new ExpressionTree());
@@ -155,17 +155,17 @@ namespace WebApi.Evaluate
         public decimal GetLastTreeReplaceLeftResult(decimal newLeftNodeNumber)
         {
             
-            var top = LastTreeSingle.GetTop();
+            var top = LastSingleTree.GetTop();
             
             Node newLeftNode = Node.Build()
                                    .SetParentNode(top)
                                    .SetNumber(newLeftNodeNumber)
                                    .Exec();
             //一定要設定Root
-            LastTreeSingle.Root = newLeftNode;
+            LastSingleTree.Root = newLeftNode;
             top.LeftNode = newLeftNode;
 
-            return Evaluator.EvaluateTree(TreeUtils.CloneTree(LastTreeSingle));
+            return Evaluator.EvaluateTree(TreeUtils.CloneTree(LastSingleTree));
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace WebApi.Evaluate
         /// <returns>計算結果</returns>
         public decimal GetLastTreeRightResult()
         {
-            var tree = TreeUtils.CloneTree(LastTreeSingle);
+            var tree = TreeUtils.CloneTree(LastSingleTree);
             
             var newTop = tree.GetTop().RightNode;
             newTop.ParentNode = null;
@@ -194,7 +194,7 @@ namespace WebApi.Evaluate
         /// <returns>樹頂運算符</returns>
         public string GetLastTreeTopOperator()
         {
-            return LastTreeSingle.GetTop().NodeValue.Operator.Name.ToString();
+            return LastSingleTree.GetTop().NodeValue.Operator.Name.ToString();
         }
 
         /// <summary>

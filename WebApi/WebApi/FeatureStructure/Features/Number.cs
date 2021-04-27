@@ -12,8 +12,7 @@ namespace WebApi.FeatureStructure
         {
             FeatureSet = new HashSet<Feature>() { Feature.Null, Feature.NUMBER, Feature.BINARY, Feature.EQUAL, Feature.LEFT_BRACKET, Feature.CLEAR, Feature.CLEAR_ERROR, Feature.BACKSPACE };
         }
-
-        //新，介面
+        
         protected override FrameObject CreateFrameObject()
         {
             FrameUpdate frameUpdate = OrderingDealer();

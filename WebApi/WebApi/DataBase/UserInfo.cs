@@ -19,10 +19,10 @@ namespace WebApi.FeatureStructure
         public NumberField NumberField { get; set; }
 
         //User-Related。
-        public decimal CurrentAnswer { get; set; }
+        public ExpressionTreeManager ExpressionTreeManager { get; set; }
 
         //User-Related。
-        public ExpressionTreeManager ExpressionTreeManager { get; set; }
+        public decimal CurrentAnswer { get; set; }
 
         public string CurrentUnaryString { get; set; }
 

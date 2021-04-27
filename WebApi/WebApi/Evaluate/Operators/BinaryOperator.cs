@@ -28,17 +28,5 @@ namespace WebApi.Evaluate.Operators
             Formula = formula;
             Name = name;
         }
-
-        ///// <summary>
-        ///// 建構子
-        ///// </summary>
-        ///// <param name="priority">優先度</param>
-        ///// <param name="formula">運算規則</param>
-        //public BinaryOperator(int priority, Func<decimal, decimal, decimal> formula)
-        //{
-        //    Priority = priority;
-        //    Formula = formula;
-        //}
-
     }
 }

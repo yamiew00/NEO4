@@ -22,14 +22,5 @@ namespace WebApi.Evaluate.Operators
             Formula = formula;
             Name = name;
         }
-
-        ///// <summary>
-        ///// 建構子
-        ///// </summary>
-        ///// <param name="formula">運算規則</param>
-        //public UnaryOperator(Func<decimal, decimal> formula)
-        //{
-        //    Formula = formula;
-        //}
     }
 }
