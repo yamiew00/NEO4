@@ -31,11 +31,15 @@ namespace WebApi.FeatureStructure
         {
             Feature CurrentFeature = Feature.NUMBER;
             
-            FrameUpdate frameUpdate = Tree();
+            FrameUpdate frameUpdate;
 
             //等號後輸入數字
             if (PreviousFeature == Feature.EQUAL)
             {
+                //必須要把之前的運算全部清空
+                InfoInit();
+                frameUpdate = Tree();
+
                 frameUpdate.RemoveLength = FrameUpdate.REMOVE_ALL;
 
                 //執行成功時記錄下這次的Cast
@@ -46,6 +50,7 @@ namespace WebApi.FeatureStructure
             //backspace或clearerror之後的數字處理
             if ((PreviousFeature == Feature.BACKSPACE || PreviousFeature == Feature.CLEAR_ERROR) && NumberField.Number == 0)
             {
+                frameUpdate = Tree();
                 frameUpdate.RemoveLength += 1;
 
                 //執行成功時記錄下這次的Cast
@@ -53,6 +58,7 @@ namespace WebApi.FeatureStructure
                 return frameUpdate;
             }
 
+            frameUpdate = Tree();
             //執行成功時記錄下這次的Cast
             PreviousFeature = CurrentFeature;
             return frameUpdate;

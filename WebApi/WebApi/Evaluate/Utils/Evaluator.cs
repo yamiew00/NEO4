@@ -12,63 +12,78 @@ namespace WebApi.Evaluate.Utils
     /// </summary>
     public class Evaluator
     {
-        /// <summary>
-        /// 計算樹的結果
-        /// </summary>
-        /// <param name="tree">運算樹</param>
-        /// <returns>運算答案</returns>
+        //新的
         public decimal EvaluateTree(ExpressionTree tree)
         {
-            Node top = tree.GetTop();
-            if (top.NodeValue.Number.HasValue)
+            var top = tree.GetTop();
+            if (top.IsNumber())
             {
                 return top.NodeValue.Number.Value;
             }
-            decimal ans = PackNode(top).NodeValue.Number.Value;
+            var ans = PackNode(tree.GetTop());
+            //清除運算雜質
+            ClearAllPartial(tree);
+
             return ans;
         }
-
-        public decimal EvaluateNode(Node topNode)
+        
+        //還要清除parial number
+        public decimal PackNode(Node node)
         {
-            if (topNode.NodeValue.Number.HasValue || !topNode.IsOperator())
+            if (node.NodeValue.Number.HasValue)
             {
-                throw new Exception("節點必須是運算符");
+                return node.NodeValue.Number.Value;
             }
-            return PackNode(topNode).NodeValue.Number.Value;
-        }
 
-        /// <summary>
-        /// 將節點收束成一個數字。必須傳進運算符節點。
-        /// </summary>
-        /// <param name="node">運算符節點</param>
-        /// <returns></returns>
-        public Node PackNode(Node node)
-        {
             //防呆
             if (!node.IsOperator())
             {
                 throw new Exception("必須傳入運算符");
             }
 
-            if (node.LeftNode.IsOperator())
+            var leftNode = node.LeftNode;
+            var rightNode = node.RightNode;
+
+            if (!(leftNode.HasPartial()))
             {
-                node.LeftNode = PackNode(node.LeftNode);
+                if (leftNode.IsNumber())
+                {
+                    leftNode.PartialAnswer = leftNode.NodeValue.Number;
+                }
+                else if (leftNode.IsOperator())
+                {
+                    leftNode.PartialAnswer = PackNode(leftNode);
+                }
+                else
+                {
+                    throw new Exception("節點必定要是運算元或數字");
+                }
             }
-            if (node.RightNode.IsOperator())
+            if (!(rightNode.HasPartial()))
             {
-                node.RightNode = PackNode(node.RightNode);
+                if (rightNode.IsNumber())
+                {
+                    rightNode.PartialAnswer = rightNode.NodeValue.Number;
+                }
+                else if (rightNode.IsOperator())
+                {
+                    rightNode.PartialAnswer = PackNode(rightNode);
+                }
+                else
+                {
+                    throw new Exception("節點必定要是運算元或數字");
+                }
             }
 
-            var ans = Compute(node.NodeValue.Operator, node.LeftNode.NodeValue.Number.Value, node.RightNode.NodeValue.Number.Value); 
+            var leftPartial = leftNode.PartialAnswer.Value;
+            var rightPartial = rightNode.PartialAnswer.Value;
 
-            Node newNode = Node.Build()
-                                .SetParentNode(node)
-                                .SetNumber(ans)
-                                .Exec();
-
-            return newNode;
+            
+            var ans = Compute(node.NodeValue.Operator, leftPartial, rightPartial);
+            
+            return ans;
         }
-
+        
         /// <summary>
         /// 運算(雙元符號)
         /// </summary>
@@ -76,9 +91,36 @@ namespace WebApi.Evaluate.Utils
         /// <param name="num1">數字1</param>
         /// <param name="num2">數字2</param>
         /// <returns>答案</returns>
-        public decimal Compute(BinaryOperator Operator, decimal num1, decimal num2)
+        private decimal Compute(BinaryOperator Operator, decimal num1, decimal num2)
         {
             return Operator.Formula(num1, num2);
+        }
+
+        private void ClearAllPartial(ExpressionTree tree)
+        {
+            if (tree == null)
+            {
+                return;
+            }
+            var top = tree.GetTop();
+            if (top == null)
+            {
+                return;
+            }
+            ClearNodePartial(top);
+        }
+
+        private void ClearNodePartial(Node node)
+        {
+            node.PartialAnswer = null;
+            if (node.LeftNode != null)
+            {
+                ClearNodePartial(node.LeftNode);
+            }
+            if (node.RightNode != null)
+            {
+                ClearNodePartial(node.RightNode);
+            }
         }
     }
 }

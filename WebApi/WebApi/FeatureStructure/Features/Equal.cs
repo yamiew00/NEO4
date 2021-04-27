@@ -32,10 +32,10 @@ namespace WebApi.FeatureStructure
             CompleteExpression = frameUpdate.Refresh(CompleteExpression);
 
             //panel, subpanel設定
-            var subPanel = CompleteExpression;
-            var panel = frameUpdate.Answer;
+            FrameObject.SubPanel = CompleteExpression;
+            FrameObject.Panel = frameUpdate.Answer;
 
-            return new FrameObject(subPanel, panel);
+            return FrameObject;
         }
 
         protected override FrameUpdate OrderingDealer()
@@ -125,15 +125,11 @@ namespace WebApi.FeatureStructure
             string updateString = CurrentAnswer.ToString();
 
             //更新計算答案
-            CurrentAnswer = ExpressionTreeManager.GetLastTreeReplaceLeftResult(CurrentAnswer);
-            var op = ExpressionTreeManager.GetLastTreeTopOperator();
-            updateString += op;
-
-            var rightNumber = ExpressionTreeManager.GetLastTreeRightResult();
-            updateString += rightNumber.ToString();
-
-            updateString += "=";
-
+            ExpressionTreeManager.ReplaceLeft(CurrentAnswer);
+            var op = ExpressionTreeManager.GetTop().NodeValue.Operator.Name;
+            var rightResult = ExpressionTreeManager.GetRightHalf();
+            updateString += $"{op}{rightResult}=";
+            CurrentAnswer = ExpressionTreeManager.TryGetResult().Answer;
             return new FrameUpdate(CurrentAnswer.ToString(), removeLength: FrameUpdate.REMOVE_ALL, updateString: updateString);
         }
 

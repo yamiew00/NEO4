@@ -27,6 +27,8 @@ namespace WebApi.Evaluate.Tree
         /// </summary>
         public Value NodeValue { get; set; }
 
+        public decimal? PartialAnswer { get; set; }
+
 
         /// <summary>
         /// 值。如果有值，則其中一者必為空值
@@ -193,6 +195,16 @@ namespace WebApi.Evaluate.Tree
         public bool IsOperator()
         {
             return (NodeValue == null) ? false : NodeValue.Operator != null;
+        }
+
+        public bool IsNumber()
+        {
+            return (NodeValue == null) ? false : NodeValue.Number != null;
+        }
+
+        public bool HasPartial()
+        {
+            return PartialAnswer.HasValue;
         }
     }
 }

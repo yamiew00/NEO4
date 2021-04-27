@@ -21,8 +21,7 @@ namespace WebApi.Evaluate
         /// 運算方法的類別。
         /// </summary>
         private Evaluator Evaluator;
-
-        private ExpressionTree LastSingleTree;
+        
 
         /// <summary>
         /// 建構子
@@ -31,9 +30,9 @@ namespace WebApi.Evaluate
         {
             TreeStack.Push(new ExpressionTree());
             Evaluator = new Evaluator();
-            LastSingleTree = new ExpressionTree();
         }
 
+        //Binary, Equal,RightBracket
         /// <summary>
         /// 新增一個新數字
         /// </summary>
@@ -83,6 +82,7 @@ namespace WebApi.Evaluate
             TreeStack.Peek().Add(subTree);
         }
         
+        //都是Equal在用
         /// <summary>
         /// 取得答案以及需要補足的右括號數量
         /// </summary>
@@ -91,12 +91,8 @@ namespace WebApi.Evaluate
         {
             if (TreeStack.Count == 1)
             {
-                //新功能
-                LastSingleTree = TreeUtils.CloneTree(TreeStack.Peek());
-
-                //算完就pop
-                var answer = Evaluator.EvaluateTree(TreeStack.Pop());
-                TreeStack.Push(new ExpressionTree());
+                //算完不能pop
+                var answer = Evaluator.EvaluateTree(TreeStack.Peek());
                 return new Result(answer, 0);
             }
             else if (TreeStack.Count > 1)
@@ -110,12 +106,9 @@ namespace WebApi.Evaluate
                     TreeStack.Peek().Add(subTree);
                     extraRightBracket++;
                 }
-
-                //新功能
-                LastSingleTree = TreeUtils.CloneTree(TreeStack.Peek());
-
-                var ans = Evaluator.EvaluateTree(TreeStack.Pop());
-                TreeStack.Push(new ExpressionTree());
+                
+                //算完不能pop
+                var ans = Evaluator.EvaluateTree(TreeStack.Peek());
                 return new Result(ans, extraRightBracket);
             }
             else
@@ -124,6 +117,7 @@ namespace WebApi.Evaluate
             }
         }
 
+        //Binary, RightBracket
         /// <summary>
         /// 取得最外層的計算結果
         /// </summary>
@@ -133,9 +127,8 @@ namespace WebApi.Evaluate
             //暫時計算的結果只需要到第一層
             if (TreeStack.Count > 0)
             {
-                var cloneTree = TreeUtils.CloneTree(TreeStack.Peek());
-
-                return Evaluator.EvaluateTree(cloneTree);
+                var outerTree = TreeStack.Peek();
+                return Evaluator.EvaluateTree(outerTree);
             }
             else if (TreeStack.Count == 0)
             {
@@ -146,64 +139,40 @@ namespace WebApi.Evaluate
                 throw new Exception("資料有誤");
             }
         }
-
-        /// <summary>
-        /// 取得樹頂左節點被更換後的計算結果
-        /// </summary>
-        /// <param name="newLeftNodeNumber">要更換的數字</param>
-        /// <returns>計算結果</returns>
-        public decimal GetLastTreeReplaceLeftResult(decimal newLeftNodeNumber)
+        
+        //EqualCombo1
+        public void ReplaceLeft(decimal newNumber)
         {
-            
-            var top = LastSingleTree.GetTop();
-            
+            //在這個方法被呼叫之前，TreeStack已經收束成一棵完整的樹了，也就是TreeStack.Count = 1
+            var tree = TreeStack.Peek();
+            var top = tree.GetTop();
+
+            System.Diagnostics.Debug.WriteLine($"Here2");
+            //新的左節點
             Node newLeftNode = Node.Build()
-                                   .SetParentNode(top)
-                                   .SetNumber(newLeftNodeNumber)
-                                   .Exec();
-            //一定要設定Root
-            LastSingleTree.Root = newLeftNode;
+                       .SetParentNode(top)
+                       .SetNumber(newNumber)
+                       .Exec();
             top.LeftNode = newLeftNode;
-
-            return Evaluator.EvaluateTree(TreeUtils.CloneTree(LastSingleTree));
+            tree.Root = newLeftNode;   
         }
 
-        /// <summary>
-        /// 取得樹頂右半邊的計算結果(不包含樹頂)
-        /// </summary>
-        /// <returns>計算結果</returns>
-        public decimal GetLastTreeRightResult()
+        //EqualCombo2
+        public Node GetTop()
         {
-            var tree = TreeUtils.CloneTree(LastSingleTree);
-            
-            var newTop = tree.GetTop().RightNode;
-            newTop.ParentNode = null;
+            return TreeStack.Peek().GetTop();
+        }
 
-            //分成節點是數字或非數字的情況
-            if (newTop.NodeValue.Number.HasValue)
+        //EqualCombo3
+        public decimal GetRightHalf()
+        {
+            var top = TreeStack.Peek().GetTop();
+            if (top.RightNode == null)
             {
-                return newTop.NodeValue.Number.Value;
+                return 0;
             }
-            
-            return Evaluator.EvaluateNode(newTop);
-        }
 
-        /// <summary>
-        /// 取得樹頂的運算符
-        /// </summary>
-        /// <returns>樹頂運算符</returns>
-        public string GetLastTreeTopOperator()
-        {
-            return LastSingleTree.GetTop().NodeValue.Operator.Name.ToString();
-        }
-
-        /// <summary>
-        /// Clear事件
-        /// </summary>
-        public void Clear()
-        {
-            TreeStack = new Stack<ExpressionTree>();
-            TreeStack.Push(new ExpressionTree());
+            return Evaluator.PackNode(top.RightNode);
         }
     }
 }
