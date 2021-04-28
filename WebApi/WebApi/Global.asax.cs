@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using System.Web.Routing;
+using WebApi.FeatureStructure;
 
 namespace WebApi
 {
@@ -11,6 +12,7 @@ namespace WebApi
     {
         protected void Application_Start()
         {
+            OrderingRule.LoadOrdering();
             GlobalConfiguration.Configure(WebApiConfig.Register);
         }
     }

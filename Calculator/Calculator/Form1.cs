@@ -20,6 +20,7 @@ namespace Calculator
         {
             InitializeComponent();
             Global.UpdateUserId();
+            
         }
 
         /// <summary>

@@ -87,7 +87,7 @@ namespace WebApi.Evaluate
         /// 取得答案以及需要補足的右括號數量
         /// </summary>
         /// <returns>答案以及右括號的數量</returns>
-        public Result TryGetResult()
+        public Result GetResult()
         {
             if (TreeStack.Count == 1)
             {
@@ -122,7 +122,7 @@ namespace WebApi.Evaluate
         /// 取得最外層的計算結果
         /// </summary>
         /// <returns>計算結果</returns>
-        public decimal TryGetTmpResult()
+        public decimal GetTmpResult()
         {
             //暫時計算的結果只需要到第一層
             if (TreeStack.Count > 0)
@@ -146,8 +146,7 @@ namespace WebApi.Evaluate
             //在這個方法被呼叫之前，TreeStack已經收束成一棵完整的樹了，也就是TreeStack.Count = 1
             var tree = TreeStack.Peek();
             var top = tree.GetTop();
-
-            System.Diagnostics.Debug.WriteLine($"Here2");
+            
             //新的左節點
             Node newLeftNode = Node.Build()
                        .SetParentNode(top)

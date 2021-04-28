@@ -19,8 +19,14 @@ namespace WebApi.FeatureStructure
 
         public Unary(int userId, char content) : base(userId, content)
         {
-            FeatureSet 
-                = new HashSet<Feature>() { Feature.Null, Feature.NUMBER, Feature.BINARY, Feature.EQUAL, Feature.RIGHT_BRACKET, Feature.CLEAR_ERROR, Feature.BACKSPACE, Feature.UNARY };
+        }
+
+        /// <summary>
+        /// 空建構子(必要)
+        /// </summary>
+        public Unary()
+        {
+
         }
 
         protected override FrameObject CreateFrameObject()
@@ -32,10 +38,10 @@ namespace WebApi.FeatureStructure
             CompleteExpression = frameUpdate.Refresh(CompleteExpression);
 
             //panel, subpanel設定
-            var subPanel = CompleteExpression;
-            var panel = frameUpdate.Answer;
+            FrameObject.SubPanel = CompleteExpression;
+            FrameObject.Panel = frameUpdate.Answer;
 
-            return new FrameObject(subPanel, panel);
+            return FrameObject;
         }
 
         protected override FrameUpdate OrderingDealer()
@@ -154,5 +160,19 @@ namespace WebApi.FeatureStructure
             return new FrameUpdate(NumberField.Number.ToString(), removeLength, CurrentUnaryString);
         }
 
+        protected override HashSet<Feature> SetPreviousFeatures()
+        {
+            return new HashSet<Feature>() { Feature.Null, Feature.NUMBER, Feature.BINARY, Feature.EQUAL, Feature.RIGHT_BRACKET, Feature.CLEAR_ERROR, Feature.BACKSPACE, Feature.UNARY };
+        }
+
+        public override HashSet<Type> LegitPreviousType()
+        {
+            return new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(Equal), typeof(RightBracket), typeof(Clear), typeof(ClearError), typeof(BackSpace), typeof(Unary) };
+        }
+
+        public override HashSet<Type> LegitAfterWardType()
+        {
+            return new HashSet<Type>() { typeof(Binary), typeof(Equal), typeof(RightBracket), typeof(Clear), typeof(Unary) };
+        }
     }
 }

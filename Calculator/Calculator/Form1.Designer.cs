@@ -316,7 +316,7 @@
             this.ButtonCE.Size = new System.Drawing.Size(70, 74);
             this.ButtonCE.TabIndex = 28;
             this.ButtonCE.Tag = "ClearError";
-            this.ButtonCE.Text = "CE";
+            this.ButtonCE.Text = "₠";
             this.ButtonCE.UseVisualStyleBackColor = true;
             this.ButtonCE.Click += new System.EventHandler(this.All_Button_Click);
             // 

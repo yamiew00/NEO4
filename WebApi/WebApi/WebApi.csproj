@@ -88,12 +88,13 @@
     <Compile Include="Controllers\RequestController.cs" />
     <Compile Include="DataBase\Users.cs" />
     <Compile Include="Evaluate\Tree\Result.cs" />
-    <Compile Include="Evaluate\Utils\TreeUtils.cs" />
     <Compile Include="Exceptions\BracketException.cs" />
     <Compile Include="Exceptions\OrderException.cs" />
     <Compile Include="Exceptions\SquareRootException.cs" />
     <Compile Include="Exceptions\TooLongDigitException.cs" />
     <Compile Include="Extensions\Jsons.cs" />
+    <Compile Include="FeatureStructure\OrderedFeature.cs" />
+    <Compile Include="FeatureStructure\OrderingRule.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

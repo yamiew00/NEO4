@@ -1,4 +1,7 @@
-﻿using WebApi.Evaluate;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using WebApi.Evaluate;
 using WebApi.Evaluate.Tree;
 using WebApi.Models.Response;
 
@@ -15,11 +18,12 @@ namespace WebApi.FeatureStructure
         //User-Related
         public Feature PreviousFeature { get; set; }
 
-        //User-Related。
-        public NumberField NumberField { get; set; }
+        public Type LastFeature { get; set; }
 
         //User-Related。
-        public ExpressionTreeManager ExpressionTreeManager { get; set; }
+        public NumberField NumberField { get; set; }
+        
+        public Stack<ExpressionTree> TreeStack { get; set; }
 
         //User-Related。
         public decimal CurrentAnswer { get; set; }
@@ -36,9 +40,12 @@ namespace WebApi.FeatureStructure
             CompleteExpression = string.Empty;
             FrameObject = new FrameObject();
             PreviousFeature = Feature.Null;
+            //初始預設為Clear
+            LastFeature = typeof(Clear); 
             NumberField = new NumberField();
             CurrentAnswer = 0;
-            ExpressionTreeManager = new ExpressionTreeManager();
+            TreeStack = new Stack<ExpressionTree>();
+            TreeStack.Push(new ExpressionTree());
             CurrentUnaryString = string.Empty;
         }
     }
