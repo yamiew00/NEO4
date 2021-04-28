@@ -20,11 +20,10 @@ namespace WebApi.FeatureStructure
         }
 
         /// <summary>
-        /// 空建構子(必要)
+        /// 空建構子。反射用的
         /// </summary>
         public LeftBracket()
         {
-
         }
 
         /// <summary>
@@ -45,11 +44,19 @@ namespace WebApi.FeatureStructure
             return FrameObject;
         }
 
+        /// <summary>
+        /// 回傳此功能後面可以接的功能集
+        /// </summary>
+        /// <returns>後面可以接的功能集</returns>
         public override HashSet<Type> LegitAfterWardType()
         {
             return new HashSet<Type>() { typeof(Number), typeof(LeftBracket), typeof(RightBracket), typeof(Clear)};
         }
 
+        /// <summary>
+        /// 回傳此功能前面可以接的功能集
+        /// </summary>
+        /// <returns>前面可以接的功能集</returns>
         public override HashSet<Type> LegitPreviousType()
         {
             return new HashSet<Type>() { typeof(Binary), typeof(Equal), typeof(LeftBracket), typeof(Clear), typeof(ClearError), typeof(BackSpace) };
@@ -63,23 +70,12 @@ namespace WebApi.FeatureStructure
         {
             FrameUpdate frameUpdate = Tree();
 
-            if (PreviousFeature == Feature.EQUAL)
+            if (LastFeature == typeof(Equal))
             {
                 frameUpdate.RemoveLength = FrameUpdate.REMOVE_ALL;
             }
-
-            //執行成功時記錄下這次的Cast
-            PreviousFeature = Feature.LEFT_BRACKET;
+            
             return frameUpdate;
-        }
-
-        /// <summary>
-        /// 設定實體物件的合法順序規則
-        /// </summary>
-        /// <returns>合法順序集</returns>
-        protected override HashSet<Feature> SetPreviousFeatures()
-        {
-            return new HashSet<Feature>() { Feature.Null, Feature.BINARY, Feature.EQUAL, Feature.LEFT_BRACKET, Feature.CLEAR, Feature.CLEAR_ERROR, Feature.BACKSPACE };
         }
 
         /// <summary>
@@ -90,6 +86,15 @@ namespace WebApi.FeatureStructure
         {
             TreeStack.Push(new ExpressionTree());
             return new FrameUpdate(removeLength: 0, updateString: "(");
+        }
+
+        /// <summary>
+        /// 回傳新增物件的方法
+        /// </summary>
+        /// <returns>委派</returns>
+        public override Func<int, char, IFeature> Create()
+        {
+            return (userid, content) => new LeftBracket(userid);
         }
     }
 }

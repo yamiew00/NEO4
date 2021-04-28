@@ -7,28 +7,54 @@ using WebApi.Models.Response;
 
 namespace WebApi.FeatureStructure
 {
+    /// <summary>
+    /// 單元運算規則
+    /// </summary>
     public enum UnaryRule
     {
         UNARY_SINGLE,
         UNARY_UNARY_COMBO
     }
 
+    /// <summary>
+    /// 單元運算子:Concrete IFeature物件
+    /// </summary>
     public class Unary : IFeature
     {
+        /// <summary>
+        /// 單元運算規則
+        /// </summary>
         private UnaryRule UnaryRule;
 
+        /// <summary>
+        /// 單元運算字典
+        /// </summary>
+        private static Dictionary<char, UnaryOperator> UnaryDic = new Dictionary<char, UnaryOperator>()
+        {
+            {'±', new UnaryOperator((num) => -1 * num, '±') },
+            {'√', new UnaryOperator((num) => (decimal)Math.Pow((double) num, 0.5), '√')}
+        };
+
+        /// <summary>
+        /// 建構子
+        /// </summary>
+        /// <param name="userId">用戶id</param>
+        /// <param name="content">功能內容</param>
         public Unary(int userId, char content) : base(userId, content)
         {
         }
 
         /// <summary>
-        /// 空建構子(必要)
+        /// 空建構子。反射用的
         /// </summary>
         public Unary()
         {
-
         }
 
+        /// <summary>
+        /// 根據OrderingDealer方法的回傳值，製造畫面物件。
+        /// </summary>
+        /// <returns>畫面面件</returns>
         protected override FrameObject CreateFrameObject()
         {
             //OrderingChecker會回傳FrameUpdate
@@ -44,14 +70,16 @@ namespace WebApi.FeatureStructure
             return FrameObject;
         }
 
+        /// <summary>
+        /// 根據Tree方法的回傳值，製造畫面更新。
+        /// </summary>
+        /// <returns>畫面更新</returns>
         protected override FrameUpdate OrderingDealer()
         {
-            Feature CurrentFeature = Feature.UNARY;
-            
             FrameUpdate frameUpdate;
 
             //如果單元連按會有迭代的表現方式
-            if (PreviousFeature == Feature.UNARY)
+            if (LastFeature == typeof(Unary))
             {
                 UnaryRule = UnaryRule.UNARY_UNARY_COMBO;
             }
@@ -62,12 +90,13 @@ namespace WebApi.FeatureStructure
             }
 
             frameUpdate = Tree();
-
-            //執行成功時記錄下這次的Cast
-            PreviousFeature = CurrentFeature;
             return frameUpdate;
         }
 
+        /// <summary>
+        /// 將運算結果，製成畫面更新。
+        /// </summary>
+        /// <returns>畫面更新</returns>
         protected override FrameUpdate Tree()
         {
             if (UnaryRule == UnaryRule.UNARY_SINGLE)
@@ -84,10 +113,14 @@ namespace WebApi.FeatureStructure
             }
         }
 
+        /// <summary>
+        /// 對單一數字，做第一次的單元運算
+        /// </summary>
+        /// <returns>畫面更新</returns>
         private FrameUpdate UnarySingle()
         {
             //拿到單元運算的公式
-            UnaryOperator unaryOperator = Setting.Operators.GetUnary(Content);
+            UnaryOperator unaryOperator = UnaryDic[Content];
             var formula = unaryOperator.Formula;
 
             int removeLength = 0;
@@ -125,13 +158,17 @@ namespace WebApi.FeatureStructure
 
             //記住這次的結果
             CurrentUnaryString = updateString;
-            return new FrameUpdate(NumberField.Number.ToString(),removeLength, updateString);
+            return new FrameUpdate(NumberField.Number.ToString(), removeLength, updateString);
         }
 
+        /// <summary>
+        /// 連續做單元運算
+        /// </summary>
+        /// <returns>畫面更新</returns>
         private FrameUpdate UnaryCombo()
         {
             //取得單元運算子
-            UnaryOperator unaryOperator = Setting.Operators.GetUnary(Content);
+            UnaryOperator unaryOperator = UnaryDic[Content];
             var formula = unaryOperator.Formula;
 
             int removeLength = CurrentUnaryString.Length;
@@ -160,19 +197,31 @@ namespace WebApi.FeatureStructure
             return new FrameUpdate(NumberField.Number.ToString(), removeLength, CurrentUnaryString);
         }
 
-        protected override HashSet<Feature> SetPreviousFeatures()
-        {
-            return new HashSet<Feature>() { Feature.Null, Feature.NUMBER, Feature.BINARY, Feature.EQUAL, Feature.RIGHT_BRACKET, Feature.CLEAR_ERROR, Feature.BACKSPACE, Feature.UNARY };
-        }
-
+        /// <summary>
+        /// 回傳此功能前面可以接的功能集
+        /// </summary>
+        /// <returns>前面可以接的功能集</returns>
         public override HashSet<Type> LegitPreviousType()
         {
             return new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(Equal), typeof(RightBracket), typeof(Clear), typeof(ClearError), typeof(BackSpace), typeof(Unary) };
         }
 
+        /// <summary>
+        /// 回傳此功能後面可以接的功能集
+        /// </summary>
+        /// <returns>後面可以接的功能集</returns>
         public override HashSet<Type> LegitAfterWardType()
         {
             return new HashSet<Type>() { typeof(Binary), typeof(Equal), typeof(RightBracket), typeof(Clear), typeof(Unary) };
+        }
+
+        /// <summary>
+        /// 回傳新增物件的方法
+        /// </summary>
+        /// <returns>委派</returns>
+        public override Func<int, char, IFeature> Create()
+        {
+            return (userid, content) => new Unary(userid, content);
         }
     }
 }

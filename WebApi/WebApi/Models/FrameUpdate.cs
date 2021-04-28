@@ -26,7 +26,6 @@ namespace WebApi.Models
         /// </summary>
         public string UpdateString { get; set; }
 
-
         /// <summary>
         /// 答案
         /// </summary>
@@ -41,18 +40,27 @@ namespace WebApi.Models
             Answer = answer;
         }
 
+        /// <summary>
+        /// 建構子
+        /// </summary>
+        /// <param name="removeLength">要移除的長度</param>
+        /// <param name="updateString">更新字串</param>
         public FrameUpdate(int removeLength, string updateString)
         {
             RemoveLength = removeLength;
             UpdateString = updateString;
         }
 
+        /// <summary>
+        /// 建構子
+        /// </summary>
+        /// <param name="answer">顯示答案</param>
+        /// <param name="removeLength">要移除的長度</param>
+        /// <param name="updateString">更新字串</param>
         public FrameUpdate(string answer, int removeLength, string updateString) : this(removeLength, updateString)
         {
             Answer = answer;
         }
-
-
 
         /// <summary>
         /// 建構子

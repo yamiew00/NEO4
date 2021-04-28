@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using WebApi.Extensions;
 
 namespace WebApi.FeatureStructure
 {
+    /// <summary>
+    /// 執行順序的規則
+    /// </summary>
     public class OrderingRule
     {
+        /// <summary>
+        /// 順序字典。key:先前執行的type；value:可在key之後執行的所有type
+        /// </summary>
         public static Dictionary<Type, HashSet<Type>> OrderingDic = new Dictionary<Type, HashSet<Type>>();
 
         /// <summary>
@@ -14,62 +20,33 @@ namespace WebApi.FeatureStructure
         /// </summary>
         public static void LoadOrdering()
         {
-            var types = typeof(IFeature).Assembly.GetTypes().Where(type => type.IsSubclassOf(typeof(IFeature)));
-            //前位字典
-            foreach(var afterType in types)
-            {
-                var name = afterType.Name;
-                var reflect = Activator.CreateInstance(afterType);
-                
+            var types = typeof(IFeature).GetAllTypes();
 
-                HashSet<Type> previousTypeSet = (HashSet<Type>)afterType.GetMethod("LegitPreviousType").Invoke(reflect, null);
-                
-                foreach (var previousType in previousTypeSet)
-                {
-                    AddToDic(previousType, afterType);
-                }
-            }
-
-            //check, ok
-            System.Diagnostics.Debug.WriteLine("---1---");
-            foreach (var pair in OrderingDic)
+            //順位字典的輸入
+            foreach (var type in types)
             {
-                System.Diagnostics.Debug.WriteLine($"{pair.Key.Name}:(count = {pair.Value.Count})");
-                System.Diagnostics.Debug.Write("        ");
-                foreach (var item in pair.Value)
-                {
-                    System.Diagnostics.Debug.Write(item.Name + ", ");
-                }
-                System.Diagnostics.Debug.WriteLine("");
-            }
-
-            //後位字典
-            foreach(var type in types)
-            {
-                //var name = afterType.Name;
                 var reflect = Activator.CreateInstance(type);
 
+                HashSet<Type> previousTypeSet = (HashSet<Type>)type.GetMethod("LegitPreviousType").Invoke(reflect, null);
                 HashSet<Type> afterTypeSet = (HashSet<Type>)type.GetMethod("LegitAfterWardType").Invoke(reflect, null);
-                foreach(var afterType in afterTypeSet)
+
+                foreach (var previousType in previousTypeSet)
+                {
+                    AddToDic(previousType, type);
+                }
+
+                foreach (var afterType in afterTypeSet)
                 {
                     AddToDic(type, afterType);
                 }
             }
-
-            //check, ok
-            System.Diagnostics.Debug.WriteLine("---2---");
-            foreach (var pair in OrderingDic)
-            {
-                System.Diagnostics.Debug.WriteLine($"{pair.Key.Name}:(count = {pair.Value.Count})");
-                System.Diagnostics.Debug.Write("        ");
-                foreach (var item in pair.Value)
-                {
-                    System.Diagnostics.Debug.Write(item.Name + ", ");
-                }
-                System.Diagnostics.Debug.WriteLine("");
-            }
         }
 
+        /// <summary>
+        /// 新增到OrderingDic的方法
+        /// </summary>
+        /// <param name="key">key(Type)</param>
+        /// <param name="value">value(Type)</param>
         private static void AddToDic(Type key, Type value)
         {
             if (OrderingDic.Keys.Contains(key))
@@ -87,6 +64,12 @@ namespace WebApi.FeatureStructure
             }
         }
 
+        /// <summary>
+        /// 判斷執行順序是否有誤
+        /// </summary>
+        /// <param name="lastType">先前的執行功能</param>
+        /// <param name="currentType">現在的執行功能</param>
+        /// <returns></returns>
         public static bool IsOrderLegit(Type lastType, Type currentType)
         {
             if (OrderingDic.Keys.Contains(lastType))
@@ -99,6 +82,4 @@ namespace WebApi.FeatureStructure
             }
         }
     }
-
-
 }

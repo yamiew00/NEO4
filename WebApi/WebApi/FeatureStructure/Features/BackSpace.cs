@@ -19,11 +19,10 @@ namespace WebApi.FeatureStructure
         }
 
         /// <summary>
-        /// 空建構子(必要)
+        /// 空建構子。反射用的
         /// </summary>
         public BackSpace()
         {
-
         }
 
         /// <summary>
@@ -44,11 +43,19 @@ namespace WebApi.FeatureStructure
             return FrameObject;
         }
 
+        /// <summary>
+        /// 回傳此功能後面可以接的功能集
+        /// </summary>
+        /// <returns>後面可以接的功能集</returns>
         public override HashSet<Type> LegitAfterWardType()
         {
-            return new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(Equal),typeof(LeftBracket), typeof(RightBracket), typeof(Clear), typeof(BackSpace), typeof(Unary) };
+            return new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(Equal), typeof(LeftBracket), typeof(RightBracket), typeof(Clear), typeof(BackSpace), typeof(Unary) };
         }
 
+        /// <summary>
+        /// 回傳此功能前面可以接的功能集
+        /// </summary>
+        /// <returns>前面可以接的功能集</returns>
         public override HashSet<Type> LegitPreviousType()
         {
             return new HashSet<Type>() { typeof(Number), typeof(BackSpace) };
@@ -61,18 +68,7 @@ namespace WebApi.FeatureStructure
         protected override FrameUpdate OrderingDealer()
         {
             FrameUpdate frameUpdate = Tree();
-            //執行成功時記錄下這次的Cast
-            PreviousFeature = Feature.BACKSPACE;
             return frameUpdate;
-        }
-
-        /// <summary>
-        /// 設定實體物件的合法順序規則
-        /// </summary>
-        /// <returns>合法順序集</returns>
-        protected override HashSet<Feature> SetPreviousFeatures()
-        {
-            return new HashSet<Feature>() { Feature.NUMBER, Feature.BACKSPACE };
         }
 
         /// <summary>
@@ -99,6 +95,15 @@ namespace WebApi.FeatureStructure
                 updateString += ".";
             }
             return new FrameUpdate(RemoveLength, updateString);
+        }
+
+        /// <summary>
+        /// 回傳新增物件的方法
+        /// </summary>
+        /// <returns>委派</returns>
+        public override Func<int, char, IFeature> Create()
+        {
+            return (userid, content) => new BackSpace(userid);
         }
     }
 }

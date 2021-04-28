@@ -73,7 +73,6 @@ namespace Calculator.News
         public async Task<Response> Request(Bond bond)
         {
             var uri = Path("/api/integrated/" + Global.USER_ID);
-            Console.WriteLine(Global.USER_ID);
             string jsonString = bond.ToJson<Bond>();
 
             var request = new HttpRequestMessage

@@ -26,7 +26,18 @@ namespace WebApi.FeatureStructure
         /// 雙元規則
         /// </summary>
         private BinaryRule BinaryRule;
-        
+
+        /// <summary>
+        /// 二元運算字典
+        /// </summary>
+        private static Dictionary<char, BinaryOperator> BinaryDic = new Dictionary<char, BinaryOperator>()
+        {
+            { '+', new BinaryOperator(1, (num1, num2) => num1 + num2, '+')},
+            { '-', new BinaryOperator(1, (num1, num2) => num1 - num2, '-')},
+            { 'x', new BinaryOperator(2, (num1, num2) => num1 * num2, 'x')},
+            { '÷', new BinaryOperator(2, (num1, num2) => num1 / num2, '÷')},
+        };
+
         /// <summary>
         /// 建構子
         /// </summary>
@@ -37,11 +48,10 @@ namespace WebApi.FeatureStructure
         }
 
         /// <summary>
-        /// 空建構子(必要)
+        /// 空建構子。反射用的
         /// </summary>
         public Binary()
         {
-
         }
 
         /// <summary>
@@ -63,14 +73,22 @@ namespace WebApi.FeatureStructure
             return FrameObject;
         }
 
+        /// <summary>
+        /// 回傳此功能後面可以接的功能集
+        /// </summary>
+        /// <returns>後面可以接的功能集</returns>
         public override HashSet<Type> LegitAfterWardType()
         {
-            return new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(Equal),typeof(LeftBracket), typeof(RightBracket), typeof(Clear), typeof(Unary) };
+            return new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(Equal), typeof(LeftBracket), typeof(RightBracket), typeof(Clear), typeof(Unary) };
         }
 
+        /// <summary>
+        /// 回傳此功能前面可以接的功能集
+        /// </summary>
+        /// <returns>前面可以接的功能集</returns>
         public override HashSet<Type> LegitPreviousType()
         {
-            return new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(RightBracket),typeof(Clear), typeof(ClearError), typeof(BackSpace), typeof(Unary) };
+            return new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(RightBracket), typeof(Clear), typeof(ClearError), typeof(BackSpace), typeof(Unary) };
         }
 
         /// <summary>
@@ -78,19 +96,17 @@ namespace WebApi.FeatureStructure
         /// </summary>
         /// <returns>畫面更新</returns>
         protected override FrameUpdate OrderingDealer()
-        {
-            Feature CurrentFeature = Feature.BINARY;
-            
+        {            
             FrameUpdate frameUpdate;
 
-            if (PreviousFeature == Feature.Null)
+            if (LastFeature == typeof(Clear))
             {
                 BinaryRule = BinaryRule.ADD_BINARY;
                 frameUpdate = Tree();
                 //要補0
                 frameUpdate.UpdateString = $"0{frameUpdate.UpdateString}";
             }
-            else if (PreviousFeature == Feature.BINARY)
+            else if (LastFeature == typeof(Binary))
             {
                 BinaryRule = BinaryRule.MODIFY_BINARY;
                 frameUpdate = Tree();
@@ -100,21 +116,10 @@ namespace WebApi.FeatureStructure
                 BinaryRule = BinaryRule.ADD_BINARY;
                 frameUpdate = Tree();
             }
-
-            //執行成功時記錄下這次的Cast
-            PreviousFeature = CurrentFeature;
+            
             return frameUpdate;
         }
-
-        /// <summary>
-        /// 設定實體物件的合法順序規則
-        /// </summary>
-        /// <returns>合法順序集</returns>
-        protected override HashSet<Feature> SetPreviousFeatures()
-        {
-            return new HashSet<Feature>() { Feature.Null, Feature.NUMBER, Feature.BINARY, Feature.RIGHT_BRACKET, Feature.CLEAR_ERROR, Feature.BACKSPACE, Feature.UNARY };
-        }
-
+        
         /// <summary>
         /// 將運算結果，製成畫面更新。
         /// </summary>
@@ -123,7 +128,7 @@ namespace WebApi.FeatureStructure
         {
             if (BinaryRule == BinaryRule.ADD_BINARY)
             {
-                BinaryOperator binaryOperator = Setting.Operators.GetBinary(Content);
+                BinaryOperator binaryOperator = BinaryDic[Content];
 
                 //若沒有輸入過值，則視為輸入了0
                 TreeStack.Peek().Add((NumberField == null) ? 0 : NumberField.Number.Value);
@@ -140,7 +145,7 @@ namespace WebApi.FeatureStructure
             }
             else if (BinaryRule == BinaryRule.MODIFY_BINARY)
             {
-                BinaryOperator binaryOperator = Setting.Operators.GetBinary(Content);
+                BinaryOperator binaryOperator = BinaryDic[Content];
                 if (NumberField != null)
                 {
                     throw new Exception("ModifyBinary時Number不能有值");
@@ -152,6 +157,15 @@ namespace WebApi.FeatureStructure
             {
                 throw new Exception("BinaryRule錯誤");
             }
+        }
+
+        /// <summary>
+        /// 回傳新增物件的方法
+        /// </summary>
+        /// <returns>委派</returns>
+        public override Func<int, char, IFeature> Create()
+        {
+            return (userid, content) => new Binary(userid, content);
         }
     }
 }

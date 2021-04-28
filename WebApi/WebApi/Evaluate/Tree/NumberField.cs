@@ -20,7 +20,7 @@ namespace WebApi.Evaluate.Tree
         /// <summary>
         /// 有小數點的布林值(可能仍為整數)
         /// </summary>
-        public bool IsNumeric;
+        public bool IsNumeric { get; set; }
 
         /// <summary>
         /// 小數點後有幾位

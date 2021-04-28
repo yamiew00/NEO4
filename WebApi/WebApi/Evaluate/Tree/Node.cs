@@ -27,8 +27,10 @@ namespace WebApi.Evaluate.Tree
         /// </summary>
         public Value NodeValue { get; set; }
 
+        /// <summary>
+        /// 該節點代表的答案(自己與自己的子節點整合起來的答案)
+        /// </summary>
         public decimal? PartialAnswer { get; set; }
-
 
         /// <summary>
         /// 值。如果有值，則其中一者必為空值
@@ -197,11 +199,19 @@ namespace WebApi.Evaluate.Tree
             return (NodeValue == null) ? false : NodeValue.Operator != null;
         }
 
+        /// <summary>
+        /// 判斷是否為數字
+        /// </summary>
+        /// <returns></returns>
         public bool IsNumber()
         {
             return (NodeValue == null) ? false : NodeValue.Number != null;
         }
 
+        /// <summary>
+        /// 是否已有答案
+        /// </summary>
+        /// <returns>布林值</returns>
         public bool HasPartial()
         {
             return PartialAnswer.HasValue;

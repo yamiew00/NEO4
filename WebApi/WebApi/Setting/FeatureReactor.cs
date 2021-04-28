@@ -7,6 +7,7 @@ using WebApi.DataBase;
 using WebApi.Models.Request;
 using WebApi.Models.Response;
 using WebApi.FeatureStructure;
+using WebApi.Extensions;
 
 namespace WebApi.Setting
 {
@@ -18,64 +19,22 @@ namespace WebApi.Setting
         /// <summary>
         /// 執行特定Feature所對應的方法，並回傳FrameResponse物件
         /// </summary>
-        private readonly static Dictionary<string, Func<char, int, IFeature>> IFeatureDic = new Dictionary<string, Func<char, int, IFeature>>()
+        private static Dictionary<string, Func<int, char, IFeature>> IFeatureDic = new Dictionary<string, Func<int, char, IFeature>>();
+
+        /// <summary>
+        /// 載入行為字典
+        /// </summary>
+        public static void LoadIFeature()
         {
+            var types = typeof(IFeature).GetAllTypes();
+            foreach (var type in types)
             {
-                "Number", (content, userId) =>
-                {
-                    return new Number(userId, content);
-                }
-            },
-            {
-                "Binary", (content, userId) =>
-                {
-                    return new Binary(userId, content);
-                }
-            },
-            {
-                "Unary", (content, userId) =>
-                {
-                    return new Unary(userId, content);
-                }
-            },
-            {
-                "Equal", (content, userId) =>
-                {
-                    return new Equal(userId);
-                }
-            },
-            {
-                "LeftBracket", (content, userId) =>
-                {
-                    return new LeftBracket(userId);
-                }
-            },
-            {
-                "RightBracket", (content, userId) =>
-                {
-                    return new RightBracket(userId);
-                }
-            },
-            {
-                //Clear的Cast就是null?
-                "Clear", (content, userId) =>
-                {
-                    return new Clear(userId);
-                }
-            },
-            {
-                "ClearError", (content, userId) =>
-                {
-                    return new ClearError(userId);
-                }
-            },
-            {
-                "BackSpace", (content, userId) =>
-                {
-                    return new BackSpace(userId);
-                }
+                var reflect = Activator.CreateInstance(type);
+
+                Func<int, char, IFeature> func = (Func<int, char, IFeature>)type.GetMethod("Create").Invoke(reflect, null);
+                IFeatureDic.Add(type.Name, func);
             }
-        };
+        }
 
         /// <summary>
         /// 呼叫字典中的方法以取得FrameObject
@@ -89,7 +48,7 @@ namespace WebApi.Setting
             {
                 throw new Exception("無此Feature");
             }
-            return IFeatureDic[instruct.Feature].Invoke(instruct.Content, userId).GetFrameObject();
+            return IFeatureDic[instruct.Feature].Invoke(userId, instruct.Content).GetFrameObject();
         }
     }
 }

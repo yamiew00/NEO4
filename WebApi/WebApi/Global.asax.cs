@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Routing;
 using WebApi.FeatureStructure;
+using WebApi.Setting;
 
 namespace WebApi
 {
@@ -13,6 +14,7 @@ namespace WebApi
         protected void Application_Start()
         {
             OrderingRule.LoadOrdering();
+            FeatureReactor.LoadIFeature();
             GlobalConfiguration.Configure(WebApiConfig.Register);
         }
     }

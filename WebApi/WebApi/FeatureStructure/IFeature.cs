@@ -14,11 +14,6 @@ namespace WebApi.FeatureStructure
     public abstract class IFeature : OrderedFeature
     {
         /// <summary>
-        /// 合法的前一次功能集
-        /// </summary>
-        protected HashSet<Feature> FeatureSet { get; set; }
-
-        /// <summary>
         /// 例外字典
         /// </summary>
         private readonly Dictionary<Type, Func<FrameObject, int, FrameObject>> ExceptionDic = new Dictionary<Type, Func<FrameObject, int, FrameObject>>()
@@ -57,9 +52,11 @@ namespace WebApi.FeatureStructure
             }
         };
 
+        /// <summary>
+        /// 空建構子。反射的用
+        /// </summary>
         public IFeature()
         {
-
         }
         
         /// <summary>
@@ -68,7 +65,6 @@ namespace WebApi.FeatureStructure
         /// <param name="userId">用戶id</param>
         public IFeature(int userId) : base(userId)
         {
-            FeatureSet = SetPreviousFeatures();
         }
 
         /// <summary>
@@ -78,8 +74,13 @@ namespace WebApi.FeatureStructure
         /// <param name="content">功能內容</param>
         public IFeature(int userId, char content) : base(userId, content)
         {
-            FeatureSet = SetPreviousFeatures();
         }
+
+        /// <summary>
+        /// 回傳新增物件的方法
+        /// </summary>
+        /// <returns>委派</returns>
+        public abstract Func<int, char, IFeature> Create();
 
         /// <summary>
         /// 回傳畫面物件的方法。在這邊做順序判斷
@@ -116,12 +117,6 @@ namespace WebApi.FeatureStructure
                 }
             }
         }
-
-        /// <summary>
-        /// 設定實體物件的合法順序規則
-        /// </summary>
-        /// <returns>合法順序集</returns>
-        protected abstract HashSet<Feature> SetPreviousFeatures();
 
         /// <summary>
         /// 根據OrderingDealer方法的回傳值，製造畫面物件。

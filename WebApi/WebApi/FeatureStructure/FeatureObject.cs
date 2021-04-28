@@ -8,23 +8,6 @@ using WebApi.Models.Response;
 namespace WebApi.FeatureStructure
 {
     /// <summary>
-    /// 功能種類
-    /// </summary>
-    public enum Feature
-    {
-        Null,
-        NUMBER,
-        BINARY,
-        EQUAL,
-        LEFT_BRACKET,
-        RIGHT_BRACKET,
-        CLEAR,
-        CLEAR_ERROR,
-        BACKSPACE,
-        UNARY
-    }
-
-    /// <summary>
     /// Feature的抽象類別。
     /// </summary>
     public abstract class FeatureObject
@@ -79,20 +62,6 @@ namespace WebApi.FeatureStructure
         /// <summary>
         /// 前次執行功能
         /// </summary>
-        protected Feature PreviousFeature
-        {
-            get
-            {
-                return UserInfo.PreviousFeature;
-            }
-
-            set
-            {
-                UserInfo.PreviousFeature = value;
-            }
-        }
-
-
         protected Type LastFeature
         {
             get
@@ -170,10 +139,11 @@ namespace WebApi.FeatureStructure
             }
         }
 
-        //空建構子
+        /// <summary>
+        /// 空建構子。反射用的
+        /// </summary>
         protected FeatureObject()
         {
-
         }
 
         /// <summary>

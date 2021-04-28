@@ -7,40 +7,62 @@ using WebApi.Models.Response;
 
 namespace WebApi.FeatureStructure
 {
+    /// <summary>
+    /// 用戶資訊(計算、畫面)
+    /// </summary>
     public class UserInfo
     {
-        //User-Related。
+        /// <summary>
+        /// 完整表達式
+        /// </summary>
         public string CompleteExpression { get; set; }
 
-        //User-Related
+        /// <summary>
+        /// 畫面物件
+        /// </summary>
         public FrameObject FrameObject { get; set; }
 
-        //User-Related
-        public Feature PreviousFeature { get; set; }
-
+        /// <summary>
+        /// 前次執行功能
+        /// </summary>
         public Type LastFeature { get; set; }
 
-        //User-Related。
+        /// <summary>
+        /// 數字
+        /// </summary>
         public NumberField NumberField { get; set; }
         
+        /// <summary>
+        /// 運算樹
+        /// </summary>
         public Stack<ExpressionTree> TreeStack { get; set; }
 
-        //User-Related。
+        /// <summary>
+        /// 當前答案
+        /// </summary>
         public decimal CurrentAnswer { get; set; }
 
+        /// <summary>
+        /// 單元運算字串
+        /// </summary>
         public string CurrentUnaryString { get; set; }
 
+        /// <summary>
+        /// 建構子
+        /// </summary>
         public UserInfo()
         {
             Init();
         }
 
+        /// <summary>
+        /// 用戶資訊的初始化
+        /// </summary>
         public void Init()
         {
             CompleteExpression = string.Empty;
             FrameObject = new FrameObject();
-            PreviousFeature = Feature.Null;
-            //初始預設為Clear
+            //LastFeature初始預設為Clear
             LastFeature = typeof(Clear); 
             NumberField = new NumberField();
             CurrentAnswer = 0;

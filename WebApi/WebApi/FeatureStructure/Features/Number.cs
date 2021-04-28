@@ -22,11 +22,10 @@ namespace WebApi.FeatureStructure
         }
 
         /// <summary>
-        /// 空建構子(必要)
+        /// 空建構子(給反射用的)
         /// </summary>
         public Number()
         {
-
         }
 
         /// <summary>
@@ -47,11 +46,19 @@ namespace WebApi.FeatureStructure
             return FrameObject;
         }
 
+        /// <summary>
+        /// 回傳此功能後面可以接的功能集
+        /// </summary>
+        /// <returns>後面可以接的功能集</returns>
         public override HashSet<Type> LegitAfterWardType()
         {
             return new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(Equal), typeof(RightBracket), typeof(Clear), typeof(ClearError), typeof(BackSpace), typeof(Unary) };
         }
 
+        /// <summary>
+        /// 回傳此功能前面可以接的功能集
+        /// </summary>
+        /// <returns>前面可以接的功能集</returns>
         public override HashSet<Type> LegitPreviousType()
         {
             return new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(Equal), typeof(LeftBracket), typeof(Clear), typeof(ClearError), typeof(BackSpace) };
@@ -63,48 +70,30 @@ namespace WebApi.FeatureStructure
         /// <returns>畫面更新</returns>
         protected override FrameUpdate OrderingDealer()
         {
-            Feature CurrentFeature = Feature.NUMBER;
-            
             FrameUpdate frameUpdate;
 
             //等號後輸入數字
-            if (PreviousFeature == Feature.EQUAL)
+            if (LastFeature == typeof(Equal))
             {
                 //必須要把之前的運算全部清空
                 InfoInit();
+
                 frameUpdate = Tree();
-
                 frameUpdate.RemoveLength = FrameUpdate.REMOVE_ALL;
-
-                //執行成功時記錄下這次的Cast
-                PreviousFeature = CurrentFeature;
                 return frameUpdate;
             }
 
             //backspace或clearerror之後的數字處理
-            if ((PreviousFeature == Feature.BACKSPACE || PreviousFeature == Feature.CLEAR_ERROR) && NumberField.Number == 0)
+            if ((LastFeature == typeof(BackSpace) || LastFeature == typeof(ClearError)) && NumberField.Number == 0)
             {
                 frameUpdate = Tree();
                 frameUpdate.RemoveLength += 1;
-
-                //執行成功時記錄下這次的Cast
-                PreviousFeature = CurrentFeature;
+                
                 return frameUpdate;
             }
 
             frameUpdate = Tree();
-            //執行成功時記錄下這次的Cast
-            PreviousFeature = CurrentFeature;
             return frameUpdate;
-        }
-
-        /// <summary>
-        /// 設定實體物件的合法順序規則
-        /// </summary>
-        /// <returns>合法順序集</returns>
-        protected override HashSet<Feature> SetPreviousFeatures()
-        {
-            return new HashSet<Feature>() { Feature.Null, Feature.NUMBER, Feature.BINARY, Feature.EQUAL, Feature.LEFT_BRACKET, Feature.CLEAR, Feature.CLEAR_ERROR, Feature.BACKSPACE };
         }
 
         /// <summary>
@@ -154,6 +143,14 @@ namespace WebApi.FeatureStructure
             }
             return new FrameUpdate(NumberField.Number.ToString(), removeLength: 0, updateString: Content.ToString());
         }
-        
+
+        /// <summary>
+        /// 回傳新增物件的方法
+        /// </summary>
+        /// <returns>委派</returns>
+        public override Func<int, char, IFeature> Create()
+        {
+            return (userid, content) => new Number(userid, content);
+        }
     }
 }
