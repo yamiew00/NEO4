@@ -12,7 +12,11 @@ namespace WebApi.Evaluate.Utils
     /// </summary>
     public class Evaluator
     {
-        //新的
+        /// <summary>
+        /// 計算一棵樹的最終答案
+        /// </summary>
+        /// <param name="tree">樹</param>
+        /// <returns>答案</returns>
         public decimal EvaluateTree(ExpressionTree tree)
         {
             var top = tree.GetTop();
@@ -27,7 +31,11 @@ namespace WebApi.Evaluate.Utils
             return ans;
         }
         
-        //還要清除parial number
+        /// <summary>
+        /// 將指定Node收束成一個數字(該Node及其以下的所有Node視為一棵子樹)
+        /// </summary>
+        /// <param name="node">節點</param>
+        /// <returns>計算結果</returns>
         public decimal PackNode(Node node)
         {
             if (node.NodeValue.Number.HasValue)
@@ -77,7 +85,6 @@ namespace WebApi.Evaluate.Utils
 
             var leftPartial = leftNode.PartialAnswer.Value;
             var rightPartial = rightNode.PartialAnswer.Value;
-
             
             var ans = Compute(node.NodeValue.Operator, leftPartial, rightPartial);
             
@@ -96,6 +103,10 @@ namespace WebApi.Evaluate.Utils
             return Operator.Formula(num1, num2);
         }
 
+        /// <summary>
+        /// 清除指定樹的雜質
+        /// </summary>
+        /// <param name="tree">樹</param>
         private void ClearAllPartial(ExpressionTree tree)
         {
             if (tree == null)
@@ -110,6 +121,10 @@ namespace WebApi.Evaluate.Utils
             ClearNodePartial(top);
         }
 
+        /// <summary>
+        /// 清除指定節點的雜質
+        /// </summary>
+        /// <param name="node">節點</param>
         private void ClearNodePartial(Node node)
         {
             node.PartialAnswer = null;

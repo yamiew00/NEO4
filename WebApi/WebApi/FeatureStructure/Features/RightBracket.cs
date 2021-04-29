@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using WebApi.Evaluate.Tree;
 using WebApi.Exceptions;
+using WebApi.FeatureStructure.Computes;
+using WebApi.FeatureStructure.Frames;
 using WebApi.Models;
 using WebApi.Models.Response;
 
@@ -19,24 +21,6 @@ namespace WebApi.FeatureStructure
         {
         }
         
-        /// <summary>
-        /// 根據OrderingDealer方法的回傳值，製造畫面物件。
-        /// </summary>
-        /// <returns>畫面面件</returns>
-        protected override FrameObject CreateFrameObject()
-        {
-            FrameUpdate frameUpdate = OrderingDealer();
-
-            //完整運算式的刷新
-            CompleteExpression = frameUpdate.Refresh(CompleteExpression);
-
-            //panel, subpanel設定。
-            FrameObject.SubPanel = CompleteExpression;
-            FrameObject.Panel = frameUpdate.Answer;
-
-            return FrameObject;
-        }
-
         /// <summary>
         /// 回傳此功能後面可以接的功能集
         /// </summary>
@@ -56,59 +40,58 @@ namespace WebApi.FeatureStructure
         }
 
         /// <summary>
-        /// 根據Tree方法的回傳值，製造畫面更新。
+        /// 依功能回傳畫面物件
         /// </summary>
-        /// <returns>畫面更新</returns>
-        protected override FrameUpdate OrderingDealer()
+        /// <param name="boardObject">面板物件</param>
+        /// <param name="frameUpdate">畫面更新</param>
+        /// <returns>畫面物件</returns>
+        public override FrameObject GetFrameObject(BoardObject boardObject, FrameUpdate frameUpdate)
         {
-            FrameUpdate frameUpdate = Tree();
-            return frameUpdate;
+            //完整運算式的刷新
+            boardObject.CompleteExpression = frameUpdate.Refresh(boardObject.CompleteExpression);
+
+            //panel, subpanel設定。
+            boardObject.FrameObject.SubPanel = boardObject.CompleteExpression;
+            boardObject.FrameObject.Panel = frameUpdate.Answer;
+
+            return boardObject.FrameObject;
         }
 
         /// <summary>
-        /// 將運算結果，製成畫面更新。
+        /// 依計畫內容回傳畫面更新
         /// </summary>
+        /// <param name="computeObject">計算物件</param>
         /// <returns>畫面更新</returns>
-        protected override FrameUpdate Tree()
+        public override FrameUpdate Compute(ComputeObject computeObject)
         {
             string updateString = string.Empty;
 
-            if (NumberField != null)
+            if (computeObject.NumberField != null)
             {
-                TreeStack.Peek().Add(NumberField.Number.Value);
+                computeObject.TreeStack.Peek().Add(computeObject.NumberField.Number.Value);
             }
-            else if (NumberField == null)
+            else if (computeObject.NumberField == null)
             {
-                TreeStack.Peek().Add(CurrentAnswer);
-                updateString += CurrentAnswer.ToString();
+                computeObject.TreeStack.Peek().Add(computeObject.CurrentAnswer);
+                updateString += computeObject.CurrentAnswer.ToString();
             }
-            
+
             //右括號處理
-            if (TreeStack.Count <= 1)
+            if (computeObject.TreeStack.Count <= 1)
             {
                 throw new BracketException("右括號數量過多");
             }
-            var subTree = TreeStack.Pop();
+            var subTree = computeObject.TreeStack.Pop();
 
-            TreeStack.Peek().Add(subTree);
+            computeObject.TreeStack.Peek().Add(subTree);
 
             updateString += ")";
 
-            NumberField = null;
-            
-            CurrentAnswer = GetTmpResult();
+            computeObject.NumberField = null;
 
-            return new FrameUpdate(CurrentAnswer.ToString(), removeLength: 0, updateString: updateString);
+            computeObject.CurrentAnswer = GetTmpResult(computeObject);
+
+            return new FrameUpdate(computeObject.CurrentAnswer.ToString(), removeLength: 0, updateString: updateString);
         }
-
-        /// <summary>
-        /// 回傳新增物件的方法
-        /// </summary>
-        /// <returns>委派</returns>
-        public override Func<char, Feature> Create()
-        {
-            return (content) => new RightBracket();
-        }
-
     }
 }

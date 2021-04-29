@@ -63,16 +63,6 @@ namespace WebApi.Models
         }
 
         /// <summary>
-        /// 建構子
-        /// </summary>
-        /// <param name="answer">答案</param>
-        /// <param name="expUpdate">運算式更新內容</param>
-        //public FrameUpdate(string answer, ExpUpdate expUpdate)
-        //{
-        //    Answer = answer;
-        //}
-
-        /// <summary>
         /// 刷新運算式內容
         /// </summary>
         /// <param name="expression">運算式</param>
@@ -84,7 +74,7 @@ namespace WebApi.Models
                 expression = string.Empty;
             }
 
-            //-1代表
+            //RemoveALL代表要刪除整個字串
             if (RemoveLength == REMOVE_ALL)
             {
                 RemoveLength = expression.Length;

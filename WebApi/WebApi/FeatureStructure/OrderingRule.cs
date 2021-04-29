@@ -13,7 +13,7 @@ namespace WebApi.FeatureStructure
         /// <summary>
         /// 順序字典。key:先前執行的type；value:可在key之後執行的所有type
         /// </summary>
-        public static Dictionary<Type, HashSet<Type>> OrderingDic = new Dictionary<Type, HashSet<Type>>();
+        private static Dictionary<Type, HashSet<Type>> OrderingDic = new Dictionary<Type, HashSet<Type>>();
 
         /// <summary>
         /// 載入順位字典

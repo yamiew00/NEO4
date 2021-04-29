@@ -20,8 +20,17 @@ namespace WebApi.Evaluate.Operators
         /// </summary>
         public Func<decimal, decimal, decimal> Formula { get; private set; }
 
-        public char Name;
+        /// <summary>
+        /// 名稱
+        /// </summary>
+        public char Name { get; set; }
 
+        /// <summary>
+        /// 建構子
+        /// </summary>
+        /// <param name="priority">優先度</param>
+        /// <param name="formula">運算規則</param>
+        /// <param name="name">名稱</param>
         public BinaryOperator(int priority, Func<decimal, decimal, decimal> formula, char name)
         {
             Priority = priority;

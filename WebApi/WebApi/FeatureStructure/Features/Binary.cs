@@ -4,30 +4,18 @@ using WebApi.DataBase;
 using WebApi.Evaluate;
 using WebApi.Evaluate.Operators;
 using WebApi.Evaluate.Tree;
+using WebApi.FeatureStructure.Computes;
+using WebApi.FeatureStructure.Frames;
 using WebApi.Models;
 using WebApi.Models.Response;
 
 namespace WebApi.FeatureStructure
 {
     /// <summary>
-    /// 雙元規則
-    /// </summary>
-    public enum BinaryRule
-    {
-        ADD_BINARY,
-        MODIFY_BINARY
-    }
-
-    /// <summary>
     /// 雙元運算子:Concrete IFeature物件
     /// </summary>
     public class Binary : Feature
     {
-        /// <summary>
-        /// 雙元規則
-        /// </summary>
-        private BinaryRule BinaryRule;
-
         /// <summary>
         /// 二元運算字典
         /// </summary>
@@ -42,7 +30,6 @@ namespace WebApi.FeatureStructure
         /// <summary>
         /// 建構子
         /// </summary>
-        /// <param name="userid">用戶ID</param>
         /// <param name="content">功能內容</param>
         public Binary(char content) : base(content)
         {
@@ -55,25 +42,6 @@ namespace WebApi.FeatureStructure
         {
         }
         
-        /// <summary>
-        /// 根據OrderingDealer方法的回傳值，製造畫面物件。
-        /// </summary>
-        /// <returns>畫面面件</returns>
-        protected override FrameObject CreateFrameObject()
-        {
-            //OrderingChecker會回傳Update與要給Panel的numberString
-            FrameUpdate frameUpdate = OrderingDealer();
-
-            //完整運算式的刷新
-            CompleteExpression = frameUpdate.Refresh(CompleteExpression);
-
-            //panel, subpanel設定
-            FrameObject.SubPanel = CompleteExpression;
-            FrameObject.Panel = frameUpdate.Answer;
-
-            return FrameObject;
-        }
-
         /// <summary>
         /// 回傳此功能後面可以接的功能集
         /// </summary>
@@ -93,80 +61,84 @@ namespace WebApi.FeatureStructure
         }
 
         /// <summary>
-        /// 根據Tree方法的回傳值，製造畫面更新。
+        /// 依功能回傳畫面物件
         /// </summary>
-        /// <returns>畫面更新</returns>
-        protected override FrameUpdate OrderingDealer()
-        {            
-            FrameUpdate frameUpdate;
+        /// <param name="boardObject">面板物件</param>
+        /// <param name="frameUpdate">畫面更新</param>
+        /// <returns>畫面物件</returns>
+        public override FrameObject GetFrameObject(BoardObject boardObject, FrameUpdate frameUpdate)
+        {
+            //完整運算式的刷新
+            boardObject.CompleteExpression = frameUpdate.Refresh(boardObject.CompleteExpression);
 
-            if (LastFeature == typeof(Clear))
+            //panel, subpanel設定
+            boardObject.FrameObject.SubPanel = boardObject.CompleteExpression;
+            boardObject.FrameObject.Panel = frameUpdate.Answer;
+
+            return boardObject.FrameObject;
+        }
+
+        /// <summary>
+        /// 依計畫內容回傳畫面更新
+        /// </summary>
+        /// <param name="computeObject">計算物件</param>
+        /// <returns>畫面更新</returns>
+        public override FrameUpdate Compute(ComputeObject computeObject)
+        {
+            if (computeObject.LastFeature == typeof(Clear))
             {
-                BinaryRule = BinaryRule.ADD_BINARY;
-                frameUpdate = Tree();
+                var frameUpdate = GetUpdateDefault(computeObject);
                 //要補0
                 frameUpdate.UpdateString = $"0{frameUpdate.UpdateString}";
+                return frameUpdate;
             }
-            else if (LastFeature == typeof(Binary))
+            else if (computeObject.LastFeature == typeof(Binary))
             {
-                BinaryRule = BinaryRule.MODIFY_BINARY;
-                frameUpdate = Tree();
+                return GetUpdateAfterBinary(computeObject);
             }
             else
             {
-                BinaryRule = BinaryRule.ADD_BINARY;
-                frameUpdate = Tree();
+                return GetUpdateDefault(computeObject);
             }
-            
-            return frameUpdate;
         }
-        
+
         /// <summary>
-        /// 將運算結果，製成畫面更新。
+        /// 回傳預設雙元運算子事件的畫面更新
         /// </summary>
+        /// <param name="computeObject">計算物件</param>
         /// <returns>畫面更新</returns>
-        protected override FrameUpdate Tree()
+        private FrameUpdate GetUpdateDefault(ComputeObject computeObject)
         {
-            if (BinaryRule == BinaryRule.ADD_BINARY)
-            {
-                BinaryOperator binaryOperator = BinaryDic[Content];
+            BinaryOperator binaryOperator = BinaryDic[Content];
 
-                //若沒有輸入過值，則視為輸入了0
-                TreeStack.Peek().Add((NumberField == null) ? 0 : NumberField.Number.Value);
+            //若沒有輸入過值，則視為輸入了0
+            computeObject.TreeStack.Peek().Add((computeObject.NumberField == null) ? 0 : computeObject.NumberField.Number.Value);
 
-                //數字歸零
-                NumberField = null;
+            //數字歸零
+            computeObject.NumberField = null;
 
-                //算出一個暫時的結果並存下
-                CurrentAnswer = GetTmpResult();
-                
-                TreeStack.Peek().Add(binaryOperator);
+            //算出一個暫時的結果並存下
+            computeObject.CurrentAnswer = GetTmpResult(computeObject);
 
-                return new FrameUpdate(CurrentAnswer.ToString(), removeLength: 0, updateString: Content.ToString());
-            }
-            else if (BinaryRule == BinaryRule.MODIFY_BINARY)
-            {
-                BinaryOperator binaryOperator = BinaryDic[Content];
-                if (NumberField != null)
-                {
-                    throw new Exception("ModifyBinary時Number不能有值");
-                }
-                TreeStack.Peek().ModifyOperator(binaryOperator);
-                return new FrameUpdate(CurrentAnswer.ToString(), removeLength: 1, updateString: Content.ToString());
-            }
-            else
-            {
-                throw new Exception("BinaryRule錯誤");
-            }
+            computeObject.TreeStack.Peek().Add(binaryOperator);
+
+            return new FrameUpdate(computeObject.CurrentAnswer.ToString(), removeLength: 0, updateString: Content.ToString());
         }
 
         /// <summary>
-        /// 回傳新增物件的方法
+        /// 回傳連續輸入雙元運算子的畫面更新
         /// </summary>
-        /// <returns>委派</returns>
-        public override Func<char, Feature> Create()
+        /// <param name="computeObject">計算物件</param>
+        /// <returns>畫面更新</returns>
+        private FrameUpdate GetUpdateAfterBinary(ComputeObject computeObject)
         {
-            return (content) => new Binary(content);
+            BinaryOperator binaryOperator = BinaryDic[Content];
+            if (computeObject.NumberField != null)
+            {
+                throw new Exception("ModifyBinary時Number不能有值");
+            }
+            computeObject.TreeStack.Peek().ModifyOperator(binaryOperator);
+            return new FrameUpdate(computeObject.CurrentAnswer.ToString(), removeLength: 1, updateString: Content.ToString());
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using WebApi.FeatureStructure.Computes;
+using WebApi.FeatureStructure.Frames;
 using WebApi.Models;
 using WebApi.Models.Response;
 
@@ -10,32 +12,13 @@ namespace WebApi.FeatureStructure
     /// </summary>
     public class Clear : Feature
     {
-
         /// <summary>
         /// 空建構子。反射用的
         /// </summary>
         public Clear()
         {
         }
-
-        /// <summary>
-        /// 根據OrderingDealer方法的回傳值，製造畫面物件。
-        /// </summary>
-        /// <returns>畫面面件</returns>
-        protected override FrameObject CreateFrameObject()
-        {
-            OrderingDealer();
-
-            //完整運算式的刷新
-            CompleteExpression = string.Empty;
-
-            //panel, subpanel設定。
-            FrameObject.SubPanel = CompleteExpression;
-            FrameObject.Panel = "0";
-
-            return FrameObject;
-        }
-
+        
         /// <summary>
         /// 回傳此功能後面可以接的功能集
         /// </summary>
@@ -55,34 +38,35 @@ namespace WebApi.FeatureStructure
         }
 
         /// <summary>
-        /// 根據Tree方法的回傳值，製造畫面更新。
+        /// 依功能回傳畫面物件
         /// </summary>
-        /// <returns>畫面更新</returns>
-        protected override FrameUpdate OrderingDealer()
-        {
-            var frameUpdate = Tree();
-            return frameUpdate;
-        }
-
-        /// <summary>
-        /// 將運算結果，製成畫面更新。
-        /// </summary>
-        /// <returns>畫面更新</returns>
-        protected override FrameUpdate Tree()
+        /// <param name="boardObject">面板物件</param>
+        /// <param name="frameUpdate">畫面更新</param>
+        /// <returns>畫面物件</returns>
+        public override FrameObject GetFrameObject(BoardObject boardObject, FrameUpdate frameUpdate)
         {
             //全資訊初始化
-            InitAllInfo();
-            return new FrameUpdate(FrameUpdate.REMOVE_ALL, string.Empty);
+            boardObject.Init();
+
+            //完整運算式的刷新
+            boardObject.CompleteExpression = string.Empty;
+
+            //panel, subpanel設定。
+            boardObject.FrameObject.SubPanel = boardObject.CompleteExpression;
+            boardObject.FrameObject.Panel = "0";
+
+            return boardObject.FrameObject;
         }
 
         /// <summary>
-        /// 回傳新增物件的方法
+        /// 依計畫內容回傳畫面更新
         /// </summary>
-        /// <returns>委派</returns>
-        public override Func<char, Feature> Create()
+        /// <param name="computeObject">計算物件</param>
+        /// <returns>畫面更新</returns>
+        public override FrameUpdate Compute(ComputeObject computeObject)
         {
-            return (content) => new Clear();
+            computeObject.Init();
+            return new FrameUpdate(FrameUpdate.REMOVE_ALL, string.Empty);
         }
-
     }
 }

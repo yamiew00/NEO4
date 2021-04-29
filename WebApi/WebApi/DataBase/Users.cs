@@ -5,14 +5,14 @@ using WebApi.FeatureStructure;
 namespace WebApi.DataBase
 {
     /// <summary>
-    /// 用戶
+    /// 用戶資料庫
     /// </summary>
     public static class Users
     {
         /// <summary>
         /// 用戶資訊字典
         /// </summary>
-        public static Dictionary<int, UserInfo> UserInfoDic = new Dictionary<int, UserInfo>();
+        private static Dictionary<int, UserInfo> UserInfoDic = new Dictionary<int, UserInfo>();
 
         /// <summary>
         /// 取得特定用戶的全資訊

@@ -20,9 +20,7 @@ namespace WebApi.Setting
         /// 執行特定Feature所對應的方法，並回傳FrameResponse物件
         /// </summary>
         private static Dictionary<string, Func<char, Feature>> FeatureDic = new Dictionary<string, Func<char, Feature>>();
-
-
-
+        
         /// <summary>
         /// 載入行為字典
         /// </summary>
@@ -48,7 +46,6 @@ namespace WebApi.Setting
                         return (Feature)constructorInfo.Invoke(new object[1] { content });
                     });
                 }
-
             }
         }
 
@@ -65,11 +62,10 @@ namespace WebApi.Setting
                 throw new Exception("無此Feature");
             }
 
-            var userInfo = Users.GetUserInfo(userId);
-
-            var featureFunc = FeatureDic[instruct.Feature];
-            var feature = featureFunc.Invoke(instruct.Content);
-            return feature.GetFrameObject(Users.GetUserInfo(userId));
+            var featureConstructor = FeatureDic[instruct.Feature];
+            var feature = featureConstructor.Invoke(instruct.Content);
+            var userinfo = Users.GetUserInfo(userId);
+            return feature.GetAnswer(userinfo);
         }
     }
 }

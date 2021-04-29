@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using WebApi.FeatureStructure.Computes;
+using WebApi.FeatureStructure.Frames;
 using WebApi.Models;
 using WebApi.Models.Response;
 
@@ -10,34 +12,11 @@ namespace WebApi.FeatureStructure
     /// </summary>
     public class BackSpace : Feature
     {
-        //private static HashSet<Type> LegitAfterWardTypeS = new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(Equal), typeof(LeftBracket), typeof(RightBracket), typeof(Clear), typeof(BackSpace), typeof(Unary) };
-
-        //public override HashSet<Type> LegitAfterWardType2 { get => LegitAfterWardTypeS; }
-        
-
         /// <summary>
         /// 空建構子。反射用的
         /// </summary>
         public BackSpace()
         {
-        }
-
-        /// <summary>
-        /// 根據OrderingDealer方法的回傳值，製造畫面物件。
-        /// </summary>
-        /// <returns>畫面面件</returns>
-        protected override FrameObject CreateFrameObject()
-        {
-            FrameUpdate frameUpdate = OrderingDealer();
-
-            //完整運算式的刷新
-            CompleteExpression = frameUpdate.Refresh(CompleteExpression);
-
-            //panel, subpanel設定。
-            FrameObject.SubPanel = CompleteExpression;
-            FrameObject.Panel = frameUpdate.Refresh(FrameObject.Panel);
-
-            return FrameObject;
         }
 
         /// <summary>
@@ -59,48 +38,48 @@ namespace WebApi.FeatureStructure
         }
 
         /// <summary>
-        /// 根據Tree方法的回傳值，製造畫面更新。
+        /// 依功能回傳畫面物件
         /// </summary>
-        /// <returns>畫面更新</returns>
-        protected override FrameUpdate OrderingDealer()
+        /// <param name="boardObject">面板物件</param>
+        /// <param name="frameUpdate">畫面更新</param>
+        /// <returns>畫面物件</returns>
+        public override FrameObject GetFrameObject(BoardObject boardObject, FrameUpdate frameUpdate)
         {
-            FrameUpdate frameUpdate = Tree();
-            return frameUpdate;
+            //完整運算式的刷新
+            boardObject.CompleteExpression = frameUpdate.Refresh(boardObject.CompleteExpression);
+
+            //panel, subpanel設定。
+            boardObject.FrameObject.SubPanel = boardObject.CompleteExpression;
+            boardObject.FrameObject.Panel = frameUpdate.Refresh(boardObject.FrameObject.Panel);
+
+            return boardObject.FrameObject;
         }
 
         /// <summary>
-        /// 將運算結果，製成畫面更新。
+        /// 依計畫內容回傳畫面更新
         /// </summary>
+        /// <param name="computeObject">計算物件</param>
         /// <returns>畫面更新</returns>
-        protected override FrameUpdate Tree()
+        public override FrameUpdate Compute(ComputeObject computeObject)
         {
             int RemoveLength = 0;
-            if (NumberField == null)
+            if (computeObject.NumberField == null)
             {
                 return new FrameUpdate(removeLength: RemoveLength, updateString: string.Empty);
             }
 
-            RemoveLength = NumberField.Number.Value.ToString().Length;
-            if (NumberField.IsEndWithPoint())
+            RemoveLength = computeObject.NumberField.Number.Value.ToString().Length;
+            if (computeObject.NumberField.IsEndWithPoint())
             {
                 RemoveLength += 1;
             }
-            NumberField.ClearOneDigit();
-            string updateString = NumberField.Number.ToString();
-            if (NumberField.IsEndWithPoint())
+            computeObject.NumberField.ClearOneDigit();
+            string updateString = computeObject.NumberField.Number.ToString();
+            if (computeObject.NumberField.IsEndWithPoint())
             {
                 updateString += ".";
             }
             return new FrameUpdate(RemoveLength, updateString);
-        }
-
-        /// <summary>
-        /// 回傳新增物件的方法
-        /// </summary>
-        /// <returns>委派</returns>
-        public override Func<char, Feature> Create()
-        {
-            return (content) => new BackSpace();
         }
     }
 }
