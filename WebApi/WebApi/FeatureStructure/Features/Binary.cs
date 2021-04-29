@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using WebApi.DataBase;
 using WebApi.Evaluate;
 using WebApi.Evaluate.Operators;
 using WebApi.Evaluate.Tree;
@@ -20,7 +21,7 @@ namespace WebApi.FeatureStructure
     /// <summary>
     /// 雙元運算子:Concrete IFeature物件
     /// </summary>
-    public class Binary : IFeature
+    public class Binary : Feature
     {
         /// <summary>
         /// 雙元規則
@@ -37,13 +38,13 @@ namespace WebApi.FeatureStructure
             { 'x', new BinaryOperator(2, (num1, num2) => num1 * num2, 'x')},
             { '÷', new BinaryOperator(2, (num1, num2) => num1 / num2, '÷')},
         };
-
+        
         /// <summary>
         /// 建構子
         /// </summary>
         /// <param name="userid">用戶ID</param>
         /// <param name="content">功能內容</param>
-        public Binary(int userid, char content) : base(userid, content)
+        public Binary(char content) : base(content)
         {
         }
 
@@ -53,7 +54,7 @@ namespace WebApi.FeatureStructure
         public Binary()
         {
         }
-
+        
         /// <summary>
         /// 根據OrderingDealer方法的回傳值，製造畫面物件。
         /// </summary>
@@ -163,9 +164,9 @@ namespace WebApi.FeatureStructure
         /// 回傳新增物件的方法
         /// </summary>
         /// <returns>委派</returns>
-        public override Func<int, char, IFeature> Create()
+        public override Func<char, Feature> Create()
         {
-            return (userid, content) => new Binary(userid, content);
+            return (content) => new Binary(content);
         }
     }
 }

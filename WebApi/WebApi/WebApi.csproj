@@ -114,7 +114,7 @@
     <Compile Include="FeatureStructure\Features\Clear.cs" />
     <Compile Include="FeatureStructure\Features\Equal.cs" />
     <Compile Include="FeatureStructure\FeatureObject.cs" />
-    <Compile Include="FeatureStructure\IFeature.cs" />
+    <Compile Include="FeatureStructure\Feature.cs" />
     <Compile Include="FeatureStructure\Features\LeftBracket.cs" />
     <Compile Include="FeatureStructure\Features\Number.cs" />
     <Compile Include="FeatureStructure\Features\RightBracket.cs" />

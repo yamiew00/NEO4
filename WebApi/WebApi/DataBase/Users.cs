@@ -19,7 +19,7 @@ namespace WebApi.DataBase
         /// </summary>
         /// <param name="userId">用戶id</param>
         /// <returns>特定用戶的全資訊</returns>
-        public static UserInfo GetUserInfoDic(int userId)
+        public static UserInfo GetUserInfo(int userId)
         {
             if (UserInfoDic.Keys.Contains(userId))
             {

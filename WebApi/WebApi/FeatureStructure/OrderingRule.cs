@@ -20,7 +20,7 @@ namespace WebApi.FeatureStructure
         /// </summary>
         public static void LoadOrdering()
         {
-            var types = typeof(IFeature).GetAllTypes();
+            var types = typeof(Feature).GetAllTypes();
 
             //順位字典的輸入
             foreach (var type in types)

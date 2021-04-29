@@ -19,20 +19,36 @@ namespace WebApi.Setting
         /// <summary>
         /// 執行特定Feature所對應的方法，並回傳FrameResponse物件
         /// </summary>
-        private static Dictionary<string, Func<int, char, IFeature>> IFeatureDic = new Dictionary<string, Func<int, char, IFeature>>();
+        private static Dictionary<string, Func<char, Feature>> FeatureDic = new Dictionary<string, Func<char, Feature>>();
+
+
 
         /// <summary>
         /// 載入行為字典
         /// </summary>
         public static void LoadIFeature()
         {
-            var types = typeof(IFeature).GetAllTypes();
+            var types = typeof(Feature).GetAllTypes();
             foreach (var type in types)
             {
-                var reflect = Activator.CreateInstance(type);
+                //找建構子
+                var constructorInfo = type.GetConstructor(new Type[1] { typeof(char) });
+                if (constructorInfo == null)
+                {
+                    constructorInfo = type.GetConstructor(Type.EmptyTypes);
+                    FeatureDic.Add(type.Name, (content) =>
+                    {
+                        return (Feature)constructorInfo.Invoke(Type.EmptyTypes);
+                    });
+                }
+                else
+                {
+                    FeatureDic.Add(type.Name, (content) =>
+                    {
+                        return (Feature)constructorInfo.Invoke(new object[1] { content });
+                    });
+                }
 
-                Func<int, char, IFeature> func = (Func<int, char, IFeature>)type.GetMethod("Create").Invoke(reflect, null);
-                IFeatureDic.Add(type.Name, func);
             }
         }
 
@@ -44,11 +60,16 @@ namespace WebApi.Setting
         /// <returns>FrameObject</returns>
         public static FrameObject GetFrameObject(int userId, Instruct instruct)
         {
-            if (!IFeatureDic.Keys.Contains(instruct.Feature))
+            if (!FeatureDic.Keys.Contains(instruct.Feature))
             {
                 throw new Exception("無此Feature");
             }
-            return IFeatureDic[instruct.Feature].Invoke(userId, instruct.Content).GetFrameObject();
+
+            var userInfo = Users.GetUserInfo(userId);
+
+            var featureFunc = FeatureDic[instruct.Feature];
+            var feature = featureFunc.Invoke(instruct.Content);
+            return feature.GetFrameObject(Users.GetUserInfo(userId));
         }
     }
 }

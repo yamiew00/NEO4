@@ -64,7 +64,8 @@ namespace WebApi.FeatureStructure
             FrameObject = new FrameObject();
             //LastFeature初始預設為Clear
             LastFeature = typeof(Clear); 
-            NumberField = new NumberField();
+            //NumberField預設為null(待填入)
+            NumberField = null;
             CurrentAnswer = 0;
             TreeStack = new Stack<ExpressionTree>();
             TreeStack.Push(new ExpressionTree());

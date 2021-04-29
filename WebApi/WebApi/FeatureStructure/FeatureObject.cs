@@ -153,7 +153,7 @@ namespace WebApi.FeatureStructure
         protected FeatureObject(int userId)
         {
             UserId = userId;
-            UserInfo = Users.GetUserInfoDic(userId);
+            UserInfo = Users.GetUserInfo(userId);
         }
 
         /// <summary>

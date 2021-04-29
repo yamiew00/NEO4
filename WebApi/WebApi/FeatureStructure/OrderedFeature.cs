@@ -33,17 +33,6 @@ namespace WebApi.FeatureStructure
         protected OrderedFeature(int userId, char content) : base(userId, content)
         {
         }
-
-        /// <summary>
-        /// 回傳此功能前面可以接的功能集
-        /// </summary>
-        /// <returns>前面可以接的功能集</returns>
-        public abstract HashSet<Type> LegitPreviousType();
-
-        /// <summary>
-        /// 回傳此功能後面可以接的功能集
-        /// </summary>
-        /// <returns>後面可以接的功能集</returns>
-        public abstract HashSet<Type> LegitAfterWardType();
+        
     }
 }

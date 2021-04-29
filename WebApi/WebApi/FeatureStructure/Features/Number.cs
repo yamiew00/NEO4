@@ -10,14 +10,15 @@ namespace WebApi.FeatureStructure
     /// <summary>
     /// 數字鍵:Concrete IFeature物件
     /// </summary>
-    public class Number : IFeature
+    public class Number : Feature
     {
+
         /// <summary>
         /// 建構子
         /// </summary>
         /// <param name="userid">用戶id</param>
         /// <param name="content">功能內容</param>
-        public Number(int userid, char content) : base(userid, content)
+        public Number(char content) : base(content)
         {
         }
 
@@ -27,6 +28,7 @@ namespace WebApi.FeatureStructure
         public Number()
         {
         }
+        
 
         /// <summary>
         /// 根據OrderingDealer方法的回傳值，製造畫面物件。
@@ -76,7 +78,7 @@ namespace WebApi.FeatureStructure
             if (LastFeature == typeof(Equal))
             {
                 //必須要把之前的運算全部清空
-                InfoInit();
+                InitAllInfo();
 
                 frameUpdate = Tree();
                 frameUpdate.RemoveLength = FrameUpdate.REMOVE_ALL;
@@ -148,9 +150,9 @@ namespace WebApi.FeatureStructure
         /// 回傳新增物件的方法
         /// </summary>
         /// <returns>委派</returns>
-        public override Func<int, char, IFeature> Create()
+        public override Func<char, Feature> Create()
         {
-            return (userid, content) => new Number(userid, content);
+            return (content) => new Number(content);
         }
     }
 }

@@ -9,15 +9,8 @@ namespace WebApi.FeatureStructure
     /// <summary>
     /// 左括號鍵:Concrete IFeature物件
     /// </summary>
-    public class LeftBracket : IFeature
+    public class LeftBracket : Feature
     {
-        /// <summary>
-        /// 建構子
-        /// </summary>
-        /// <param name="userid">用戶id</param>
-        public LeftBracket(int userid) : base(userid)
-        {
-        }
 
         /// <summary>
         /// 空建構子。反射用的
@@ -25,7 +18,7 @@ namespace WebApi.FeatureStructure
         public LeftBracket()
         {
         }
-
+        
         /// <summary>
         /// 根據OrderingDealer方法的回傳值，製造畫面物件。
         /// </summary>
@@ -92,9 +85,9 @@ namespace WebApi.FeatureStructure
         /// 回傳新增物件的方法
         /// </summary>
         /// <returns>委派</returns>
-        public override Func<int, char, IFeature> Create()
+        public override Func<char, Feature> Create()
         {
-            return (userid, content) => new LeftBracket(userid);
+            return (content) => new LeftBracket();
         }
     }
 }

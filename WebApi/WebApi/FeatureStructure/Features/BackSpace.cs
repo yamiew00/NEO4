@@ -8,15 +8,12 @@ namespace WebApi.FeatureStructure
     /// <summary>
     /// 返回鍵:Concrete IFeature物件
     /// </summary>
-    public class BackSpace : IFeature
+    public class BackSpace : Feature
     {
-        /// <summary>
-        /// 建構子
-        /// </summary>
-        /// <param name="userid">用戶id</param>
-        public BackSpace(int userid) : base(userid)
-        {
-        }
+        //private static HashSet<Type> LegitAfterWardTypeS = new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(Equal), typeof(LeftBracket), typeof(RightBracket), typeof(Clear), typeof(BackSpace), typeof(Unary) };
+
+        //public override HashSet<Type> LegitAfterWardType2 { get => LegitAfterWardTypeS; }
+        
 
         /// <summary>
         /// 空建構子。反射用的
@@ -101,9 +98,9 @@ namespace WebApi.FeatureStructure
         /// 回傳新增物件的方法
         /// </summary>
         /// <returns>委派</returns>
-        public override Func<int, char, IFeature> Create()
+        public override Func<char, Feature> Create()
         {
-            return (userid, content) => new BackSpace(userid);
+            return (content) => new BackSpace();
         }
     }
 }

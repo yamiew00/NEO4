@@ -19,7 +19,7 @@ namespace WebApi.FeatureStructure
     /// <summary>
     /// 單元運算子:Concrete IFeature物件
     /// </summary>
-    public class Unary : IFeature
+    public class Unary : Feature
     {
         /// <summary>
         /// 單元運算規則
@@ -40,7 +40,7 @@ namespace WebApi.FeatureStructure
         /// </summary>
         /// <param name="userId">用戶id</param>
         /// <param name="content">功能內容</param>
-        public Unary(int userId, char content) : base(userId, content)
+        public Unary(char content) : base(content)
         {
         }
 
@@ -219,9 +219,9 @@ namespace WebApi.FeatureStructure
         /// 回傳新增物件的方法
         /// </summary>
         /// <returns>委派</returns>
-        public override Func<int, char, IFeature> Create()
+        public override Func<char, Feature> Create()
         {
-            return (userid, content) => new Unary(userid, content);
+            return (content) => new Unary(content);
         }
     }
 }

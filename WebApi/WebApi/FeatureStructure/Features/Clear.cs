@@ -8,15 +8,8 @@ namespace WebApi.FeatureStructure
     /// <summary>
     /// 清除鍵:Concrete IFeature物件
     /// </summary>
-    public class Clear : IFeature
+    public class Clear : Feature
     {
-        /// <summary>
-        /// 建構子
-        /// </summary>
-        /// <param name="userid">用戶id</param>
-        public Clear(int userid) : base(userid)
-        {
-        }
 
         /// <summary>
         /// 空建構子。反射用的
@@ -78,7 +71,7 @@ namespace WebApi.FeatureStructure
         protected override FrameUpdate Tree()
         {
             //全資訊初始化
-            InfoInit();
+            InitAllInfo();
             return new FrameUpdate(FrameUpdate.REMOVE_ALL, string.Empty);
         }
 
@@ -86,9 +79,10 @@ namespace WebApi.FeatureStructure
         /// 回傳新增物件的方法
         /// </summary>
         /// <returns>委派</returns>
-        public override Func<int, char, IFeature> Create()
+        public override Func<char, Feature> Create()
         {
-            return (userid, content) => new Clear(userid);
+            return (content) => new Clear();
         }
+
     }
 }

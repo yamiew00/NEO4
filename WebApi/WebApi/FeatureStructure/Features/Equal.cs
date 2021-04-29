@@ -21,27 +21,20 @@ namespace WebApi.FeatureStructure
     /// <summary>
     /// 等號鍵:Concrete IFeature物件
     /// </summary>
-    public class Equal : IFeature
+    public class Equal : Feature
     {
         /// <summary>
         /// 等號規則
         /// </summary>
         private EqualRule EqualRule;
-
-        /// <summary>
-        /// 建構子
-        /// </summary>
-        /// <param name="userid">用戶id</param>
-        public Equal(int userid) : base(userid)
-        {
-        }
-
+        
         /// <summary>
         /// 空建構子。反射用的
         /// </summary>
         public Equal()
         {
         }
+        
 
         /// <summary>
         /// 根據OrderingDealer方法的回傳值，製造畫面物件。
@@ -247,9 +240,11 @@ namespace WebApi.FeatureStructure
         /// 回傳新增物件的方法
         /// </summary>
         /// <returns>委派</returns>
-        public override Func<int, char, IFeature> Create()
+        public override Func<char, Feature> Create()
         {
-            return (userid, content) => new Equal(userid);
+            return (content) => new Equal();
         }
+
+
     }
 }
