@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using WebApi.Extensions;
 
 namespace WebApi.FeatureStructure
@@ -25,20 +26,23 @@ namespace WebApi.FeatureStructure
             //順位字典的輸入
             foreach (var type in types)
             {
-                var reflect = Activator.CreateInstance(type);
+                var props = type.GetProperties();
 
-                HashSet<Type> previousTypeSet = (HashSet<Type>)type.GetMethod("LegitPreviousType").Invoke(reflect, null);
-                HashSet<Type> afterTypeSet = (HashSet<Type>)type.GetMethod("LegitAfterWardType").Invoke(reflect, null);
+                var obj = Activator.CreateInstance(type);
 
-                foreach (var previousType in previousTypeSet)
+                var previousSet = (HashSet<Type>)type.GetProperty("PreviousType").GetValue(obj);
+
+                var afterSet = (HashSet<Type>)type.GetProperty("AfterWardType").GetValue(obj);
+                
+                foreach (var previous in previousSet)
                 {
-                    AddToDic(previousType, type);
+                    AddToDic(previous, type);
                 }
 
-                foreach (var afterType in afterTypeSet)
+                foreach (var after in afterSet)
                 {
-                    AddToDic(type, afterType);
-                }
+                    AddToDic(type, after);
+                }   
             }
         }
 

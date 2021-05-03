@@ -16,6 +16,26 @@ namespace WebApi.FeatureStructure
     public class Equal : Feature
     {
         /// <summary>
+        /// 可執行的前一個Type
+        /// </summary>
+        private static readonly HashSet<Type> EQUAL_PREVIOUS_TYPE = new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(Equal), typeof(RightBracket), typeof(Clear), typeof(ClearError), typeof(BackSpace), typeof(Unary) };
+
+        /// <summary>
+        /// 可執行的後一個Type
+        /// </summary>
+        private static readonly HashSet<Type> EQUAL_AFTERWARD_TYPE = new HashSet<Type>() { typeof(Number), typeof(Equal), typeof(LeftBracket), typeof(Clear), typeof(Unary) };
+
+        /// <summary>
+        /// 可執行的前一個Type
+        /// </summary>
+        public override HashSet<Type> PreviousType => EQUAL_PREVIOUS_TYPE;
+
+        /// <summary>
+        /// 可執行的後一個Type
+        /// </summary>
+        public override HashSet<Type> AfterWardType => EQUAL_AFTERWARD_TYPE;
+
+        /// <summary>
         /// 空建構子。反射用的
         /// </summary>
         public Equal()
@@ -56,24 +76,6 @@ namespace WebApi.FeatureStructure
             }
 
             return new Evaluator().PackNode(top.RightNode);
-        }
-        
-        /// <summary>
-        /// 回傳此功能後面可以接的功能集
-        /// </summary>
-        /// <returns>後面可以接的功能集</returns>
-        public override HashSet<Type> LegitAfterWardType()
-        {
-            return new HashSet<Type>() { typeof(Number), typeof(Equal), typeof(LeftBracket), typeof(Clear), typeof(Unary) };
-        }
-
-        /// <summary>
-        /// 回傳此功能前面可以接的功能集
-        /// </summary>
-        /// <returns>前面可以接的功能集</returns>
-        public override HashSet<Type> LegitPreviousType()
-        {
-            return new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(Equal), typeof(RightBracket), typeof(Clear), typeof(ClearError), typeof(BackSpace), typeof(Unary) };
         }
 
         /// <summary>

@@ -26,7 +26,27 @@ namespace WebApi.FeatureStructure
             { 'x', new BinaryOperator(2, (num1, num2) => num1 * num2, 'x')},
             { '÷', new BinaryOperator(2, (num1, num2) => num1 / num2, '÷')},
         };
-        
+
+        /// <summary>
+        /// 可執行的前一個Type
+        /// </summary>
+        private static readonly HashSet<Type> BINARY_PREVIOUS_TYPE = new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(RightBracket), typeof(Clear), typeof(ClearError), typeof(BackSpace), typeof(Unary) };
+
+        /// <summary>
+        /// 可執行的後一個Type
+        /// </summary>
+        private static readonly HashSet<Type> BINARY_AFTERWARD_TYPE = new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(Equal), typeof(LeftBracket), typeof(RightBracket), typeof(Clear), typeof(Unary) };
+
+        /// <summary>
+        /// 可執行的前一個Type
+        /// </summary>
+        public override HashSet<Type> PreviousType => BINARY_PREVIOUS_TYPE;
+
+        /// <summary>
+        /// 可執行的後一個Type
+        /// </summary>
+        public override HashSet<Type> AfterWardType => BINARY_AFTERWARD_TYPE;
+
         /// <summary>
         /// 建構子
         /// </summary>
@@ -40,24 +60,6 @@ namespace WebApi.FeatureStructure
         /// </summary>
         public Binary()
         {
-        }
-        
-        /// <summary>
-        /// 回傳此功能後面可以接的功能集
-        /// </summary>
-        /// <returns>後面可以接的功能集</returns>
-        public override HashSet<Type> LegitAfterWardType()
-        {
-            return new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(Equal), typeof(LeftBracket), typeof(RightBracket), typeof(Clear), typeof(Unary) };
-        }
-
-        /// <summary>
-        /// 回傳此功能前面可以接的功能集
-        /// </summary>
-        /// <returns>前面可以接的功能集</returns>
-        public override HashSet<Type> LegitPreviousType()
-        {
-            return new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(RightBracket), typeof(Clear), typeof(ClearError), typeof(BackSpace), typeof(Unary) };
         }
 
         /// <summary>

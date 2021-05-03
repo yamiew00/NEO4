@@ -15,28 +15,30 @@ namespace WebApi.FeatureStructure
     public class RightBracket : Feature
     {
         /// <summary>
+        /// 可執行的前一個Type
+        /// </summary>
+        private static readonly HashSet<Type> RIGHTBRACKET_PREVIOUS_TYPE = new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(LeftBracket), typeof(RightBracket), typeof(ClearError), typeof(BackSpace), typeof(Unary) };
+
+        /// <summary>
+        /// 可執行的後一個Type
+        /// </summary>
+        private static readonly HashSet<Type> RIGHTBRACKET_AFTERWARD_TYPE = new HashSet<Type>() { typeof(Binary), typeof(Equal), typeof(RightBracket), typeof(Clear), typeof(Unary) };
+
+        /// <summary>
+        /// 可執行的前一個Type
+        /// </summary>
+        public override HashSet<Type> PreviousType => RIGHTBRACKET_PREVIOUS_TYPE;
+
+        /// <summary>
+        /// 可執行的後一個Type
+        /// </summary>
+        public override HashSet<Type> AfterWardType => RIGHTBRACKET_AFTERWARD_TYPE;
+
+        /// <summary>
         /// 空建構子。反射用的
         /// </summary>
         public RightBracket()
         {
-        }
-        
-        /// <summary>
-        /// 回傳此功能後面可以接的功能集
-        /// </summary>
-        /// <returns>後面可以接的功能集</returns>
-        public override HashSet<Type> LegitAfterWardType()
-        {
-            return new HashSet<Type>() { typeof(Binary), typeof(Equal), typeof(RightBracket), typeof(Clear), typeof(Unary) };
-        }
-
-        /// <summary>
-        /// 回傳此功能前面可以接的功能集
-        /// </summary>
-        /// <returns>前面可以接的功能集</returns>
-        public override HashSet<Type> LegitPreviousType()
-        {
-            return new HashSet<Type>() { typeof(Number), typeof(Binary), typeof(LeftBracket), typeof(RightBracket), typeof(ClearError), typeof(BackSpace), typeof(Unary) };
         }
 
         /// <summary>

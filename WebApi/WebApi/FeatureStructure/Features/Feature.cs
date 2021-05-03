@@ -61,6 +61,16 @@ namespace WebApi.FeatureStructure
         };
 
         /// <summary>
+        /// 可執行的前一個Type
+        /// </summary>
+        public abstract HashSet<Type> PreviousType { get; }
+
+        /// <summary>
+        /// 可執行的後一個Type
+        /// </summary>
+        public abstract HashSet<Type> AfterWardType { get; }
+
+        /// <summary>
         /// 空建構子。
         /// </summary>
         public Feature()
@@ -134,17 +144,17 @@ namespace WebApi.FeatureStructure
             }
         }
         
-        /// <summary>
-        /// 回傳此功能前面可以接的功能集
-        /// </summary>
-        /// <returns>前面可以接的功能集</returns>
-        public abstract HashSet<Type> LegitPreviousType();
+        ///// <summary>
+        ///// 回傳此功能前面可以接的功能集
+        ///// </summary>
+        ///// <returns>前面可以接的功能集</returns>
+        //public abstract HashSet<Type> LegitPreviousType();
 
-        /// <summary>
-        /// 回傳此功能後面可以接的功能集
-        /// </summary>
-        /// <returns>後面可以接的功能集</returns>
-        public abstract HashSet<Type> LegitAfterWardType();
+        ///// <summary>
+        ///// 回傳此功能後面可以接的功能集
+        ///// </summary>
+        ///// <returns>後面可以接的功能集</returns>
+        //public abstract HashSet<Type> LegitAfterWardType();
 
         /// <summary>
         /// 依功能回傳畫面物件
